@@ -1,0 +1,31 @@
+# Optional: a single-broker Confluent Platform for offline dev on the Mac.
+# Set USE_LOCAL_BROKER=true in .env to point the services at this broker.
+
+services:
+  broker:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: safestream-broker
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@broker:29093"
+      KAFKA_LISTENERS: "PLAINTEXT://broker:29092,CONTROLLER://broker:29093,EXTERNAL://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://broker:29092,EXTERNAL://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_DIRS: "/var/lib/kafka/data"
+      CLUSTER_ID: "safestream-cluster-uuid-001"
+    volumes:
+      - broker-data:/var/lib/kafka/data
+
+volumes:
+  broker-data:

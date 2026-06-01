@@ -1,0 +1,138 @@
+# SafeStream-Kafka
+
+Real-time safe / unsafe behaviour analytics for IoT workplace video streams, powered by a
+fine-tuned YOLOv8 detector and Apache Kafka (Confluent Cloud).
+
+Three independent services communicate through three Kafka topics:
+
+```
+CCTV / RTSP / video file
+        │
+        ▼
+[ safestream.producer ] ── publishes frames ──▶  cctv-frames
+        │
+        ▼
+[ safestream.detector ] ── YOLOv8 + safe/unsafe labels ──▶  safety-detections
+        │
+        ▼
+[ safestream.aggregator ] ── rolling + cumulative totals ──▶  safety-alerts
+        │
+        ▼
+[ safestream.dashboard ] ── subscribes, renders live HTML ──▶  http://localhost:8000
+```
+
+## Requirements
+
+- macOS on Apple Silicon (M1 / M2 / M3 / M4) or Linux
+- Python 3.10 – 3.12
+- Homebrew (only needed for the optional local Kafka via Docker)
+- A YOLOv8 weights file (`yolov8m.pt` for the COCO baseline, or your own `best.pt`)
+
+## Mac M1 setup
+
+```bash
+# 1. Clone or unzip the project, then cd into it
+cd safestream-kafka
+
+# 2. Create and activate a virtualenv (arm64 Python from python.org or pyenv)
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 3. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Copy the env template and fill in your Confluent Cloud creds
+cp .env.example .env
+# edit .env: KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, KAFKA_API_SECRET
+
+# 5. (Optional) start a local Kafka broker if you don't have Confluent Cloud
+docker compose up -d
+# then set USE_LOCAL_BROKER=true in .env
+
+# 6. Create the three Kafka topics
+python -m scripts.create_topics
+```
+
+YOLOv8 inference uses Apple's Metal Performance Shaders (MPS) on M-series Macs automatically
+when available. The detector logs which device it picked at startup.
+
+## Running the four services
+
+Open four terminals (or use the VS Code launch configurations under `.vscode/launch.json`):
+
+```bash
+# Terminal 1 — dashboard (start this first so you can watch the totals)
+python -m safestream.dashboard
+
+# Terminal 2 — aggregator
+python -m safestream.aggregator
+
+# Terminal 3 — detector
+python -m safestream.detector --weights yolov8m.pt
+
+# Terminal 4 — producer (drives the pipeline)
+python -m safestream.producer --video path/to/clip.mp4 --camera-id cam-01
+```
+
+Then open <http://localhost:8000> and watch per-camera `total_safe` / `total_unsafe`
+and the rolling unsafe ratio update in real time.
+
+### Running from VS Code
+
+The `.vscode/launch.json` file ships four debug configurations — Producer, Detector,
+Aggregator, Dashboard — plus a compound configuration **"SafeStream: all services"**
+that starts everything at once.
+
+## Training your own YOLOv8 detector
+
+```bash
+python -m scripts.train_yolo --data path/to/dataset.yaml --epochs 50
+```
+
+This produces `runs/safestream_yolov8m/weights/best.pt`, which you can then pass to
+the detector via `--weights`.
+
+## Project layout
+
+```
+safestream-kafka/
+├── README.md
+├── requirements.txt
+├── .env.example          # template — copy to .env and fill in
+├── .gitignore
+├── docker-compose.yml    # local Confluent Platform (optional)
+├── .vscode/              # launch configs and editor settings
+├── safestream/           # importable Python package
+│   ├── settings.py       # central config loaded from .env
+│   ├── common/           # shared helpers (Kafka clients, encoding, labels)
+│   ├── producer/         # video → cctv-frames
+│   ├── detector/         # cctv-frames → YOLOv8 → safety-detections
+│   ├── aggregator/       # safety-detections → safety-alerts + dashboard state
+│   └── dashboard/        # FastAPI + WebSocket front-end
+├── scripts/
+│   ├── create_topics.py
+│   └── train_yolo.py
+└── tests/
+    └── test_aggregator.py
+```
+
+## Configuration cheat sheet
+
+All knobs are read from `.env` (see `.env.example` for the full list):
+
+| Variable | Default | Notes |
+|----------|---------|-------|
+| `KAFKA_BOOTSTRAP_SERVERS` | — | Confluent Cloud bootstrap endpoint |
+| `KAFKA_API_KEY` / `KAFKA_API_SECRET` | — | SASL credentials |
+| `USE_LOCAL_BROKER` | `false` | If true, ignore SASL and use plaintext localhost broker |
+| `TOPIC_FRAMES` | `cctv-frames` | Producer → Detector |
+| `TOPIC_DETECTIONS` | `safety-detections` | Detector → Aggregator |
+| `TOPIC_ALERTS` | `safety-alerts` | Aggregator → downstream sinks |
+| `AGG_WINDOW_SECONDS` | `60` | Rolling-window length |
+| `AGG_UNSAFE_RATIO_ALERT` | `0.30` | Ratio that triggers a WARN alert |
+| `AGG_MIN_WINDOW_OBS` | `5` | Minimum rolling-window obs before alerting |
+| `DETECTOR_DEVICE` | `auto` | `auto`, `mps`, `cuda`, or `cpu` |
+| `DETECTOR_CONF` | `0.25` | YOLOv8 confidence threshold |
+| `DASHBOARD_HOST` | `127.0.0.1` | FastAPI bind host |
+| `DASHBOARD_PORT` | `8000` | FastAPI bind port |

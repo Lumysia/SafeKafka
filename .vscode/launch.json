@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "SafeStream: Dashboard",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "safestream.dashboard",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "SafeStream: Aggregator",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "safestream.aggregator",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "SafeStream: Detector",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "safestream.detector",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "SafeStream: Producer (sample video)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "safestream.producer",
+      "args": ["--video", "sample.mp4", "--camera-id", "cam-01"],
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "SafeStream: Create topics",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/create_topics.py",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "SafeStream: all services",
+      "configurations": [
+        "SafeStream: Dashboard",
+        "SafeStream: Aggregator",
+        "SafeStream: Detector"
+      ]
+    }
+  ]
+}
