@@ -22,6 +22,7 @@ class _Totals:
     safe: int = 0
     unsafe: int = 0
     frames: int = 0
+    label_counts: Dict[str, int] = field(default_factory=dict)
 
 
 class SafetyAggregator:
@@ -81,6 +82,10 @@ class SafetyAggregator:
             tot.safe += s
             tot.unsafe += u
             tot.frames += 1
+            for det in msg.get("detections", []):
+                if det.get("category") == "unsafe":
+                    lbl = det.get("label", "unknown")
+                    tot.label_counts[lbl] = tot.label_counts.get(lbl, 0) + 1
 
             snap = {
                 "camera_id": cam,
@@ -129,6 +134,9 @@ class SafetyAggregator:
                     "rolling_unsafe": roll_unsafe,
                     "rolling_total": roll_total,
                     "rolling_ratio": roll_ratio,
+                    "violation_counts": dict(
+                        sorted(tot.label_counts.items(), key=lambda x: x[1], reverse=True)
+                    ),
                 }
             return out
 

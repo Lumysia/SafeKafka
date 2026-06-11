@@ -69,10 +69,10 @@ python -m safestream.dashboard
 python -m safestream.aggregator
 
 # Terminal 3 — detector
-python -m safestream.detector --weights yolov8m.pt
+python -m safestream.detector --weights previous_weights/best.pt
 
 # Terminal 4 — producer (drives the pipeline)
-python -m safestream.producer --video path/to/clip.mp4 --camera-id cam-01
+python -m safestream.producer --video-dir path/to/video_directory.mp4 --camera-id cam-01
 ```
 
 Then open <http://localhost:8000> and watch per-camera `total_safe` / `total_unsafe`
@@ -86,8 +86,17 @@ that starts everything at once.
 
 ## Training your own YOLOv8 detector
 
+> **Before training**, open `yolo_dataset/dataset.yaml` and update the `path` field to the
+> absolute path of the `yolo_dataset` directory on your machine:
+>
+> ```yaml
+> path: /absolute/path/to/SafeKafka/yolo_dataset
+> ```
+
+Also change the path to the dataset for the below command:
+
 ```bash
-python -m scripts.train_yolo --data path/to/dataset.yaml --epochs 50
+python -m scripts.train_yolo --data yolo_dataset/dataset.yaml --epochs 50
 ```
 
 This produces `runs/safestream_yolov8m/weights/best.pt`, which you can then pass to
@@ -121,18 +130,53 @@ safestream-kafka/
 
 All knobs are read from `.env` (see `.env.example` for the full list):
 
-| Variable | Default | Notes |
-|----------|---------|-------|
-| `KAFKA_BOOTSTRAP_SERVERS` | — | Confluent Cloud bootstrap endpoint |
-| `KAFKA_API_KEY` / `KAFKA_API_SECRET` | — | SASL credentials |
-| `USE_LOCAL_BROKER` | `false` | If true, ignore SASL and use plaintext localhost broker |
-| `TOPIC_FRAMES` | `cctv-frames` | Producer → Detector |
-| `TOPIC_DETECTIONS` | `safety-detections` | Detector → Aggregator |
-| `TOPIC_ALERTS` | `safety-alerts` | Aggregator → downstream sinks |
-| `AGG_WINDOW_SECONDS` | `60` | Rolling-window length |
-| `AGG_UNSAFE_RATIO_ALERT` | `0.30` | Ratio that triggers a WARN alert |
-| `AGG_MIN_WINDOW_OBS` | `5` | Minimum rolling-window obs before alerting |
-| `DETECTOR_DEVICE` | `auto` | `auto`, `mps`, `cuda`, or `cpu` |
-| `DETECTOR_CONF` | `0.25` | YOLOv8 confidence threshold |
-| `DASHBOARD_HOST` | `127.0.0.1` | FastAPI bind host |
-| `DASHBOARD_PORT` | `8000` | FastAPI bind port |
+| Variable                             | Default             | Notes                                                   |
+| ------------------------------------ | ------------------- | ------------------------------------------------------- |
+| `KAFKA_BOOTSTRAP_SERVERS`            | —                   | Confluent Cloud bootstrap endpoint                      |
+| `KAFKA_API_KEY` / `KAFKA_API_SECRET` | —                   | SASL credentials                                        |
+| `USE_LOCAL_BROKER`                   | `false`             | If true, ignore SASL and use plaintext localhost broker |
+| `TOPIC_FRAMES`                       | `cctv-frames`       | Producer → Detector                                     |
+| `TOPIC_DETECTIONS`                   | `safety-detections` | Detector → Aggregator                                   |
+| `TOPIC_ALERTS`                       | `safety-alerts`     | Aggregator → downstream sinks                           |
+| `AGG_WINDOW_SECONDS`                 | `60`                | Rolling-window length                                   |
+| `AGG_UNSAFE_RATIO_ALERT`             | `0.30`              | Ratio that triggers a WARN alert                        |
+| `AGG_MIN_WINDOW_OBS`                 | `5`                 | Minimum rolling-window obs before alerting              |
+| `DETECTOR_DEVICE`                    | `auto`              | `auto`, `mps`, `cuda`, or `cpu`                         |
+| `DETECTOR_CONF`                      | `0.25`              | YOLOv8 confidence threshold                             |
+| `DASHBOARD_HOST`                     | `127.0.0.1`         | FastAPI bind host                                       |
+| `DASHBOARD_PORT`                     | `8000`              | FastAPI bind port                                       |
+
+## Windows (PowerShell) setup
+
+```powershell
+# 1. Clone or unzip the project, then cd into it
+cd SafeKafka
+
+# 2. Create and activate a virtualenv
+py -m venv .venv
+
+.\.venv\Scripts\Activate.ps1
+
+# 3. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Copy the env template and fill in your Confluent Cloud creds
+copy .env.example .env
+# edit .env: KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, KAFKA_API_SECRET
+
+# 5. (Optional) start a local Kafka broker
+docker compose up -d
+# then set USE_LOCAL_BROKER=true in .env
+
+# 6. Create the three Kafka topics
+py -m scripts.create_topics
+```
+
+### GPU support on Windows
+
+If you have an **NVIDIA GPU**, install the latest Game Ready or Studio driver on Windows
+(≥ 527.41). This automatically enables GPU passthrough for both native Windows and WSL2 —
+no separate CUDA install needed. Verify with `nvidia-smi` in PowerShell; if it shows your
+GPU, `--device auto` in the training script will pick it up.
+

@@ -73,6 +73,15 @@
   }
   .empty { color: var(--muted); padding: 8px 0; font-style: italic; }
   footer { color: var(--muted); font-size: 12px; padding: 10px 22px; }
+  .violations { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .violations .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase;
+                     letter-spacing: 0.8px; margin-bottom: 6px; }
+  .vrow { display: flex; justify-content: space-between; align-items: center;
+          padding: 3px 0; font-size: 13px; }
+  .vrow .vname { color: var(--text); }
+  .vrow .vcount { color: var(--unsafe); font-weight: 600; min-width: 28px; text-align: right; }
+  .vbar-wrap { flex: 1; margin: 0 8px; height: 4px; background: #20242d; border-radius: 2px; overflow: hidden; }
+  .vbar { height: 100%; background: var(--unsafe); border-radius: 2px; transition: width 0.4s ease; }
 </style>
 </head>
 <body>
@@ -116,6 +125,19 @@
     return 'var(--safe)';
   }
 
+  function renderViolations(counts) {
+    if (!counts || Object.keys(counts).length === 0) return '';
+    const entries = Object.entries(counts);
+    const max = entries[0][1];
+    const rows = entries.map(([label, n]) => `
+      <div class="vrow">
+        <span class="vname">${label}</span>
+        <div class="vbar-wrap"><div class="vbar" style="width:${(100*n/max).toFixed(1)}%"></div></div>
+        <span class="vcount">${n}</span>
+      </div>`).join('');
+    return `<div class="violations"><div class="lbl">Violations</div>${rows}</div>`;
+  }
+
   function renderCameras(cams) {
     const root = $('cameras');
     const entries = Object.entries(cams || {});
@@ -156,6 +178,7 @@
             <div>${v.rolling_unsafe || 0} / ${v.rolling_total || 0}</div>
           </div>
         </div>
+        ${renderViolations(v.violation_counts)}
       `;
       root.appendChild(card);
     }

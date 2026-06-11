@@ -29,6 +29,10 @@ SAFE_KEYWORDS = (
     "hardhat",
     "safety_vest",
     "compliant",
+    "authorized intervention",
+    "authorized_intervention",
+    "closed panel cover",
+    "closed_panel_cover",
 )
 
 
