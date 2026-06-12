@@ -10,4 +10,5 @@ runs/
 .pytest_cache/
 *.egg-info/
 /yolo_dataset/
+/yolo_dataset_old/
 /data
