@@ -23,6 +23,8 @@ class _Totals:
     unsafe: int = 0
     frames: int = 0
     label_counts: Dict[str, int] = field(default_factory=dict)
+    safe_label_counts: Dict[str, int] = field(default_factory=dict)
+    last_violation: Optional[Dict[str, Any]] = None
 
 
 class SafetyAggregator:
@@ -83,9 +85,15 @@ class SafetyAggregator:
             tot.unsafe += u
             tot.frames += 1
             for det in msg.get("detections", []):
-                if det.get("category") == "unsafe":
-                    lbl = det.get("label", "unknown")
+                cat = det.get("category")
+                lbl = det.get("label", "unknown")
+                if cat == "unsafe":
                     tot.label_counts[lbl] = tot.label_counts.get(lbl, 0) + 1
+                    conf = float(det.get("conf", 0))
+                    if tot.last_violation is None or conf >= float(tot.last_violation.get("conf", 0)):
+                        tot.last_violation = {"label": lbl, "conf": conf, "timestamp": ts}
+                elif cat == "safe":
+                    tot.safe_label_counts[lbl] = tot.safe_label_counts.get(lbl, 0) + 1
 
             snap = {
                 "camera_id": cam,
@@ -112,6 +120,7 @@ class SafetyAggregator:
                     "rolling_total": roll_total,
                     "rolling_ratio": roll_ratio,
                     "severity": "HIGH" if roll_ratio >= self.high_ratio else "WARN",
+                    "violation_label": tot.last_violation["label"] if tot.last_violation else None,
                 }
                 self._alerts.append(alert)
             return snap, alert
@@ -137,6 +146,10 @@ class SafetyAggregator:
                     "violation_counts": dict(
                         sorted(tot.label_counts.items(), key=lambda x: x[1], reverse=True)
                     ),
+                    "safe_label_counts": dict(
+                        sorted(tot.safe_label_counts.items(), key=lambda x: x[1], reverse=True)
+                    ),
+                    "last_violation": dict(tot.last_violation) if tot.last_violation else None,
                 }
             return out
 

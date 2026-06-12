@@ -36,7 +36,7 @@
   main { padding: 18px 22px 60px; }
   .grid {
     display: grid; gap: 14px;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   }
   .card {
     background: var(--card); border: 1px solid var(--border);
@@ -65,12 +65,19 @@
   }
   .alerts h2 { margin: 0 0 8px; font-size: 14px; color: var(--muted);
                text-transform: uppercase; letter-spacing: 0.8px; }
+  #alerts {
+    max-height: 320px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  #alerts::-webkit-scrollbar { width: 6px; }
+  #alerts::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   .alert-row {
-    display: grid; grid-template-columns: 80px 110px 1fr 80px;
+    display: grid; grid-template-columns: 80px 110px 1fr;
     padding: 6px 0; border-bottom: 1px dashed var(--border);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 13px;
   }
+  .alert-label { color: var(--unsafe); font-style: italic; }
   .empty { color: var(--muted); padding: 8px 0; font-style: italic; }
   footer { color: var(--muted); font-size: 12px; padding: 10px 22px; }
   .violations { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
@@ -82,6 +89,30 @@
   .vrow .vcount { color: var(--unsafe); font-weight: 600; min-width: 28px; text-align: right; }
   .vbar-wrap { flex: 1; margin: 0 8px; height: 4px; background: #20242d; border-radius: 2px; overflow: hidden; }
   .vbar { height: 100%; background: var(--unsafe); border-radius: 2px; transition: width 0.4s ease; }
+  .safe-bar { background: var(--safe); }
+  .vrow .safe-count { color: var(--safe); font-weight: 600; min-width: 28px; text-align: right; }
+  .unit { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 10px; }
+  .cam-frame {
+    width: 100%; aspect-ratio: 16/9; background: #0a0c10;
+    border-radius: 8px; margin-bottom: 10px; object-fit: contain;
+    border: 1px solid var(--border); display: block;
+  }
+  .badge-offline {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px; margin-left: 8px;
+    background: #3d1a1a; color: var(--unsafe); letter-spacing: 0.5px;
+    vertical-align: middle;
+  }
+  .last-viol {
+    margin-top: 10px; padding: 7px 10px;
+    background: #1e1215; border: 1px solid #3d1a1a; border-radius: 8px;
+  }
+  .last-viol-thumb {
+    width: 100%; aspect-ratio: 16/9; object-fit: contain;
+    border-radius: 4px; margin-bottom: 5px; display: block; background: #0a0c10;
+  }
+  .last-viol-label { color: var(--unsafe); font-weight: 600; font-size: 13px; }
+  .last-viol-meta  { color: var(--muted); font-size: 11px; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -125,6 +156,37 @@
     return 'var(--safe)';
   }
 
+  function fmtAgo(ts) {
+    if (!ts) return '';
+    const s = Math.round(Date.now() / 1000 - ts);
+    if (s < 60)   return `${s}s ago`;
+    if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+    return `${Math.floor(s / 3600)}h ago`;
+  }
+
+  const _knownCams = new Set();
+
+  function refreshFrames(cams) {
+    for (const cam of Object.keys(cams || {})) _knownCams.add(cam);
+    for (const cam of _knownCams) {
+      const img = document.getElementById('frame-' + cam);
+      if (!img) continue;
+      const next = new Image();
+      next.onload = () => { img.src = next.src; img.style.visibility = 'visible'; };
+      next.src = `/api/frame/${encodeURIComponent(cam)}?t=${Date.now()}`;
+    }
+  }
+
+  function refreshViolationFrames(cams) {
+    for (const cam of Object.keys(cams || {})) {
+      const img = document.getElementById('vframe-' + cam);
+      if (!img) continue;
+      const next = new Image();
+      next.onload = () => { img.src = next.src; img.style.display = 'block'; };
+      next.src = `/api/violation-frame/${encodeURIComponent(cam)}?t=${Date.now()}`;
+    }
+  }
+
   function renderViolations(counts) {
     if (!counts || Object.keys(counts).length === 0) return '';
     const entries = Object.entries(counts);
@@ -135,10 +197,23 @@
         <div class="vbar-wrap"><div class="vbar" style="width:${(100*n/max).toFixed(1)}%"></div></div>
         <span class="vcount">${n}</span>
       </div>`).join('');
-    return `<div class="violations"><div class="lbl">Violations</div>${rows}</div>`;
+    return `<div class="violations"><div class="lbl">Violations <span class="unit">(detections)</span></div>${rows}</div>`;
   }
 
-  function renderCameras(cams) {
+  function renderSafeCategories(counts) {
+    if (!counts || Object.keys(counts).length === 0) return '';
+    const entries = Object.entries(counts);
+    const max = entries[0][1];
+    const rows = entries.map(([label, n]) => `
+      <div class="vrow">
+        <span class="vname">${label}</span>
+        <div class="vbar-wrap"><div class="vbar safe-bar" style="width:${(100*n/max).toFixed(1)}%"></div></div>
+        <span class="vcount safe-count">${n}</span>
+      </div>`).join('');
+    return `<div class="violations"><div class="lbl">Safe categorizations <span class="unit">(detections)</span></div>${rows}</div>`;
+  }
+
+  function renderCameras(cams, frameAges) {
     const root = $('cameras');
     const entries = Object.entries(cams || {});
     if (entries.length === 0) {
@@ -154,16 +229,30 @@
       const safePct = total ? (100 * v.cumulative_safe / total) : 0;
       const ratio = v.rolling_ratio || 0;
       const c = ratioColor(ratio);
+      const ageSec = frameAges && frameAges[cam] != null ? frameAges[cam] : 0;
+      const offlineBadge = ageSec > 30 ? '<span class="badge-offline">OFFLINE</span>' : '';
+      const lv = v.last_violation;
+      const lastViolHtml = lv ? `
+        <div class="last-viol">
+          <img class="last-viol-thumb" id="vframe-${cam}"
+               src="/api/violation-frame/${encodeURIComponent(cam)}"
+               alt="violation" onerror="this.style.display='none'" />
+          <div class="last-viol-label">${lv.label}</div>
+          <div class="last-viol-meta">${(lv.conf * 100).toFixed(0)}% conf · ${fmtAgo(lv.timestamp)}</div>
+        </div>` : '';
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <h3>Camera</h3>
-        <div class="cam">${cam}</div>
-        <div class="row"><span class="k">total frames</span>
+        <div class="cam">${cam}${offlineBadge}</div>
+        <img class="cam-frame" id="frame-${cam}"
+             src="/api/frame/${encodeURIComponent(cam)}"
+             alt="cam feed" onerror="this.style.visibility='hidden'" />
+        <div class="row"><span class="k">total frames <span class="unit">(processed)</span></span>
                          <span class="v">${v.cumulative_frames || 0}</span></div>
-        <div class="row"><span class="k">total safe</span>
+        <div class="row"><span class="k">total safe <span class="unit">(detections)</span></span>
                          <span class="v safe">${v.cumulative_safe || 0}</span></div>
-        <div class="row"><span class="k">total unsafe</span>
+        <div class="row"><span class="k">total unsafe <span class="unit">(detections)</span></span>
                          <span class="v unsafe">${v.cumulative_unsafe || 0}</span></div>
         <div class="bar">
           <div style="width:${safePct.toFixed(1)}%; background: var(--safe);"></div>
@@ -178,6 +267,8 @@
             <div>${v.rolling_unsafe || 0} / ${v.rolling_total || 0}</div>
           </div>
         </div>
+        ${lastViolHtml}
+        ${renderSafeCategories(v.safe_label_counts)}
         ${renderViolations(v.violation_counts)}
       `;
       root.appendChild(card);
@@ -192,13 +283,15 @@
     }
     root.innerHTML = '';
     const sorted = alerts.slice().reverse();
-    for (const a of sorted.slice(0, 20)) {
+    for (const a of sorted) {
       const row = document.createElement('div');
       row.className = 'alert-row';
+      const labelPart = a.violation_label
+        ? `<span class="alert-label">${a.violation_label}</span> · ` : '';
       row.innerHTML = `
         <span class="severity-${a.severity}">${a.severity}</span>
         <span>${fmtTime(a.timestamp)}</span>
-        <span>${a.camera_id} — ratio ${fmtRatio(a.rolling_ratio)} (${a.rolling_unsafe}/${a.rolling_total})</span>
+        <span>${a.camera_id} — ${labelPart}ratio ${fmtRatio(a.rolling_ratio)} (${a.rolling_unsafe}/${a.rolling_total})</span>
       `;
       root.appendChild(row);
     }
@@ -211,7 +304,9 @@
       $('settings').textContent =
         `window=${j.settings.window_seconds}s  ratio≥${j.settings.unsafe_ratio_alert}`;
       $('topic').textContent = j.settings.topic_detections;
-      renderCameras(j.cameras);
+      renderCameras(j.cameras, {});
+      refreshFrames(j.cameras);
+      refreshViolationFrames(j.cameras);
     } catch (e) { /* ignore */ }
   }
 
@@ -227,8 +322,10 @@
     ws.onmessage = (ev) => {
       try {
         const data = JSON.parse(ev.data);
-        renderCameras(data.cameras);
+        renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
+        refreshFrames(data.cameras);
+        refreshViolationFrames(data.cameras);
       } catch (e) { /* ignore */ }
     };
   }

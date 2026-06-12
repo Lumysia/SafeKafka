@@ -73,6 +73,10 @@ python -m safestream.detector --weights previous_weights/best.pt
 
 # Terminal 4 — producer (drives the pipeline)
 python -m safestream.producer --video-dir path/to/video_directory.mp4 --camera-id cam-01
+
+python -m safestream.producer --video-dir data/cameras/cam_01 --camera-id cam-01 --loop --realtime
+
+python -m safestream.producer --video-dir data/cameras/cam_02 --camera-id cam-02 --loop --realtime
 ```
 
 Then open <http://localhost:8000> and watch per-camera `total_safe` / `total_unsafe`

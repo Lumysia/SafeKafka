@@ -18,14 +18,16 @@ import logging
 import threading
 import time
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
+import cv2
 import uvicorn
 from confluent_kafka import KafkaError
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from safestream.aggregator.aggregator import SafetyAggregator
+from safestream.common.encoding import decode_frame_jpeg
 from safestream.common.kafka_clients import (
     make_consumer,
     make_producer,
@@ -49,6 +51,14 @@ AGG = SafetyAggregator(
     min_window_obs=SETTINGS.agg_min_window_obs,
 )
 STOP_EVENT = threading.Event()
+
+_frame_lock = threading.Lock()
+LATEST_FRAMES: Dict[str, str] = {}       # camera_id → image_b64
+LATEST_DETECTIONS: Dict[str, List] = {}  # camera_id → detections[]
+VIOLATION_FRAMES: Dict[str, bytes] = {}  # camera_id → annotated JPEG bytes of last violation
+_last_frame_ts: Dict[str, float] = {}    # throttle tracker
+
+FRAME_DISPLAY_INTERVAL = 1.0  # store at most ~1 fps per camera
 
 
 def _kafka_loop() -> None:
@@ -80,7 +90,29 @@ def _kafka_loop() -> None:
                 payload = json.loads(raw)
             except Exception:
                 continue
+            cam = payload.get("camera_id", "unknown")
             _snap, alert = AGG.update(payload)
+            with _frame_lock:
+                LATEST_DETECTIONS[cam] = payload.get("detections", [])
+            unsafe_dets = [d for d in payload.get("detections", []) if d.get("category") == "unsafe"]
+            if unsafe_dets:
+                with _frame_lock:
+                    b64 = LATEST_FRAMES.get(cam)
+                if b64:
+                    vframe = decode_frame_jpeg(b64)
+                    if vframe is not None:
+                        for det in unsafe_dets:
+                            bbox = det.get("bbox")
+                            if bbox and len(bbox) == 4:
+                                x1, y1, x2, y2 = (int(c) for c in bbox)
+                                cv2.rectangle(vframe, (x1, y1), (x2, y2), (50, 50, 220), 2)
+                                lbl = f"{det.get('label', '')} {det.get('conf', 0):.2f}"
+                                cv2.putText(vframe, lbl, (x1, max(y1 - 6, 10)),
+                                            cv2.FONT_HERSHEY_SIMPLEX, 0.45, (50, 50, 220), 1, cv2.LINE_AA)
+                        ok, buf = cv2.imencode(".jpg", vframe, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                        if ok:
+                            with _frame_lock:
+                                VIOLATION_FRAMES[cam] = buf.tobytes()
             if alert is not None:
                 logger.warning(
                     "ALERT cam=%s ratio=%.2f severity=%s",
@@ -102,6 +134,35 @@ def _kafka_loop() -> None:
         producer.flush(5)
 
 
+def _frames_loop() -> None:
+    """Background thread: consume cctv-frames, store latest frame per camera (~1 fps)."""
+    consumer = make_consumer("safestream-dashboard-frames")
+    consumer.subscribe([SETTINGS.topic_frames])
+    try:
+        while not STOP_EVENT.is_set():
+            msg = consumer.poll(1.0)
+            if msg is None or msg.error():
+                continue
+            raw = safe_decode(msg)
+            if raw is None:
+                continue
+            try:
+                payload = json.loads(raw)
+            except Exception:
+                continue
+            cam = payload.get("camera_id", "unknown")
+            now = time.time()
+            with _frame_lock:
+                if now - _last_frame_ts.get(cam, 0) >= FRAME_DISPLAY_INTERVAL:
+                    LATEST_FRAMES[cam] = payload.get("image_b64", "")
+                    _last_frame_ts[cam] = now
+    finally:
+        try:
+            consumer.close()
+        except Exception:
+            pass
+
+
 # ---------------------------------------------------------------------------
 # FastAPI app
 # ---------------------------------------------------------------------------
@@ -116,7 +177,9 @@ INDEX_HTML = (Path(__file__).parent / "static" / "index.html").read_text(
 def _startup() -> None:
     t = threading.Thread(target=_kafka_loop, daemon=True, name="kafka-loop")
     t.start()
-    logger.info("Background Kafka thread started.")
+    t2 = threading.Thread(target=_frames_loop, daemon=True, name="frames-loop")
+    t2.start()
+    logger.info("Background Kafka threads started.")
 
 
 @app.on_event("shutdown")
@@ -152,6 +215,44 @@ def api_alerts(limit: int = 25) -> JSONResponse:
 @app.get("/api/history")
 def api_history(limit: int = 100) -> JSONResponse:
     return JSONResponse({"history": AGG.recent_history(limit=limit)})
+
+
+@app.get("/api/frame/{camera_id}")
+def api_frame(camera_id: str) -> Response:
+    with _frame_lock:
+        b64 = LATEST_FRAMES.get(camera_id)
+        dets = list(LATEST_DETECTIONS.get(camera_id, []))
+    if not b64:
+        return Response(status_code=204)
+
+    frame = decode_frame_jpeg(b64)
+    if frame is None:
+        return Response(status_code=204)
+
+    for det in dets:
+        bbox = det.get("bbox")
+        if not bbox or len(bbox) < 4:
+            continue
+        x1, y1, x2, y2 = (int(c) for c in bbox)
+        color = (50, 50, 220) if det.get("category") == "unsafe" else (50, 200, 80)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        label = f"{det.get('label', '')} {det.get('conf', 0):.2f}"
+        cv2.putText(frame, label, (x1, max(y1 - 6, 10)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 1, cv2.LINE_AA)
+
+    ok, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
+    if not ok:
+        return Response(status_code=500)
+    return Response(content=buf.tobytes(), media_type="image/jpeg")
+
+
+@app.get("/api/violation-frame/{camera_id}")
+def api_violation_frame(camera_id: str) -> Response:
+    with _frame_lock:
+        data = VIOLATION_FRAMES.get(camera_id)
+    if not data:
+        return Response(status_code=204)
+    return Response(content=data, media_type="image/jpeg")
 
 
 class _Hub:
@@ -191,11 +292,13 @@ async def _start_broadcaster() -> None:
     async def broadcaster() -> None:
         while True:
             await asyncio.sleep(1.0)
+            now = time.time()
             await HUB.broadcast(
                 {
-                    "ts": time.time(),
+                    "ts": now,
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
+                    "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},
                 }
             )
 
@@ -207,12 +310,14 @@ async def ws_endpoint(ws: WebSocket) -> None:
     await HUB.connect(ws)
     try:
         # Send an immediate snapshot on connect
+        now = time.time()
         await ws.send_text(
             json.dumps(
                 {
-                    "ts": time.time(),
+                    "ts": now,
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
+                    "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},
                 },
                 default=str,
             )
