@@ -113,12 +113,15 @@ def run() -> int:
 
             # Inference
             preds = model(frame, conf=args.conf, verbose=False)
-            boxes = preds[0].boxes if preds else None
             detections: List[Dict[str, Any]] = []
             safe_c = unsafe_c = 0
-            if boxes is not None and len(boxes) > 0:
-                for b in boxes:
-                    cls_id = int(b.cls[0])
+
+            probs = getattr(preds[0], "probs", None) if preds else None
+            if probs is not None:
+                # Classification model: one top-1 label per frame, no boxes.
+                conf = float(probs.top1conf)
+                if conf >= args.conf:
+                    cls_id = int(probs.top1)
                     label = model.names.get(cls_id, str(cls_id))
                     cat = classify_label(label)
                     if cat == "safe":
@@ -126,13 +129,28 @@ def run() -> int:
                     elif cat == "unsafe":
                         unsafe_c += 1
                     detections.append(
-                        {
-                            "label": label,
-                            "category": cat,
-                            "conf": float(b.conf[0]),
-                            "bbox": [float(x) for x in b.xyxy[0].tolist()],
-                        }
+                        {"label": label, "category": cat, "conf": conf}
                     )
+            else:
+                # Detection model: iterate over predicted boxes.
+                boxes = preds[0].boxes if preds else None
+                if boxes is not None and len(boxes) > 0:
+                    for b in boxes:
+                        cls_id = int(b.cls[0])
+                        label = model.names.get(cls_id, str(cls_id))
+                        cat = classify_label(label)
+                        if cat == "safe":
+                            safe_c += 1
+                        elif cat == "unsafe":
+                            unsafe_c += 1
+                        detections.append(
+                            {
+                                "label": label,
+                                "category": cat,
+                                "conf": float(b.conf[0]),
+                                "bbox": [float(x) for x in b.xyxy[0].tolist()],
+                            }
+                        )
 
             out = {
                 "camera_id": payload.get("camera_id"),

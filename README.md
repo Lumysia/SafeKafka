@@ -88,23 +88,32 @@ The `.vscode/launch.json` file ships four debug configurations — Producer, Det
 Aggregator, Dashboard — plus a compound configuration **"SafeStream: all services"**
 that starts everything at once.
 
-## Training your own YOLOv8 detector
+## Training your own YOLOv8 classifier
 
-> **Before training**, open `yolo_dataset/dataset.yaml` and update the `path` field to the
-> absolute path of the `yolo_dataset` directory on your machine:
->
-> ```yaml
-> path: /absolute/path/to/SafeKafka/yolo_dataset
-> ```
-
-Also change the path to the dataset for the below command:
+The dataset has clip-level labels (each clip is one behaviour, no bounding boxes),
+so we train YOLOv8 in **classification** mode. `scripts/prepare_dataset.py` samples
+evenly spaced frames from every clip and writes a classification directory tree
+(`train/<class>/*.jpg`, `val/...`, `test/...`) — no `dataset.yaml` needed.
 
 ```bash
-python -m scripts.train_yolo --data yolo_dataset/dataset.yaml --epochs 50
+# default: pull clips from the Voxel51 hub dataset (takes around 30 minutes)
+python -m scripts.prepare_dataset --out yolo_dataset --frames-per-clip 12
+
+# OR use download videos directly from source link https://data.mendeley.com/datasets/xjmtb22pff/1) and use local folders instead
+python -m scripts.prepare_dataset --src path/to/videos --out yolo_dataset --frames-per-clip 12
+
+# train your own model if necessary
+# imgsz defaults to 224
+python -m scripts.train_yolo --data yolo_dataset --epochs 50
 ```
 
-This produces `runs/safestream_yolov8m/weights/best.pt`, which you can then pass to
-the detector via `--weights`.
+This produces a `*-cls` model at `runs/classify/runs/safestream_yolov8m/weights/best.pt`,
+which you pass to the detector via `--weights`. The detector auto-detects
+classification weights and emits one labelled result per frame (no bounding box):
+
+```bash
+python -m safestream.detector --weights runs/classify/runs/safestream_yolov8m/weights/best.pt
+```
 
 ## Project layout
 
