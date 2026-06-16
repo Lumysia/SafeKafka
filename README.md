@@ -69,10 +69,14 @@ python -m safestream.dashboard
 python -m safestream.aggregator
 
 # Terminal 3 — detector
-python -m safestream.detector --weights yolov8m.pt
+python -m safestream.detector --weights previous_weights/best.pt
 
 # Terminal 4 — producer (drives the pipeline)
-python -m safestream.producer --video path/to/clip.mp4 --camera-id cam-01
+python -m safestream.producer --video-dir path/to/video_directory.mp4 --camera-id cam-01
+
+python -m safestream.producer --video-dir data/cameras/cam_01 --camera-id cam-01 --loop --realtime
+
+python -m safestream.producer --video-dir data/cameras/cam_02 --camera-id cam-02 --loop --realtime
 ```
 
 Then open <http://localhost:8000> and watch per-camera `total_safe` / `total_unsafe`
@@ -84,14 +88,32 @@ The `.vscode/launch.json` file ships four debug configurations — Producer, Det
 Aggregator, Dashboard — plus a compound configuration **"SafeStream: all services"**
 that starts everything at once.
 
-## Training your own YOLOv8 detector
+## Training your own YOLOv8 classifier
+
+The dataset has clip-level labels (each clip is one behaviour, no bounding boxes),
+so we train YOLOv8 in **classification** mode. `scripts/prepare_dataset.py` samples
+evenly spaced frames from every clip and writes a classification directory tree
+(`train/<class>/*.jpg`, `val/...`, `test/...`) — no `dataset.yaml` needed.
 
 ```bash
-python -m scripts.train_yolo --data path/to/dataset.yaml --epochs 50
+# default: pull clips from the Voxel51 hub dataset (takes around 30 minutes)
+python -m scripts.prepare_dataset --out yolo_dataset --frames-per-clip 12
+
+# OR use download videos directly from source link https://data.mendeley.com/datasets/xjmtb22pff/1) and use local folders instead
+python -m scripts.prepare_dataset --src path/to/videos --out yolo_dataset --frames-per-clip 12
+
+# train your own model if necessary
+# imgsz defaults to 224
+python -m scripts.train_yolo --data yolo_dataset --epochs 50
 ```
 
-This produces `runs/safestream_yolov8m/weights/best.pt`, which you can then pass to
-the detector via `--weights`.
+This produces a `*-cls` model at `runs/classify/runs/safestream_yolov8m/weights/best.pt`,
+which you pass to the detector via `--weights`. The detector auto-detects
+classification weights and emits one labelled result per frame (no bounding box):
+
+```bash
+python -m safestream.detector --weights runs/classify/runs/safestream_yolov8m/weights/best.pt
+```
 
 ## Project layout
 
@@ -121,18 +143,53 @@ safestream-kafka/
 
 All knobs are read from `.env` (see `.env.example` for the full list):
 
-| Variable | Default | Notes |
-|----------|---------|-------|
-| `KAFKA_BOOTSTRAP_SERVERS` | — | Confluent Cloud bootstrap endpoint |
-| `KAFKA_API_KEY` / `KAFKA_API_SECRET` | — | SASL credentials |
-| `USE_LOCAL_BROKER` | `false` | If true, ignore SASL and use plaintext localhost broker |
-| `TOPIC_FRAMES` | `cctv-frames` | Producer → Detector |
-| `TOPIC_DETECTIONS` | `safety-detections` | Detector → Aggregator |
-| `TOPIC_ALERTS` | `safety-alerts` | Aggregator → downstream sinks |
-| `AGG_WINDOW_SECONDS` | `60` | Rolling-window length |
-| `AGG_UNSAFE_RATIO_ALERT` | `0.30` | Ratio that triggers a WARN alert |
-| `AGG_MIN_WINDOW_OBS` | `5` | Minimum rolling-window obs before alerting |
-| `DETECTOR_DEVICE` | `auto` | `auto`, `mps`, `cuda`, or `cpu` |
-| `DETECTOR_CONF` | `0.25` | YOLOv8 confidence threshold |
-| `DASHBOARD_HOST` | `127.0.0.1` | FastAPI bind host |
-| `DASHBOARD_PORT` | `8000` | FastAPI bind port |
+| Variable                             | Default             | Notes                                                   |
+| ------------------------------------ | ------------------- | ------------------------------------------------------- |
+| `KAFKA_BOOTSTRAP_SERVERS`            | —                   | Confluent Cloud bootstrap endpoint                      |
+| `KAFKA_API_KEY` / `KAFKA_API_SECRET` | —                   | SASL credentials                                        |
+| `USE_LOCAL_BROKER`                   | `false`             | If true, ignore SASL and use plaintext localhost broker |
+| `TOPIC_FRAMES`                       | `cctv-frames`       | Producer → Detector                                     |
+| `TOPIC_DETECTIONS`                   | `safety-detections` | Detector → Aggregator                                   |
+| `TOPIC_ALERTS`                       | `safety-alerts`     | Aggregator → downstream sinks                           |
+| `AGG_WINDOW_SECONDS`                 | `60`                | Rolling-window length                                   |
+| `AGG_UNSAFE_RATIO_ALERT`             | `0.30`              | Ratio that triggers a WARN alert                        |
+| `AGG_MIN_WINDOW_OBS`                 | `5`                 | Minimum rolling-window obs before alerting              |
+| `DETECTOR_DEVICE`                    | `auto`              | `auto`, `mps`, `cuda`, or `cpu`                         |
+| `DETECTOR_CONF`                      | `0.25`              | YOLOv8 confidence threshold                             |
+| `DASHBOARD_HOST`                     | `127.0.0.1`         | FastAPI bind host                                       |
+| `DASHBOARD_PORT`                     | `8000`              | FastAPI bind port                                       |
+
+## Windows (PowerShell) setup
+
+```powershell
+# 1. Clone or unzip the project, then cd into it
+cd SafeKafka
+
+# 2. Create and activate a virtualenv
+py -m venv .venv
+
+.\.venv\Scripts\Activate.ps1
+
+# 3. Install dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 4. Copy the env template and fill in your Confluent Cloud creds
+copy .env.example .env
+# edit .env: KAFKA_BOOTSTRAP_SERVERS, KAFKA_API_KEY, KAFKA_API_SECRET
+
+# 5. (Optional) start a local Kafka broker
+docker compose up -d
+# then set USE_LOCAL_BROKER=true in .env
+
+# 6. Create the three Kafka topics
+py -m scripts.create_topics
+```
+
+### GPU support on Windows
+
+If you have an **NVIDIA GPU**, install the latest Game Ready or Studio driver on Windows
+(≥ 527.41). This automatically enables GPU passthrough for both native Windows and WSL2 —
+no separate CUDA install needed. Verify with `nvidia-smi` in PowerShell; if it shows your
+GPU, `--device auto` in the training script will pick it up.
+
