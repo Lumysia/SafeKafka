@@ -28,6 +28,33 @@ CCTV / RTSP / video file
 - Homebrew (only needed for the optional local Kafka via Docker)
 - A YOLOv8 weights file (`yolov8m.pt` for the COCO baseline, or your own `best.pt`)
 
+## Docker Compose demo
+
+For the fastest live demonstration, use the bundled Docker Compose stack. It starts Kafka,
+creates topics, launches the dashboard, detector, and producer, then replays the included
+demo videos through the pipeline.
+
+```bash
+docker compose up --build
+```
+
+Then open <http://localhost:8000>. The producer replays `demo_videos/`, the detector uses
+`previous_weights/best.pt`, and the dashboard shows live `cam-01` / `cam-02` unsafe totals
+and alerts.
+
+To run in the background:
+
+```bash
+docker compose up --build -d
+docker compose logs -f dashboard detector producer
+```
+
+Stop everything with:
+
+```bash
+docker compose down
+```
+
 ## Mac M1 setup
 
 ```bash
@@ -192,4 +219,3 @@ If you have an **NVIDIA GPU**, install the latest Game Ready or Studio driver on
 (≥ 527.41). This automatically enables GPU passthrough for both native Windows and WSL2 —
 no separate CUDA install needed. Verify with `nvidia-smi` in PowerShell; if it shows your
 GPU, `--device auto` in the training script will pick it up.
-
