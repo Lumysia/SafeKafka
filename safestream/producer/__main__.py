@@ -256,7 +256,7 @@ def run() -> int:
             if len(cam_ids) > 1:
                 threads = []
                 for index, cam_id in enumerate(cam_ids):
-                    cam_videos = videos[index::len(cam_ids)] or videos
+                    cam_videos = videos[index:] + videos[:index]
                     thread = threading.Thread(
                         target=_stream_video_list,
                         args=(cam_videos, cam_id, args, s),

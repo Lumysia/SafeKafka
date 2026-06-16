@@ -93,8 +93,7 @@ class SafetyAggregator:
                 if cat == "unsafe":
                     tot.label_counts[lbl] = tot.label_counts.get(lbl, 0) + 1
                     conf = float(det.get("conf", 0))
-                    if tot.last_violation is None or conf >= float(tot.last_violation.get("conf", 0)):
-                        tot.last_violation = {"label": lbl, "conf": conf, "timestamp": ts}
+                    tot.last_violation = {"label": lbl, "conf": conf, "timestamp": ts}
                 elif cat == "safe":
                     tot.safe_label_counts[lbl] = tot.safe_label_counts.get(lbl, 0) + 1
 

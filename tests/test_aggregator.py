@@ -16,6 +16,12 @@ def _msg(cam, ts, safe, unsafe):
     }
 
 
+def _msg_with_detection(cam, ts, label, conf):
+    msg = _msg(cam, ts, 0, 1)
+    msg["detections"] = [{"category": "unsafe", "label": label, "conf": conf}]
+    return msg
+
+
 def test_classify_label_basic():
     assert classify_label("wearing_helmet") == "safe"
     assert classify_label("no_helmet") == "unsafe"
@@ -100,3 +106,14 @@ def test_alert_cooldown_limits_repeated_alerts():
     assert a1 is not None
     assert a2 is None
     assert a3 is not None
+
+
+def test_last_violation_tracks_latest_unsafe_detection():
+    agg = SafetyAggregator(window_seconds=60, unsafe_ratio_alert=0.30,
+                           min_window_obs=1)
+    t0 = time.time()
+    agg.update(_msg_with_detection("cam-01", t0, "Opened_Panel_Cover", 0.99))
+    agg.update(_msg_with_detection("cam-01", t0 + 1, "Safe_Walkway_Violation", 0.60))
+    shot = agg.snapshot()
+    assert shot["cam-01"]["last_violation"]["label"] == "Safe_Walkway_Violation"
+    assert shot["cam-01"]["last_violation"]["conf"] == 0.60
