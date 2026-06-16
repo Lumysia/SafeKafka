@@ -52,12 +52,16 @@ AGG = SafetyAggregator(
     alert_cooldown_seconds=SETTINGS.agg_alert_cooldown_seconds,
 )
 STOP_EVENT = threading.Event()
+STARTED_AT = time.time()
 
 _frame_lock = threading.Lock()
 LATEST_FRAMES: Dict[str, str] = {}       # camera_id → image_b64
 LATEST_DETECTIONS: Dict[str, List] = {}  # camera_id → detections[]
 VIOLATION_FRAMES: Dict[str, bytes] = {}  # camera_id → annotated JPEG bytes of last violation
 _last_frame_ts: Dict[str, float] = {}    # throttle tracker
+FRAME_MESSAGES_SEEN = 0
+DETECTION_MESSAGES_SEEN = 0
+LAST_DETECTION_TS = 0.0
 
 FRAME_DISPLAY_INTERVAL = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
 
@@ -79,6 +83,30 @@ def _settings_payload() -> dict:
     }
 
 
+def _status_payload() -> dict:
+    with _frame_lock:
+        frame_count = FRAME_MESSAGES_SEEN
+        detection_count = DETECTION_MESSAGES_SEEN
+        latest_frame_ts = max(_last_frame_ts.values(), default=0.0)
+        latest_detection_ts = LAST_DETECTION_TS
+    cameras = AGG.snapshot()
+    return {
+        "dashboard_started": True,
+        "uptime_seconds": time.time() - STARTED_AT,
+        "frames_seen": frame_count,
+        "detections_seen": detection_count,
+        "cameras_seen": len(cameras),
+        "latest_frame_age": time.time() - latest_frame_ts if latest_frame_ts else None,
+        "latest_detection_age": time.time() - latest_detection_ts if latest_detection_ts else None,
+        "milestones": {
+            "dashboard_connected": True,
+            "frames_received": frame_count > 0,
+            "detections_received": detection_count > 0,
+            "cameras_ready": len(cameras) > 0,
+        },
+    }
+
+
 def _kafka_loop() -> None:
     """Background thread: consume detections, update the aggregator,
     re-publish alerts to the safety-alerts topic."""
@@ -91,6 +119,7 @@ def _kafka_loop() -> None:
         SETTINGS.agg_window_seconds,
         SETTINGS.agg_unsafe_ratio_alert,
     )
+    global DETECTION_MESSAGES_SEEN, LAST_DETECTION_TS
     n = 0
     try:
         while not STOP_EVENT.is_set():
@@ -111,6 +140,8 @@ def _kafka_loop() -> None:
             cam = payload.get("camera_id", "unknown")
             _snap, alert = AGG.update(payload)
             with _frame_lock:
+                DETECTION_MESSAGES_SEEN += 1
+                LAST_DETECTION_TS = time.time()
                 LATEST_DETECTIONS[cam] = payload.get("detections", [])
             unsafe_dets = [d for d in payload.get("detections", []) if d.get("category") == "unsafe"]
             if unsafe_dets:
@@ -156,6 +187,7 @@ def _frames_loop() -> None:
     """Background thread: consume cctv-frames, store latest frame per camera (~1 fps)."""
     consumer = make_consumer("safestream-dashboard-frames")
     consumer.subscribe([SETTINGS.topic_frames])
+    global FRAME_MESSAGES_SEEN
     try:
         while not STOP_EVENT.is_set():
             msg = consumer.poll(1.0)
@@ -171,6 +203,7 @@ def _frames_loop() -> None:
             cam = payload.get("camera_id", "unknown")
             now = time.time()
             with _frame_lock:
+                FRAME_MESSAGES_SEEN += 1
                 if now - _last_frame_ts.get(cam, 0) >= FRAME_DISPLAY_INTERVAL:
                     LATEST_FRAMES[cam] = payload.get("image_b64", "")
                     _last_frame_ts[cam] = now
@@ -223,6 +256,11 @@ def api_snapshot() -> JSONResponse:
 @app.get("/api/alerts")
 def api_alerts(limit: int = 25) -> JSONResponse:
     return JSONResponse({"alerts": AGG.recent_alerts(limit=limit)})
+
+
+@app.get("/api/status")
+def api_status() -> JSONResponse:
+    return JSONResponse(_status_payload())
 
 
 @app.get("/api/history")
@@ -352,6 +390,7 @@ async def _start_broadcaster() -> None:
                 {
                     "ts": now,
                     "settings": _settings_payload(),
+                    "status": _status_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},
@@ -372,6 +411,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
                 {
                     "ts": now,
                     "settings": _settings_payload(),
+                    "status": _status_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},

@@ -36,7 +36,7 @@
   main { padding: 18px 22px 60px; }
   .grid {
     display: grid; gap: 14px;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(760px, 1fr));
   }
   .overview-grid {
     display: grid; gap: 10px; margin-bottom: 14px;
@@ -58,6 +58,11 @@
     text-transform: uppercase; letter-spacing: 0.8px;
   }
   .card .cam { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .camera-layout {
+    display: grid; grid-template-columns: minmax(360px, 1.1fr) minmax(300px, 0.9fr);
+    gap: 14px; align-items: start;
+  }
+  .media-column, .stats-column { min-width: 0; }
   .row { display: flex; justify-content: space-between; padding: 4px 0; }
   .row .k { color: var(--muted); font-size: 13px; }
   .row .v { font-weight: 600; }
@@ -103,6 +108,23 @@
   }
   .alert-label { color: var(--unsafe); font-style: italic; }
   .empty { color: var(--muted); padding: 8px 0; font-style: italic; }
+  .loading-card {
+    display: grid; gap: 12px; max-width: 520px;
+    background: linear-gradient(145deg, #181b22, #12151b);
+  }
+  .loading-head { display: flex; gap: 12px; align-items: center; }
+  .spinner {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 3px solid #2a2f3a; border-top-color: var(--safe);
+    animation: spin 0.8s linear infinite; flex: 0 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title { font-weight: 700; font-size: 16px; }
+  .loading-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .progress-track { height: 8px; background: #20242d; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--safe), var(--warn)); transition: width 0.5s ease; }
+  .loading-meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+  .loading-hint { color: var(--muted); font-size: 12px; }
   footer { color: var(--muted); font-size: 12px; padding: 10px 22px; }
   .violations { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 10px; }
   .violations .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase;
@@ -128,7 +150,7 @@
     vertical-align: middle;
   }
   .last-viol {
-    margin-top: 10px; padding: 7px 10px;
+    margin-top: 10px; padding: 8px 10px;
     background: #1e1215; border: 1px solid #3d1a1a; border-radius: 8px;
   }
   .last-viol-thumb {
@@ -146,6 +168,10 @@
   .current-class.unsafe .name { color: var(--unsafe); }
   .current-class.other .name { color: var(--muted); }
   .current-class .meta { color: var(--muted); font-size: 11px; margin-top: 3px; overflow-wrap: anywhere; }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .camera-layout { grid-template-columns: 1fr; }
+  }
   @media (max-width: 520px) {
     .metric-grid { grid-template-columns: 1fr; }
   }
@@ -173,8 +199,21 @@
     </section>
 
     <div id="cameras" class="grid">
-      <div class="empty card">Waiting for the first detections on
-        <code id="topic">safety-detections</code>...</div>
+      <div class="card loading-card" id="loading-card">
+        <div class="loading-head">
+          <div class="spinner"></div>
+          <div>
+            <div class="loading-title" id="loading-title">Starting Kafka pipeline</div>
+            <div class="loading-sub" id="loading-sub">Waiting for first detections on <code id="topic">safety-detections</code></div>
+          </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="loading-progress"></div></div>
+        <div class="loading-meta">
+          <span id="loading-stage">initializing services</span>
+          <span id="loading-percent">0%</span>
+        </div>
+        <div class="loading-hint" id="loading-hint">Detector loads the model first, then the producer starts replaying demo videos.</div>
+      </div>
     </div>
 
     <section class="alerts">
@@ -189,6 +228,19 @@
 <script>
   const $ = (id) => document.getElementById(id);
   let dashboardSettings = { window_seconds: 60, unsafe_ratio_alert: 0.30 };
+  const loadingStartedAt = Date.now();
+  let loadingTimer = null;
+  let latestStatus = {
+    milestones: {
+      dashboard_connected: false,
+      frames_received: false,
+      detections_received: false,
+      cameras_ready: false,
+    },
+    frames_seen: 0,
+    detections_seen: 0,
+    cameras_seen: 0,
+  };
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -250,6 +302,42 @@
     $('overview-fps').textContent = `${dashboardSettings.producer_analytics_fps || 0} / ${dashboardSettings.dashboard_frame_fps || 0} fps`;
   }
 
+  function loadingStage(status) {
+    const milestones = status.milestones || {};
+    if (!milestones.dashboard_connected) return ['Connecting dashboard', 'opening dashboard websocket'];
+    if (!milestones.frames_received) return ['Waiting for producer frames', 'no messages observed on cctv-frames yet'];
+    if (!milestones.detections_received) return ['Waiting for detector output', `${status.frames_seen || 0} frame messages observed, no safety-detections yet`];
+    if (!milestones.cameras_ready) return ['Preparing camera cards', `${status.detections_seen || 0} detection messages observed`];
+    return ['Camera cards ready', `${status.cameras_seen || 0} camera(s) online`];
+  }
+
+  function updateLoading(cams, status = latestStatus) {
+    const count = Object.keys(cams || {}).length;
+    if (count > 0) {
+      if (loadingTimer) clearInterval(loadingTimer);
+      return;
+    }
+    const elapsed = Math.floor((Date.now() - loadingStartedAt) / 1000);
+    const milestones = status.milestones || {};
+    const complete = [
+      milestones.dashboard_connected,
+      milestones.frames_received,
+      milestones.detections_received,
+      milestones.cameras_ready,
+    ].filter(Boolean).length;
+    const progress = Math.round((complete / 4) * 100);
+    const [title, stage] = loadingStage(status);
+    const titleEl = $('loading-title');
+    if (!titleEl) return;
+    titleEl.textContent = title;
+    $('loading-stage').textContent = `${stage} · ${elapsed}s elapsed`;
+    $('loading-percent').textContent = `${progress}%`;
+    $('loading-progress').style.width = `${progress}%`;
+    if (elapsed > 45) {
+      $('loading-hint').textContent = `Still waiting. Observed ${status.frames_seen || 0} frame messages and ${status.detections_seen || 0} detection messages. Check docker compose logs detector producer dashboard if stuck.`;
+    }
+  }
+
   function refreshViolationFrames(cams) {
     for (const cam of Object.keys(cams || {})) {
       const img = document.getElementById('vframe-' + safeId(cam));
@@ -262,7 +350,8 @@
 
   function renderViolations(counts) {
     if (!counts || Object.keys(counts).length === 0) return '';
-    const entries = Object.entries(counts);
+    const allEntries = Object.entries(counts);
+    const entries = allEntries.slice(0, 3);
     const max = entries[0][1];
     const rows = entries.map(([label, n]) => `
       <div class="vrow">
@@ -270,12 +359,14 @@
         <div class="vbar-wrap"><div class="vbar" style="width:${(100*n/max).toFixed(1)}%"></div></div>
         <span class="vcount">${n}</span>
       </div>`).join('');
-    return `<div class="violations"><div class="lbl">Violations <span class="unit">(detections)</span></div>${rows}</div>`;
+    const more = allEntries.length > entries.length ? `<div class="loading-hint">+${allEntries.length - entries.length} more categories</div>` : '';
+    return `<div class="violations"><div class="lbl">Violations <span class="unit">(top detections)</span></div>${rows}${more}</div>`;
   }
 
   function renderSafeCategories(counts) {
     if (!counts || Object.keys(counts).length === 0) return '';
-    const entries = Object.entries(counts);
+    const allEntries = Object.entries(counts);
+    const entries = allEntries.slice(0, 3);
     const max = entries[0][1];
     const rows = entries.map(([label, n]) => `
       <div class="vrow">
@@ -283,20 +374,19 @@
         <div class="vbar-wrap"><div class="vbar safe-bar" style="width:${(100*n/max).toFixed(1)}%"></div></div>
         <span class="vcount safe-count">${n}</span>
       </div>`).join('');
-    return `<div class="violations"><div class="lbl">Safe categorizations <span class="unit">(detections)</span></div>${rows}</div>`;
+    const more = allEntries.length > entries.length ? `<div class="loading-hint">+${allEntries.length - entries.length} more categories</div>` : '';
+    return `<div class="violations"><div class="lbl">Safe categorizations <span class="unit">(top detections)</span></div>${rows}${more}</div>`;
   }
 
   function renderCameras(cams, frameAges) {
     const root = $('cameras');
     const entries = Object.entries(cams || {});
     if (entries.length === 0) {
-      root.innerHTML =
-        '<div class="empty card">Waiting for the first detections on ' +
-        '<code>safety-detections</code>...</div>';
+      updateLoading(cams);
       return;
     }
-    const empty = root.querySelector('.empty.card');
-    if (empty) root.innerHTML = '';
+    const loading = root.querySelector('#loading-card');
+    if (loading) root.innerHTML = '';
     entries.sort((a, b) => a[0].localeCompare(b[0]));
     for (const [cam, v] of entries) {
       const id = safeId(cam);
@@ -314,45 +404,51 @@
       let card = document.getElementById(`card-${id}`);
       if (!card) {
         card = document.createElement('div');
-        card.className = 'card';
+        card.className = 'card camera-card';
         card.id = `card-${id}`;
         card.innerHTML = `
           <h3>Camera</h3>
           <div class="cam" id="cam-name-${id}"></div>
-          <img class="cam-frame" id="frame-${id}"
-               src="/api/stream/${encodeURIComponent(cam)}"
-               alt="cam feed" onerror="this.style.visibility='hidden'" />
-          <div id="current-class-${id}"></div>
-          <div class="section-title">Sliding window <span class="unit" id="window-label-${id}"></span></div>
-          <div class="metric-grid">
-            <div class="metric"><div class="k">Window Safe</div><div class="v safe" id="roll-safe-${id}">0</div></div>
-            <div class="metric"><div class="k">Window Unsafe</div><div class="v unsafe" id="roll-unsafe-${id}">0</div></div>
-            <div class="metric"><div class="k">Status</div><div class="v" id="status-${id}">OK</div></div>
-          </div>
-          <div class="bar"><div id="window-safe-bar-${id}" style="width:0%; background: var(--safe);"></div></div>
-          <div class="ratio">
-            <div>
-              <div class="lbl">rolling unsafe ratio</div>
-              <div class="big" id="ratio-${id}">0.0%</div>
+          <div class="camera-layout">
+            <div class="media-column">
+              <img class="cam-frame" id="frame-${id}"
+                   src="/api/stream/${encodeURIComponent(cam)}"
+                   alt="cam feed" onerror="this.style.visibility='hidden'" />
+              <div id="last-viol-${id}"></div>
             </div>
-            <div style="text-align:right">
-              <div class="lbl">rolling unsafe / total</div>
-              <div id="rolling-${id}">0 / 0</div>
+            <div class="stats-column">
+              <div id="current-class-${id}"></div>
+              <div class="section-title">Sliding window <span class="unit" id="window-label-${id}"></span></div>
+              <div class="metric-grid">
+                <div class="metric"><div class="k">Window Safe</div><div class="v safe" id="roll-safe-${id}">0</div></div>
+                <div class="metric"><div class="k">Window Unsafe</div><div class="v unsafe" id="roll-unsafe-${id}">0</div></div>
+                <div class="metric"><div class="k">Status</div><div class="v" id="status-${id}">OK</div></div>
+              </div>
+              <div class="bar"><div id="window-safe-bar-${id}" style="width:0%; background: var(--safe);"></div></div>
+              <div class="ratio">
+                <div>
+                  <div class="lbl">rolling unsafe ratio</div>
+                  <div class="big" id="ratio-${id}">0.0%</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="lbl">rolling unsafe / total</div>
+                  <div id="rolling-${id}">0 / 0</div>
+                </div>
+              </div>
+              <div class="section-title">Cumulative totals <span class="unit">(since dashboard start)</span></div>
+              <div class="row"><span class="k">processed frames</span>
+                               <span class="v" id="frames-${id}">0</span></div>
+              <div class="row"><span class="k">safe detections</span>
+                               <span class="v safe" id="safe-${id}">0</span></div>
+              <div class="row"><span class="k">unsafe detections</span>
+                               <span class="v unsafe" id="unsafe-${id}">0</span></div>
+              <div class="bar"><div id="safe-bar-${id}" style="width:0%; background: var(--safe);"></div></div>
+              <div class="row"><span class="k">cumulative unsafe ratio</span>
+                               <span class="v" id="cum-ratio-${id}">0.0%</span></div>
+              <div id="safe-cats-${id}"></div>
+              <div id="violations-${id}"></div>
             </div>
           </div>
-          <div class="section-title">Cumulative totals <span class="unit">(since dashboard start)</span></div>
-          <div class="row"><span class="k">processed frames</span>
-                           <span class="v" id="frames-${id}">0</span></div>
-          <div class="row"><span class="k">safe detections</span>
-                           <span class="v safe" id="safe-${id}">0</span></div>
-          <div class="row"><span class="k">unsafe detections</span>
-                           <span class="v unsafe" id="unsafe-${id}">0</span></div>
-          <div class="bar"><div id="safe-bar-${id}" style="width:0%; background: var(--safe);"></div></div>
-          <div class="row"><span class="k">cumulative unsafe ratio</span>
-                           <span class="v" id="cum-ratio-${id}">0.0%</span></div>
-          <div id="last-viol-${id}"></div>
-          <div id="safe-cats-${id}"></div>
-          <div id="violations-${id}"></div>
         `;
         root.appendChild(card);
       }
@@ -417,6 +513,10 @@
     try {
       const r = await fetch('/api/snapshot');
       const j = await r.json();
+      try {
+        const s = await fetch('/api/status');
+        latestStatus = await s.json();
+      } catch (e) { /* ignore */ }
       dashboardSettings = j.settings;
       $('settings').textContent =
         `window=${j.settings.window_seconds}s  ratio≥${j.settings.unsafe_ratio_alert}`;
@@ -426,6 +526,15 @@
       refreshViolationFrames(j.cameras);
     } catch (e) { /* ignore */ }
   }
+
+  loadingTimer = setInterval(async () => {
+    try {
+      const r = await fetch('/api/status');
+      latestStatus = await r.json();
+    } catch (e) { /* ignore */ }
+    updateLoading({}, latestStatus);
+  }, 1000);
+  updateLoading({});
 
   function connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
@@ -440,6 +549,7 @@
       try {
         const data = JSON.parse(ev.data);
         if (data.settings) dashboardSettings = data.settings;
+        if (data.status) latestStatus = data.status;
         renderOverview(data.cameras);
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
