@@ -6,16 +6,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   :root {
-    --bg: #0f1115;
-    --card: #181b22;
-    --text: #e6e8ee;
-    --muted: #8a93a3;
-    --safe: #2ecc71;
-    --unsafe: #e74c3c;
-    --warn: #f39c12;
-    --high: #c0392b;
-    --accent: #7d3c98;
-    --border: #262a33;
+    --bg: #f6f8fb;
+    --card: #ffffff;
+    --subtle: #f1f5f9;
+    --text: #172033;
+    --muted: #64748b;
+    --safe: #15803d;
+    --unsafe: #dc2626;
+    --warn: #d97706;
+    --high: #b91c1c;
+    --accent: #2563eb;
+    --border: #dbe3ef;
   }
   * { box-sizing: border-box; }
   html, body {
@@ -26,7 +27,8 @@
   header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 22px; border-bottom: 1px solid var(--border);
-    background: linear-gradient(90deg, #15171d, #1c1f28);
+    background: linear-gradient(90deg, #ffffff, #eef4ff);
+    box-shadow: 0 1px 10px rgba(15, 23, 42, 0.06);
   }
   header h1 { margin: 0; font-size: 18px; letter-spacing: 0.4px; }
   header .pill {
@@ -66,7 +68,7 @@
   .metric-line .k { color: var(--muted); }
   .metric-line .v { font-weight: 700; }
   .confusion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
-  .confusion-cell { padding: 7px; border: 1px solid var(--border); border-radius: 7px; background: #12151b; }
+  .confusion-cell { padding: 7px; border: 1px solid var(--border); border-radius: 7px; background: var(--subtle); }
   .confusion-cell .k { color: var(--muted); font-size: 10px; text-transform: uppercase; }
   .confusion-cell .v { font-weight: 700; margin-top: 2px; }
   .note { color: var(--muted); font-size: 11px; margin-top: 8px; line-height: 1.35; }
@@ -90,7 +92,7 @@
   .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
   .metric {
     padding: 8px; border: 1px solid var(--border); border-radius: 8px;
-    background: #12151b;
+    background: var(--subtle);
   }
   .metric .k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
   .metric .v { margin-top: 2px; font-size: 20px; font-weight: 700; }
@@ -102,7 +104,7 @@
   .v.unsafe { color: var(--unsafe); }
   .v.warn { color: var(--warn); }
   .v.high { color: var(--high); }
-  .bar { height: 8px; border-radius: 4px; background: #20242d; margin-top: 8px; overflow: hidden; }
+  .bar { height: 8px; border-radius: 4px; background: #e2e8f0; margin-top: 8px; overflow: hidden; }
   .bar > div { height: 100%; transition: width 0.4s ease; }
   .ratio { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; }
   .ratio .big { font-size: 28px; font-weight: 700; }
@@ -131,18 +133,18 @@
   .empty { color: var(--muted); padding: 8px 0; font-style: italic; }
   .loading-card {
     display: grid; gap: 12px; max-width: 520px;
-    background: linear-gradient(145deg, #181b22, #12151b);
+    background: linear-gradient(145deg, #ffffff, #eef4ff);
   }
   .loading-head { display: flex; gap: 12px; align-items: center; }
   .spinner {
     width: 34px; height: 34px; border-radius: 50%;
-    border: 3px solid #2a2f3a; border-top-color: var(--safe);
+    border: 3px solid #dbe3ef; border-top-color: var(--safe);
     animation: spin 0.8s linear infinite; flex: 0 0 auto;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-title { font-weight: 700; font-size: 16px; }
   .loading-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
-  .progress-track { height: 8px; background: #20242d; border-radius: 999px; overflow: hidden; }
+  .progress-track { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--safe), var(--warn)); transition: width 0.5s ease; }
   .loading-meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
   .loading-hint { color: var(--muted); font-size: 12px; }
@@ -154,35 +156,35 @@
           padding: 3px 0; font-size: 13px; }
   .vrow .vname { color: var(--text); }
   .vrow .vcount { color: var(--unsafe); font-weight: 600; min-width: 28px; text-align: right; }
-  .vbar-wrap { flex: 1; margin: 0 8px; height: 4px; background: #20242d; border-radius: 2px; overflow: hidden; }
+  .vbar-wrap { flex: 1; margin: 0 8px; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
   .vbar { height: 100%; background: var(--unsafe); border-radius: 2px; transition: width 0.4s ease; }
   .safe-bar { background: var(--safe); }
   .vrow .safe-count { color: var(--safe); font-weight: 600; min-width: 28px; text-align: right; }
   .unit { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 10px; }
   .cam-frame {
-    width: 100%; aspect-ratio: 16/9; background: #0a0c10;
+    width: 100%; aspect-ratio: 16/9; background: #eef2f7;
     border-radius: 8px; margin-bottom: 10px; object-fit: contain;
     border: 1px solid var(--border); display: block;
   }
   .badge-offline {
     display: inline-block; font-size: 10px; font-weight: 700;
     padding: 2px 7px; border-radius: 999px; margin-left: 8px;
-    background: #3d1a1a; color: var(--unsafe); letter-spacing: 0.5px;
+    background: #fee2e2; color: var(--unsafe); letter-spacing: 0.5px;
     vertical-align: middle;
   }
   .last-viol {
     margin-top: 10px; padding: 8px 10px;
-    background: #1e1215; border: 1px solid #3d1a1a; border-radius: 8px;
+    background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px;
   }
   .last-viol-thumb {
     width: 100%; aspect-ratio: 16/9; object-fit: contain;
-    border-radius: 4px; margin-bottom: 5px; display: block; background: #0a0c10;
+    border-radius: 4px; margin-bottom: 5px; display: block; background: #eef2f7;
   }
   .last-viol-label { color: var(--unsafe); font-weight: 600; font-size: 13px; }
   .last-viol-meta  { color: var(--muted); font-size: 11px; margin-top: 2px; }
   .current-class {
     margin-top: 10px; padding: 8px 10px;
-    background: #12151b; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--subtle); border: 1px solid var(--border); border-radius: 8px;
   }
   .current-class .name { font-weight: 700; }
   .current-class.safe .name { color: var(--safe); }
