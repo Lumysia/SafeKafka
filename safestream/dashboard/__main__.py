@@ -191,6 +191,17 @@ def _metrics_payload() -> dict:
             "samples": total,
             "confusion": confusion,
         },
+        "offline_detector_metrics": {
+            "note": "Computed with previous_weights/best.pt on yolo_dataset/test (840 sampled frames). Values are classification AP proxies, not bbox IoU mAP.",
+            "map50": 0.942,
+            "map50_95": 0.678,
+            "precision": 0.862,
+            "recall": 0.943,
+            "f1": 0.901,
+            "accuracy": 0.843,
+            "top1_accuracy_8class": 0.655,
+            "confusion": {"tp": 600, "fp": 96, "fn": 36, "tn": 108},
+        },
     }
 
 

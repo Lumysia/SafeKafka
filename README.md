@@ -58,23 +58,28 @@ docker compose down
 
 ## Dashboard metrics
 
-The dashboard separates live streaming metrics from offline detector evaluation metrics.
+The dashboard shows live streaming metrics. Offline detector/classifier metrics below were
+computed with `previous_weights/best.pt` on `yolo_dataset/test` (`840` sampled test frames).
+This project uses YOLOv8 **classification** weights, so the table reports classification AP
+proxies instead of bounding-box IoU mAP.
 
-| Metric | Where it appears | How it is computed |
-| ------ | ---------------- | ------------------ |
-| `mAP @ 0.5` | README / report only | Offline YOLO evaluation on an annotated held-out test split. Not computed live because the stream has no per-frame bounding-box ground truth. |
-| `mAP @ 0.5:0.95` | README / report only | Offline YOLO evaluation averaged over IoU thresholds. Not a live dashboard metric. |
-| Detector precision | README / report only | Offline detector/classifier evaluation against held-out labels. |
-| Detector recall | README / report only | Offline detector/classifier evaluation against held-out labels. |
-| Binary F1 score | Dashboard `Demo Evaluation` | Live demo-only binary safe-vs-unsafe F1. Ground truth is inferred from bundled demo clip filename class IDs. |
-| Confusion matrix | Dashboard `Demo Evaluation` | Live demo-only `TP unsafe`, `FP unsafe`, `FN unsafe`, `TN safe` counts from the same filename-derived ground truth. |
-| Alerts per minute | Dashboard `Live Operations` | Count of generated alerts in the last 60 seconds. |
-| End-to-end latency | Dashboard `Live Operations` | Time from frame timestamp to dashboard detection consumption, shown as rolling average and max over the last 60 seconds. |
-| Throughput | Dashboard `Live Operations` | `safety-detections` messages per second over the last 60 seconds. |
+| Metric | Value | Notes |
+| ------ | ----- | ----- |
+| `mAP @ 0.5` | `0.942` | Binary unsafe-vs-safe average precision proxy; not bbox IoU mAP. |
+| `mAP @ 0.5:0.95` | `0.678` | 8-class macro average precision proxy; not bbox IoU mAP. |
+| Detector precision | `0.862` | Binary unsafe precision on the held-out test split. |
+| Detector recall | `0.943` | Binary unsafe recall on the held-out test split. |
+| Binary F1 score | `0.901` | Binary unsafe-vs-safe F1 on the held-out test split. |
+| Accuracy | `0.843` | Binary safe-vs-unsafe accuracy. |
+| 8-class top-1 accuracy | `0.655` | Exact 8-class classification accuracy. |
+| Confusion matrix | `TP=600`, `FP=96`, `FN=36`, `TN=108` | Positive class is `unsafe`; rows are true unsafe/safe. |
+| Alerts per minute | live dashboard | Count of generated alerts in the last 60 seconds. |
+| End-to-end latency | live dashboard | Frame timestamp to dashboard detection consumption, rolling average/max over the last 60 seconds. |
+| Throughput | live dashboard | `safety-detections` messages per second over the last 60 seconds. |
 
-The live F1/confusion matrix are for the bundled Docker demo only. For arbitrary camera
-streams, the dashboard still shows live throughput, latency, alerts, sliding-window ratios,
-and class distributions, but binary evaluation requires ground-truth labels.
+Live dashboard F1/confusion matrix are demo-only because the bundled demo clip filenames
+encode ground-truth class IDs. Arbitrary camera streams still show throughput, latency,
+alerts, sliding-window ratios, and class distributions, but evaluation metrics need labels.
 
 ## Mac M1 setup
 
