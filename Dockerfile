@@ -2,7 +2,9 @@ FROM python:3.10-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /app
 
@@ -11,11 +13,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml uv.lock* requirements.txt ./
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
+RUN pip install --upgrade pip uv \
+    && uv sync --no-dev --frozen --no-install-project
 
 COPY safestream ./safestream
 COPY scripts ./scripts
 COPY previous_weights ./previous_weights
 
-CMD ["python", "-m", "safestream.dashboard"]
+CMD ["uv", "run", "python", "-m", "safestream.dashboard"]

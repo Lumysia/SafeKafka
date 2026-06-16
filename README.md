@@ -38,9 +38,9 @@ demo videos through the pipeline.
 docker compose up --build
 ```
 
-Then open <http://localhost:8000>. The producer replays `demo_videos/`, the detector uses
-`previous_weights/best.pt`, and the dashboard shows live `cam-01` / `cam-02` unsafe totals
-and alerts.
+Then open <http://localhost:8000>. The producer replays one bundled clip per behaviour
+class from `demo_videos/`, the detector uses the 8-class `previous_weights/best.pt`, and
+the dashboard shows live `cam-01` / `cam-02` safe and unsafe totals.
 
 To run in the background:
 
@@ -123,15 +123,19 @@ evenly spaced frames from every clip and writes a classification directory tree
 (`train/<class>/*.jpg`, `val/...`, `test/...`) — no `dataset.yaml` needed.
 
 ```bash
-# default: pull clips from the Voxel51 hub dataset (takes around 30 minutes)
-python -m scripts.prepare_dataset --out yolo_dataset --frames-per-clip 12
+# install runtime dependencies with uv, then add dataset tooling for training
+uv sync
+uv pip install fiftyone fiftyone-db huggingface_hub
+
+# default: pull clips from the Voxel51 hub dataset and prepare all 8 classes
+uv run python -m scripts.prepare_dataset --out yolo_dataset --frames-per-clip 12
 
 # OR use download videos directly from source link https://data.mendeley.com/datasets/xjmtb22pff/1) and use local folders instead
-python -m scripts.prepare_dataset --src path/to/videos --out yolo_dataset --frames-per-clip 12
+uv run python -m scripts.prepare_dataset --src path/to/videos --out yolo_dataset --frames-per-clip 12
 
 # train your own model if necessary
 # imgsz defaults to 224
-python -m scripts.train_yolo --data yolo_dataset --epochs 50
+uv run python -m scripts.train_yolo --data yolo_dataset --epochs 50 --device auto
 ```
 
 This produces a `*-cls` model at `runs/classify/runs/safestream_yolov8m/weights/best.pt`,
@@ -139,7 +143,7 @@ which you pass to the detector via `--weights`. The detector auto-detects
 classification weights and emits one labelled result per frame (no bounding box):
 
 ```bash
-python -m safestream.detector --weights runs/classify/runs/safestream_yolov8m/weights/best.pt
+uv run python -m safestream.detector --weights runs/classify/runs/safestream_yolov8m/weights/best.pt
 ```
 
 ## Project layout
