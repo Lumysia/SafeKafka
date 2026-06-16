@@ -17,8 +17,9 @@ import json
 import logging
 import threading
 import time
+from collections import deque
 from pathlib import Path
-from typing import Dict, List
+from typing import Deque, Dict, List, Optional
 
 import cv2
 import uvicorn
@@ -62,6 +63,10 @@ _last_frame_ts: Dict[str, float] = {}    # throttle tracker
 FRAME_MESSAGES_SEEN = 0
 DETECTION_MESSAGES_SEEN = 0
 LAST_DETECTION_TS = 0.0
+DETECTION_TIMESTAMPS: Deque[float] = deque(maxlen=5000)
+ALERT_TIMESTAMPS: Deque[float] = deque(maxlen=1000)
+LATENCY_SAMPLES: Deque[tuple[float, float]] = deque(maxlen=5000)
+CONFUSION = {"tp": 0, "tn": 0, "fp": 0, "fn": 0}
 
 FRAME_DISPLAY_INTERVAL = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
 
@@ -107,6 +112,88 @@ def _status_payload() -> dict:
     }
 
 
+def _truth_from_source(source: Optional[str]) -> Optional[str]:
+    if not source:
+        return None
+    name = Path(str(source)).name
+    prefix = name.split("_", 1)[0]
+    if prefix in {"0", "1", "2", "3"}:
+        return "unsafe"
+    if prefix in {"4", "5", "6", "7"}:
+        return "safe"
+    return None
+
+
+def _prediction_category(detections: List[dict]) -> str:
+    categories = {d.get("category") for d in detections}
+    if "unsafe" in categories:
+        return "unsafe"
+    if "safe" in categories:
+        return "safe"
+    return "other"
+
+
+def _record_live_metrics(payload: dict, received_at: float) -> None:
+    global LAST_DETECTION_TS
+    source_ts = float(payload.get("timestamp", received_at) or received_at)
+    detections = payload.get("detections", [])
+    truth = _truth_from_source(payload.get("source"))
+    pred = _prediction_category(detections)
+    with _frame_lock:
+        DETECTION_TIMESTAMPS.append(received_at)
+        LATENCY_SAMPLES.append((received_at, max(0.0, received_at - source_ts)))
+        LAST_DETECTION_TS = received_at
+        if truth in {"safe", "unsafe"} and pred in {"safe", "unsafe"}:
+            if truth == "unsafe" and pred == "unsafe":
+                CONFUSION["tp"] += 1
+            elif truth == "safe" and pred == "safe":
+                CONFUSION["tn"] += 1
+            elif truth == "safe" and pred == "unsafe":
+                CONFUSION["fp"] += 1
+            elif truth == "unsafe" and pred == "safe":
+                CONFUSION["fn"] += 1
+
+
+def _metrics_payload() -> dict:
+    now = time.time()
+    with _frame_lock:
+        recent_detections = [ts for ts in DETECTION_TIMESTAMPS if now - ts <= 60]
+        recent_alerts = [ts for ts in ALERT_TIMESTAMPS if now - ts <= 60]
+        recent_latencies = [lat for ts, lat in LATENCY_SAMPLES if now - ts <= 60]
+        confusion = dict(CONFUSION)
+    throughput = len(recent_detections) / 60.0
+    latency_avg = sum(recent_latencies) / len(recent_latencies) if recent_latencies else None
+    latency_max = max(recent_latencies) if recent_latencies else None
+    tp = confusion["tp"]
+    tn = confusion["tn"]
+    fp = confusion["fp"]
+    fn = confusion["fn"]
+    precision = tp / (tp + fp) if (tp + fp) else None
+    recall = tp / (tp + fn) if (tp + fn) else None
+    f1 = (2 * precision * recall / (precision + recall)) if precision is not None and recall is not None and (precision + recall) else None
+    total = tp + tn + fp + fn
+    accuracy = (tp + tn) / total if total else None
+    return {
+        "live_operations": {
+            "throughput_fps_60s": throughput,
+            "alerts_per_minute": len(recent_alerts),
+            "latency_avg_seconds_60s": latency_avg,
+            "latency_max_seconds_60s": latency_max,
+            "latency_target_seconds": 1.0,
+        },
+        "demo_evaluation": {
+            "note": "Computed live only for bundled demo clips whose filenames encode ground-truth class ids.",
+            "positive_class": "unsafe",
+            "f1": f1,
+            "precision": precision,
+            "recall": recall,
+            "accuracy": accuracy,
+            "samples": total,
+            "confusion": confusion,
+        },
+    }
+
+
 def _kafka_loop() -> None:
     """Background thread: consume detections, update the aggregator,
     re-publish alerts to the safety-alerts topic."""
@@ -137,11 +224,12 @@ def _kafka_loop() -> None:
                 payload = json.loads(raw)
             except Exception:
                 continue
+            received_at = time.time()
             cam = payload.get("camera_id", "unknown")
             _snap, alert = AGG.update(payload)
+            _record_live_metrics(payload, received_at)
             with _frame_lock:
                 DETECTION_MESSAGES_SEEN += 1
-                LAST_DETECTION_TS = time.time()
                 LATEST_DETECTIONS[cam] = payload.get("detections", [])
             unsafe_dets = [d for d in payload.get("detections", []) if d.get("category") == "unsafe"]
             if unsafe_dets:
@@ -173,6 +261,8 @@ def _kafka_loop() -> None:
                     value=json.dumps(alert),
                 )
                 producer.poll(0)
+                with _frame_lock:
+                    ALERT_TIMESTAMPS.append(time.time())
             n += 1
     finally:
         logger.info("Dashboard consumer stopping (records=%d)", n)
@@ -266,6 +356,11 @@ def api_status() -> JSONResponse:
 @app.get("/api/history")
 def api_history(limit: int = 100) -> JSONResponse:
     return JSONResponse({"history": AGG.recent_history(limit=limit)})
+
+
+@app.get("/api/metrics")
+def api_metrics() -> JSONResponse:
+    return JSONResponse(_metrics_payload())
 
 
 @app.get("/api/frame/{camera_id}")
@@ -391,6 +486,7 @@ async def _start_broadcaster() -> None:
                     "ts": now,
                     "settings": _settings_payload(),
                     "status": _status_payload(),
+                    "metrics": _metrics_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},
@@ -412,6 +508,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
                     "ts": now,
                     "settings": _settings_payload(),
                     "status": _status_payload(),
+                    "metrics": _metrics_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},

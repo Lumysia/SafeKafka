@@ -49,6 +49,27 @@
   .overview-card .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; }
   .overview-card .v { margin-top: 4px; font-size: 22px; font-weight: 700; }
   .overview-card .sub { margin-top: 2px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+  .metrics-panel {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px; margin-bottom: 14px;
+  }
+  .metrics-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .metrics-card h2 {
+    margin: 0 0 8px; font-size: 13px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .metric-table { display: grid; gap: 6px; }
+  .metric-line { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+  .metric-line .k { color: var(--muted); }
+  .metric-line .v { font-weight: 700; }
+  .confusion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
+  .confusion-cell { padding: 7px; border: 1px solid var(--border); border-radius: 7px; background: #12151b; }
+  .confusion-cell .k { color: var(--muted); font-size: 10px; text-transform: uppercase; }
+  .confusion-cell .v { font-weight: 700; margin-top: 2px; }
+  .note { color: var(--muted); font-size: 11px; margin-top: 8px; line-height: 1.35; }
   .card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 12px; padding: 14px 16px;
@@ -198,6 +219,35 @@
       <div class="overview-card"><div class="k">Frame Rates</div><div class="v" id="overview-fps">0 fps</div><div class="sub">producer / dashboard stream</div></div>
     </section>
 
+    <section class="metrics-panel">
+      <div class="metrics-card">
+        <h2>Live Operations</h2>
+        <div class="metric-table">
+          <div class="metric-line"><span class="k">Throughput</span><span class="v" id="metric-throughput">0.00 fps</span></div>
+          <div class="metric-line"><span class="k">Alerts / minute</span><span class="v" id="metric-alerts">0</span></div>
+          <div class="metric-line"><span class="k">Avg latency</span><span class="v" id="metric-latency-avg">n/a</span></div>
+          <div class="metric-line"><span class="k">Max latency</span><span class="v" id="metric-latency-max">n/a</span></div>
+        </div>
+        <div class="note">Live metrics from Kafka message timestamps over the last 60 seconds.</div>
+      </div>
+      <div class="metrics-card">
+        <h2>Demo Evaluation</h2>
+        <div class="metric-table">
+          <div class="metric-line"><span class="k">Binary F1 unsafe</span><span class="v" id="metric-f1">n/a</span></div>
+          <div class="metric-line"><span class="k">Precision / Recall</span><span class="v" id="metric-pr">n/a</span></div>
+          <div class="metric-line"><span class="k">Accuracy</span><span class="v" id="metric-acc">n/a</span></div>
+          <div class="metric-line"><span class="k">Samples</span><span class="v" id="metric-samples">0</span></div>
+        </div>
+        <div class="confusion-grid">
+          <div class="confusion-cell"><div class="k">TP unsafe</div><div class="v unsafe" id="cm-tp">0</div></div>
+          <div class="confusion-cell"><div class="k">FP unsafe</div><div class="v warn" id="cm-fp">0</div></div>
+          <div class="confusion-cell"><div class="k">FN unsafe</div><div class="v warn" id="cm-fn">0</div></div>
+          <div class="confusion-cell"><div class="k">TN safe</div><div class="v safe" id="cm-tn">0</div></div>
+        </div>
+        <div class="note">Computed live only for bundled demo clips with class-id filenames.</div>
+      </div>
+    </section>
+
     <div id="cameras" class="grid">
       <div class="card loading-card" id="loading-card">
         <div class="loading-head">
@@ -241,6 +291,7 @@
     detections_seen: 0,
     cameras_seen: 0,
   };
+  let latestMetrics = null;
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -283,6 +334,30 @@
   function basename(path) {
     if (!path) return '';
     return String(path).split(/[\\/]/).pop();
+  }
+
+  function fmtMetric(value, suffix = '', digits = 2) {
+    if (value === null || value === undefined || Number.isNaN(Number(value))) return 'n/a';
+    return `${Number(value).toFixed(digits)}${suffix}`;
+  }
+
+  function renderMetrics(metrics) {
+    if (!metrics) return;
+    const live = metrics.live_operations || {};
+    const demo = metrics.demo_evaluation || {};
+    const cm = demo.confusion || {};
+    $('metric-throughput').textContent = fmtMetric(live.throughput_fps_60s, ' fps', 2);
+    $('metric-alerts').textContent = live.alerts_per_minute ?? 0;
+    $('metric-latency-avg').textContent = fmtMetric(live.latency_avg_seconds_60s, 's', 3);
+    $('metric-latency-max').textContent = fmtMetric(live.latency_max_seconds_60s, 's', 3);
+    $('metric-f1').textContent = fmtMetric(demo.f1, '', 3);
+    $('metric-pr').textContent = `${fmtMetric(demo.precision, '', 2)} / ${fmtMetric(demo.recall, '', 2)}`;
+    $('metric-acc').textContent = fmtMetric(demo.accuracy, '', 3);
+    $('metric-samples').textContent = demo.samples ?? 0;
+    $('cm-tp').textContent = cm.tp ?? 0;
+    $('cm-fp').textContent = cm.fp ?? 0;
+    $('cm-fn').textContent = cm.fn ?? 0;
+    $('cm-tn').textContent = cm.tn ?? 0;
   }
 
   function renderOverview(cams) {
@@ -517,6 +592,11 @@
         const s = await fetch('/api/status');
         latestStatus = await s.json();
       } catch (e) { /* ignore */ }
+      try {
+        const m = await fetch('/api/metrics');
+        latestMetrics = await m.json();
+        renderMetrics(latestMetrics);
+      } catch (e) { /* ignore */ }
       dashboardSettings = j.settings;
       $('settings').textContent =
         `window=${j.settings.window_seconds}s  ratio≥${j.settings.unsafe_ratio_alert}`;
@@ -550,6 +630,10 @@
         const data = JSON.parse(ev.data);
         if (data.settings) dashboardSettings = data.settings;
         if (data.status) latestStatus = data.status;
+        if (data.metrics) {
+          latestMetrics = data.metrics;
+          renderMetrics(latestMetrics);
+        }
         renderOverview(data.cameras);
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
