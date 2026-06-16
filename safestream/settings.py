@@ -33,6 +33,7 @@ class Settings:
     api_key: str = os.environ.get("KAFKA_API_KEY", "")
     api_secret: str = os.environ.get("KAFKA_API_SECRET", "")
     use_local_broker: bool = _bool("USE_LOCAL_BROKER", False)
+    kafka_auto_offset_reset: str = os.environ.get("KAFKA_AUTO_OFFSET_RESET", "earliest")
 
     # Topic names
     topic_frames: str = os.environ.get("TOPIC_FRAMES", "cctv-frames")
@@ -57,10 +58,14 @@ class Settings:
         os.environ.get("AGG_UNSAFE_RATIO_ALERT", "0.30")
     )
     agg_min_window_obs: int = int(os.environ.get("AGG_MIN_WINDOW_OBS", "5"))
+    agg_alert_cooldown_seconds: float = float(
+        os.environ.get("AGG_ALERT_COOLDOWN_SECONDS", "5")
+    )
 
     # Dashboard
     dashboard_host: str = os.environ.get("DASHBOARD_HOST", "127.0.0.1")
     dashboard_port: int = int(os.environ.get("DASHBOARD_PORT", "8000"))
+    dashboard_frame_fps: float = float(os.environ.get("DASHBOARD_FRAME_FPS", "8"))
 
     def summary(self) -> str:
         lines = [

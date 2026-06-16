@@ -40,7 +40,8 @@ docker compose up --build
 
 Then open <http://localhost:8000>. The producer replays one bundled clip per behaviour
 class from `demo_videos/`, the detector uses the 8-class `previous_weights/best.pt`, and
-the dashboard shows live `cam-01` / `cam-02` safe and unsafe totals.
+the dashboard shows continuous MJPEG camera feeds plus live `cam-01` / `cam-02` safe and
+unsafe totals.
 
 To run in the background:
 

@@ -38,17 +38,22 @@ services:
       KAFKA_API_KEY: ""
       KAFKA_API_SECRET: ""
       USE_LOCAL_BROKER: "true"
+      KAFKA_AUTO_OFFSET_RESET: latest
       TOPIC_FRAMES: cctv-frames
       TOPIC_DETECTIONS: safety-detections
       TOPIC_ALERTS: safety-alerts
       DETECTOR_WEIGHTS: previous_weights/best.pt
       DETECTOR_DEVICE: cpu
       DETECTOR_CONF: "0.25"
+      PRODUCER_ANALYTICS_FPS: "8"
+      PRODUCER_JPEG_QUALITY: "70"
       AGG_WINDOW_SECONDS: "60"
       AGG_UNSAFE_RATIO_ALERT: "0.30"
       AGG_MIN_WINDOW_OBS: "5"
+      AGG_ALERT_COOLDOWN_SECONDS: "5"
       DASHBOARD_HOST: 0.0.0.0
       DASHBOARD_PORT: "8000"
+      DASHBOARD_FRAME_FPS: "8"
     depends_on:
       broker:
         condition: service_healthy

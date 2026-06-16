@@ -45,17 +45,20 @@ class SafetyAggregator:
         high_ratio: float = 0.60,
         min_window_obs: int = 5,
         max_history: int = 5000,
+        alert_cooldown_seconds: float = 0.0,
     ):
         self.window = float(window_seconds)
         self.ratio_alert = float(unsafe_ratio_alert)
         self.high_ratio = float(high_ratio)
         self.min_window_obs = int(min_window_obs)
         self.max_history = int(max_history)
+        self.alert_cooldown_seconds = float(alert_cooldown_seconds)
 
         self._windows: Dict[str, _Window] = defaultdict(_Window)
         self._totals: Dict[str, _Totals] = defaultdict(_Totals)
         self._history: Deque[Dict[str, Any]] = deque(maxlen=max_history)
         self._alerts: Deque[Dict[str, Any]] = deque(maxlen=max_history)
+        self._last_alert_ts: Dict[str, float] = {}
         self._lock = threading.Lock()
 
     def update(self, msg: Dict[str, Any]) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
@@ -112,6 +115,7 @@ class SafetyAggregator:
             if (
                 roll_total >= self.min_window_obs
                 and roll_ratio >= self.ratio_alert
+                and ts - self._last_alert_ts.get(cam, -float("inf")) >= self.alert_cooldown_seconds
             ):
                 alert = {
                     "camera_id": cam,
@@ -123,6 +127,7 @@ class SafetyAggregator:
                     "violation_label": tot.last_violation["label"] if tot.last_violation else None,
                 }
                 self._alerts.append(alert)
+                self._last_alert_ts[cam] = ts
             return snap, alert
 
     def snapshot(self) -> Dict[str, Dict[str, Any]]:

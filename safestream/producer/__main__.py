@@ -28,6 +28,7 @@ import logging
 import random
 import signal
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
@@ -252,9 +253,46 @@ def run() -> int:
                     break
         else:
             # Playlist of video files, optionally round-robined across cameras
-            playlist: Iterable[Tuple[str, str]] = _build_playlist(videos, cam_ids,
-                                                                 loop=args.loop)
-            for vp, cam_id in playlist:
+            if len(cam_ids) > 1:
+                threads = []
+                for index, cam_id in enumerate(cam_ids):
+                    cam_videos = videos[index::len(cam_ids)] or videos
+                    thread = threading.Thread(
+                        target=_stream_video_list,
+                        args=(cam_videos, cam_id, args, s),
+                        daemon=True,
+                        name=f"producer-{cam_id}",
+                    )
+                    thread.start()
+                    threads.append(thread)
+                while not _STOP and any(thread.is_alive() for thread in threads):
+                    time.sleep(0.5)
+            else:
+                playlist: Iterable[Tuple[str, str]] = _build_playlist(videos, cam_ids,
+                                                                     loop=args.loop)
+                for vp, cam_id in playlist:
+                    if _STOP:
+                        break
+                    cap = cv2.VideoCapture(vp)
+                    if not cap.isOpened():
+                        logger.warning("Could not open %s, skipping", vp)
+                        continue
+                    try:
+                        sent = _stream_capture(cap, vp, cam_id, args, producer, s, sent)
+                    finally:
+                        cap.release()
+    finally:
+        logger.info("Flushing producer (sent=%d)...", sent)
+        producer.flush(10)
+    return 0
+
+
+def _stream_video_list(videos: List[str], camera_id: str, args, s) -> None:
+    producer = make_producer()
+    sent = 0
+    try:
+        while not _STOP:
+            for vp in videos:
                 if _STOP:
                     break
                 cap = cv2.VideoCapture(vp)
@@ -262,13 +300,14 @@ def run() -> int:
                     logger.warning("Could not open %s, skipping", vp)
                     continue
                 try:
-                    sent = _stream_capture(cap, vp, cam_id, args, producer, s, sent)
+                    sent = _stream_capture(cap, vp, camera_id, args, producer, s, sent)
                 finally:
                     cap.release()
+            if not args.loop:
+                break
     finally:
-        logger.info("Flushing producer (sent=%d)...", sent)
+        logger.info("[%s] flushing producer (sent=%d)...", camera_id, sent)
         producer.flush(10)
-    return 0
 
 
 def _build_playlist(videos: List[str], cam_ids: List[str], loop: bool) -> Iterable[Tuple[str, str]]:

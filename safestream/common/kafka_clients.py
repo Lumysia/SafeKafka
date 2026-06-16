@@ -61,7 +61,7 @@ def consumer_config(group_id: str, extra: Optional[dict] = None) -> dict:
     cfg.update(
         {
             "group.id": group_id,
-            "auto.offset.reset": "earliest",
+            "auto.offset.reset": get_settings().kafka_auto_offset_reset,
             "enable.auto.commit": True,
             "session.timeout.ms": 45_000,
             # Allow large frames

@@ -88,3 +88,15 @@ def test_alert_does_not_fire_below_min_obs():
     t0 = time.time()
     _, a = agg.update(_msg("cam-01", t0, 0, 1))
     assert a is None
+
+
+def test_alert_cooldown_limits_repeated_alerts():
+    agg = SafetyAggregator(window_seconds=60, unsafe_ratio_alert=0.30,
+                           min_window_obs=1, alert_cooldown_seconds=5)
+    t0 = time.time()
+    _, a1 = agg.update(_msg("cam-01", t0, 0, 1))
+    _, a2 = agg.update(_msg("cam-01", t0 + 1, 0, 1))
+    _, a3 = agg.update(_msg("cam-01", t0 + 5, 0, 1))
+    assert a1 is not None
+    assert a2 is None
+    assert a3 is not None

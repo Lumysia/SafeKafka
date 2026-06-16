@@ -50,6 +50,7 @@ def run() -> int:
         window_seconds=s.agg_window_seconds,
         unsafe_ratio_alert=s.agg_unsafe_ratio_alert,
         min_window_obs=s.agg_min_window_obs,
+        alert_cooldown_seconds=s.agg_alert_cooldown_seconds,
     )
 
     consumer = make_consumer("safestream-aggregator")

@@ -24,7 +24,7 @@ import cv2
 import uvicorn
 from confluent_kafka import KafkaError
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 
 from safestream.aggregator.aggregator import SafetyAggregator
 from safestream.common.encoding import decode_frame_jpeg
@@ -49,6 +49,7 @@ AGG = SafetyAggregator(
     window_seconds=SETTINGS.agg_window_seconds,
     unsafe_ratio_alert=SETTINGS.agg_unsafe_ratio_alert,
     min_window_obs=SETTINGS.agg_min_window_obs,
+    alert_cooldown_seconds=SETTINGS.agg_alert_cooldown_seconds,
 )
 STOP_EVENT = threading.Event()
 
@@ -58,7 +59,7 @@ LATEST_DETECTIONS: Dict[str, List] = {}  # camera_id → detections[]
 VIOLATION_FRAMES: Dict[str, bytes] = {}  # camera_id → annotated JPEG bytes of last violation
 _last_frame_ts: Dict[str, float] = {}    # throttle tracker
 
-FRAME_DISPLAY_INTERVAL = 1.0  # store at most ~1 fps per camera
+FRAME_DISPLAY_INTERVAL = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
 
 
 def _kafka_loop() -> None:
@@ -188,8 +189,8 @@ def _shutdown() -> None:
 
 
 @app.get("/", response_class=HTMLResponse)
-def index() -> str:
-    return INDEX_HTML
+def index() -> HTMLResponse:
+    return HTMLResponse(INDEX_HTML, headers={"Cache-Control": "no-store"})
 
 
 @app.get("/api/snapshot")
@@ -244,6 +245,48 @@ def api_frame(camera_id: str) -> Response:
     if not ok:
         return Response(status_code=500)
     return Response(content=buf.tobytes(), media_type="image/jpeg")
+
+
+@app.get("/api/stream/{camera_id}")
+def api_stream(camera_id: str) -> StreamingResponse:
+    boundary = "frame"
+    delay = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
+
+    def frames():
+        last_image = None
+        while not STOP_EVENT.is_set():
+            with _frame_lock:
+                b64 = LATEST_FRAMES.get(camera_id)
+                dets = list(LATEST_DETECTIONS.get(camera_id, []))
+            if b64 and b64 != last_image:
+                frame = decode_frame_jpeg(b64)
+                if frame is not None:
+                    for det in dets:
+                        bbox = det.get("bbox")
+                        if not bbox or len(bbox) < 4:
+                            continue
+                        x1, y1, x2, y2 = (int(c) for c in bbox)
+                        color = (50, 50, 220) if det.get("category") == "unsafe" else (50, 200, 80)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                        label = f"{det.get('label', '')} {det.get('conf', 0):.2f}"
+                        cv2.putText(frame, label, (x1, max(y1 - 6, 10)),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 1, cv2.LINE_AA)
+                    ok, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                    if ok:
+                        data = buf.tobytes()
+                        last_image = b64
+                        yield (
+                            f"--{boundary}\r\n"
+                            "Content-Type: image/jpeg\r\n"
+                            f"Content-Length: {len(data)}\r\n\r\n"
+                        ).encode("ascii") + data + b"\r\n"
+            time.sleep(delay)
+
+    return StreamingResponse(
+        frames(),
+        media_type=f"multipart/x-mixed-replace; boundary={boundary}",
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.get("/api/violation-frame/{camera_id}")
