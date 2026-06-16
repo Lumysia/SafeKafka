@@ -62,6 +62,23 @@ _last_frame_ts: Dict[str, float] = {}    # throttle tracker
 FRAME_DISPLAY_INTERVAL = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
 
 
+def _settings_payload() -> dict:
+    return {
+        "window_seconds": SETTINGS.agg_window_seconds,
+        "unsafe_ratio_alert": SETTINGS.agg_unsafe_ratio_alert,
+        "min_window_obs": SETTINGS.agg_min_window_obs,
+        "alert_cooldown_seconds": SETTINGS.agg_alert_cooldown_seconds,
+        "topic_detections": SETTINGS.topic_detections,
+        "topic_frames": SETTINGS.topic_frames,
+        "topic_alerts": SETTINGS.topic_alerts,
+        "detector_weights": SETTINGS.detector_weights,
+        "detector_device": SETTINGS.detector_device,
+        "detector_conf": SETTINGS.detector_conf,
+        "producer_analytics_fps": SETTINGS.producer_analytics_fps,
+        "dashboard_frame_fps": SETTINGS.dashboard_frame_fps,
+    }
+
+
 def _kafka_loop() -> None:
     """Background thread: consume detections, update the aggregator,
     re-publish alerts to the safety-alerts topic."""
@@ -197,12 +214,7 @@ def index() -> HTMLResponse:
 def api_snapshot() -> JSONResponse:
     return JSONResponse(
         {
-            "settings": {
-                "window_seconds": SETTINGS.agg_window_seconds,
-                "unsafe_ratio_alert": SETTINGS.agg_unsafe_ratio_alert,
-                "topic_detections": SETTINGS.topic_detections,
-                "topic_alerts": SETTINGS.topic_alerts,
-            },
+            "settings": _settings_payload(),
             "cameras": AGG.snapshot(),
         }
     )
@@ -339,6 +351,7 @@ async def _start_broadcaster() -> None:
             await HUB.broadcast(
                 {
                     "ts": now,
+                    "settings": _settings_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},
@@ -358,6 +371,7 @@ async def ws_endpoint(ws: WebSocket) -> None:
             json.dumps(
                 {
                     "ts": now,
+                    "settings": _settings_payload(),
                     "cameras": AGG.snapshot(),
                     "recent_alerts": AGG.recent_alerts(limit=10),
                     "frame_ages": {cam: now - ts for cam, ts in _last_frame_ts.items()},

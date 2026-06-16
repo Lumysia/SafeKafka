@@ -24,6 +24,7 @@ class _Totals:
     frames: int = 0
     label_counts: Dict[str, int] = field(default_factory=dict)
     safe_label_counts: Dict[str, int] = field(default_factory=dict)
+    last_detection: Optional[Dict[str, Any]] = None
     last_violation: Optional[Dict[str, Any]] = None
 
 
@@ -87,7 +88,18 @@ class SafetyAggregator:
             tot.safe += s
             tot.unsafe += u
             tot.frames += 1
-            for det in msg.get("detections", []):
+            detections = msg.get("detections", [])
+            if detections:
+                det = detections[0]
+                tot.last_detection = {
+                    "label": det.get("label", "unknown"),
+                    "category": det.get("category", "other"),
+                    "conf": float(det.get("conf", 0)),
+                    "timestamp": ts,
+                    "source": msg.get("source"),
+                    "frame_id": msg.get("frame_id"),
+                }
+            for det in detections:
                 cat = det.get("category")
                 lbl = det.get("label", "unknown")
                 if cat == "unsafe":
@@ -143,6 +155,7 @@ class SafetyAggregator:
                     "cumulative_safe": tot.safe,
                     "cumulative_unsafe": tot.unsafe,
                     "cumulative_frames": tot.frames,
+                    "cumulative_ratio": (tot.unsafe / (tot.safe + tot.unsafe)) if (tot.safe + tot.unsafe) > 0 else 0.0,
                     "rolling_safe": roll_safe,
                     "rolling_unsafe": roll_unsafe,
                     "rolling_total": roll_total,
@@ -153,6 +166,7 @@ class SafetyAggregator:
                     "safe_label_counts": dict(
                         sorted(tot.safe_label_counts.items(), key=lambda x: x[1], reverse=True)
                     ),
+                    "last_detection": dict(tot.last_detection) if tot.last_detection else None,
                     "last_violation": dict(tot.last_violation) if tot.last_violation else None,
                 }
             return out
