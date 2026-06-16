@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pt
+!previous_weights/
+!previous_weights/*.pt
 runs/
 .DS_Store
 .idea/
@@ -12,3 +14,5 @@ runs/
 /yolo_dataset/
 /yolo_dataset_old/
 /data
+!/demo_videos/
+!/demo_videos/*.mp4
