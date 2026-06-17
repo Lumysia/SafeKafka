@@ -191,6 +191,16 @@
   .current-class.unsafe .name { color: var(--unsafe); }
   .current-class.other .name { color: var(--muted); }
   .current-class .meta { color: var(--muted); font-size: 11px; margin-top: 3px; overflow-wrap: anywhere; }
+
+  .top-unsafe-row {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 5px 0; border-bottom: 1px dashed var(--border);
+    font-size: 13px;
+  }
+  .top-unsafe-name { color: var(--text); overflow-wrap: anywhere; }
+  .top-unsafe-count { color: var(--unsafe); font-weight: 700; }
+  #trendChart { width: 100%; max-height: 210px; }
+
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
     .camera-layout { grid-template-columns: 1fr; }
@@ -199,6 +209,7 @@
     .metric-grid { grid-template-columns: 1fr; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header>
@@ -222,6 +233,17 @@
     </section>
 
     <section class="metrics-panel">
+      <div class="metrics-card">
+        <h2>Top Unsafe Behaviors</h2>
+        <div id="topUnsafe"><div class="empty">no unsafe behavior yet.</div></div>
+      </div>
+
+      <div class="metrics-card">
+        <h2>Unsafe Ratio Trend</h2>
+        <canvas id="trendChart" height="180"></canvas>
+        <div class="note">Last 60 detection events from the rolling unsafe ratio.</div>
+      </div>
+
       <div class="metrics-card">
         <h2>Live Operations</h2>
         <div class="metric-table">
@@ -294,6 +316,7 @@
     cameras_seen: 0,
   };
   let latestMetrics = null;
+  let trendChart = null;
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -363,7 +386,9 @@
   }
 
   function renderOverview(cams) {
-    const values = Object.values(cams || {});
+    const values = Object.entries(cams || {})
+  .filter(([cam]) => !cam.startsWith("_"))
+  .map(([_, v]) => v);
     const frames = values.reduce((sum, v) => sum + (v.cumulative_frames || 0), 0);
     const safe = values.reduce((sum, v) => sum + (v.cumulative_safe || 0), 0);
     const unsafe = values.reduce((sum, v) => sum + (v.cumulative_unsafe || 0), 0);
@@ -457,7 +482,8 @@
 
   function renderCameras(cams, frameAges) {
     const root = $('cameras');
-    const entries = Object.entries(cams || {});
+    const entries = Object.entries(cams || {})
+  .filter(([cam]) => !cam.startsWith("_"));
     if (entries.length === 0) {
       updateLoading(cams);
       return;
@@ -586,6 +612,72 @@
     }
   }
 
+
+  function renderTopUnsafe(topUnsafe) {
+    const root = $('topUnsafe');
+    if (!root) return;
+
+    if (!topUnsafe || Object.keys(topUnsafe).length === 0) {
+      root.innerHTML = '<div class="empty">no unsafe behavior yet.</div>';
+      return;
+    }
+
+    root.innerHTML = Object.entries(topUnsafe)
+      .map(([name, count]) => `
+        <div class="top-unsafe-row">
+          <span class="top-unsafe-name">${name}</span>
+          <span class="top-unsafe-count">${count}</span>
+        </div>
+      `)
+      .join('');
+  }
+
+  function renderTrendChart(trend) {
+    const canvas = $('trendChart');
+    if (!canvas || !trend || trend.length === 0 || typeof Chart === 'undefined') return;
+
+    const labels = trend.map(x => fmtTime(x.timestamp));
+    const ratios = trend.map(x => Number(((x.rolling_ratio || 0) * 100).toFixed(1)));
+
+    if (!trendChart) {
+      trendChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Unsafe ratio %',
+            data: ratios,
+            tension: 0.3,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          plugins: {
+            legend: {
+              display: true
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
+              ticks: {
+                callback: (value) => value + '%'
+              }
+            }
+          }
+        }
+      });
+      return;
+    }
+
+    trendChart.data.labels = labels;
+    trendChart.data.datasets[0].data = ratios;
+    trendChart.update();
+  }
+
   async function bootstrap() {
     try {
       const r = await fetch('/api/snapshot');
@@ -605,6 +697,8 @@
       $('topic').textContent = j.settings.topic_detections;
       renderOverview(j.cameras);
       renderCameras(j.cameras, {});
+      renderTopUnsafe(j.cameras?._top_unsafe_behaviors);
+      renderTrendChart(j.cameras?._trend_chart);
       refreshViolationFrames(j.cameras);
     } catch (e) { /* ignore */ }
   }
@@ -639,6 +733,8 @@
         renderOverview(data.cameras);
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
+        renderTopUnsafe(data.cameras?._top_unsafe_behaviors);
+        renderTrendChart(data.cameras?._trend_chart);
         refreshViolationFrames(data.cameras);
       } catch (e) { /* ignore */ }
     };
