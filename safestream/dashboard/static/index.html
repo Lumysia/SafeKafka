@@ -208,7 +208,7 @@
   .risk-camera .meta { color: var(--muted); font-size: 12px; }
   .risk-bar { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
   .risk-bar > div { height: 100%; background: var(--unsafe); transition: width 0.4s ease; }
-  #trendChart, #safeUnsafeChart { width: 100%; max-height: 210px; }
+  #trendChart { width: 100%; max-height: 210px; }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
@@ -245,12 +245,6 @@
       <div class="metrics-card">
         <h2>Highest Risk Camera</h2>
         <div id="highestRisk"><div class="empty">waiting for camera data.</div></div>
-      </div>
-
-      <div class="metrics-card">
-        <h2>Safe vs Unsafe Overall</h2>
-        <canvas id="safeUnsafeChart" height="180"></canvas>
-        <div class="note">Cumulative detections across all active cameras.</div>
       </div>
 
       <div class="metrics-card">
@@ -337,7 +331,6 @@
   };
   let latestMetrics = null;
   let trendChart = null;
-  let safeUnsafeChart = null;
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -689,43 +682,6 @@
     `;
   }
 
-  function renderSafeUnsafeChart(cams) {
-    const canvas = $('safeUnsafeChart');
-    if (!canvas || typeof Chart === 'undefined') return;
-
-    const entries = cameraEntries(cams);
-    const safe = entries.reduce((sum, [, v]) => sum + (v.cumulative_safe || 0), 0);
-    const unsafe = entries.reduce((sum, [, v]) => sum + (v.cumulative_unsafe || 0), 0);
-
-    if (!safeUnsafeChart) {
-      safeUnsafeChart = new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['Safe', 'Unsafe'],
-          datasets: [{
-            data: [safe, unsafe],
-            backgroundColor: ['#15803d', '#dc2626'],
-            borderColor: '#ffffff',
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          animation: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }
-      });
-      return;
-    }
-
-    safeUnsafeChart.data.datasets[0].data = [safe, unsafe];
-    safeUnsafeChart.update();
-  }
-
   function renderTrendChart(trend) {
     const canvas = $('trendChart');
     if (!canvas || !trend || trend.length === 0 || typeof Chart === 'undefined') return;
@@ -792,7 +748,6 @@
       renderOverview(j.cameras);
       renderCameras(j.cameras, {});
       renderHighestRisk(j.cameras);
-      renderSafeUnsafeChart(j.cameras);
       renderTopUnsafe(j.cameras?._top_unsafe_behaviors);
       renderTrendChart(j.cameras?._trend_chart);
       refreshViolationFrames(j.cameras);
@@ -830,7 +785,6 @@
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
         renderHighestRisk(data.cameras);
-        renderSafeUnsafeChart(data.cameras);
         renderTopUnsafe(data.cameras?._top_unsafe_behaviors);
         renderTrendChart(data.cameras?._trend_chart);
         refreshViolationFrames(data.cameras);
