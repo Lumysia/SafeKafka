@@ -199,7 +199,16 @@
   }
   .top-unsafe-name { color: var(--text); overflow-wrap: anywhere; }
   .top-unsafe-count { color: var(--unsafe); font-weight: 700; }
-  #trendChart { width: 100%; max-height: 210px; }
+  .risk-camera {
+    display: grid; gap: 8px; padding: 10px;
+    background: var(--subtle); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .risk-camera .name { font-size: 22px; font-weight: 800; }
+  .risk-camera .ratio-value { color: var(--unsafe); font-size: 28px; font-weight: 800; }
+  .risk-camera .meta { color: var(--muted); font-size: 12px; }
+  .risk-bar { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .risk-bar > div { height: 100%; background: var(--unsafe); transition: width 0.4s ease; }
+  #trendChart, #safeUnsafeChart { width: 100%; max-height: 210px; }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
@@ -233,6 +242,17 @@
     </section>
 
     <section class="metrics-panel">
+      <div class="metrics-card">
+        <h2>Highest Risk Camera</h2>
+        <div id="highestRisk"><div class="empty">waiting for camera data.</div></div>
+      </div>
+
+      <div class="metrics-card">
+        <h2>Safe vs Unsafe Overall</h2>
+        <canvas id="safeUnsafeChart" height="180"></canvas>
+        <div class="note">Cumulative detections across all active cameras.</div>
+      </div>
+
       <div class="metrics-card">
         <h2>Top Unsafe Behaviors</h2>
         <div id="topUnsafe"><div class="empty">no unsafe behavior yet.</div></div>
@@ -317,6 +337,7 @@
   };
   let latestMetrics = null;
   let trendChart = null;
+  let safeUnsafeChart = null;
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -632,6 +653,79 @@
       .join('');
   }
 
+  function cameraEntries(cams) {
+    return Object.entries(cams || {}).filter(([cam]) => !cam.startsWith("_"));
+  }
+
+  function renderHighestRisk(cams) {
+    const root = $('highestRisk');
+    if (!root) return;
+
+    const entries = cameraEntries(cams);
+    if (entries.length === 0) {
+      root.innerHTML = '<div class="empty">waiting for camera data.</div>';
+      return;
+    }
+
+    const [cam, v] = entries
+      .slice()
+      .sort((a, b) => {
+        const ratioDiff = (b[1].rolling_ratio || 0) - (a[1].rolling_ratio || 0);
+        if (ratioDiff !== 0) return ratioDiff;
+        return (b[1].rolling_unsafe || 0) - (a[1].rolling_unsafe || 0);
+      })[0];
+    const ratio = v.rolling_ratio || 0;
+    const unsafe = v.rolling_unsafe || 0;
+    const total = v.rolling_total || 0;
+    const status = statusText(ratio);
+
+    root.innerHTML = `
+      <div class="risk-camera">
+        <div class="name">${cam}</div>
+        <div class="ratio-value">${fmtRatio(ratio)}</div>
+        <div class="risk-bar"><div style="width:${Math.min(100, ratio * 100).toFixed(1)}%"></div></div>
+        <div class="meta">${status} - ${unsafe}/${total} unsafe in the current window</div>
+      </div>
+    `;
+  }
+
+  function renderSafeUnsafeChart(cams) {
+    const canvas = $('safeUnsafeChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const entries = cameraEntries(cams);
+    const safe = entries.reduce((sum, [, v]) => sum + (v.cumulative_safe || 0), 0);
+    const unsafe = entries.reduce((sum, [, v]) => sum + (v.cumulative_unsafe || 0), 0);
+
+    if (!safeUnsafeChart) {
+      safeUnsafeChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Safe', 'Unsafe'],
+          datasets: [{
+            data: [safe, unsafe],
+            backgroundColor: ['#15803d', '#dc2626'],
+            borderColor: '#ffffff',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+      return;
+    }
+
+    safeUnsafeChart.data.datasets[0].data = [safe, unsafe];
+    safeUnsafeChart.update();
+  }
+
   function renderTrendChart(trend) {
     const canvas = $('trendChart');
     if (!canvas || !trend || trend.length === 0 || typeof Chart === 'undefined') return;
@@ -697,6 +791,8 @@
       $('topic').textContent = j.settings.topic_detections;
       renderOverview(j.cameras);
       renderCameras(j.cameras, {});
+      renderHighestRisk(j.cameras);
+      renderSafeUnsafeChart(j.cameras);
       renderTopUnsafe(j.cameras?._top_unsafe_behaviors);
       renderTrendChart(j.cameras?._trend_chart);
       refreshViolationFrames(j.cameras);
@@ -733,6 +829,8 @@
         renderOverview(data.cameras);
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
+        renderHighestRisk(data.cameras);
+        renderSafeUnsafeChart(data.cameras);
         renderTopUnsafe(data.cameras?._top_unsafe_behaviors);
         renderTrendChart(data.cameras?._trend_chart);
         refreshViolationFrames(data.cameras);
