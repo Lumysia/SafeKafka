@@ -1,0 +1,48 @@
+{
+  "frames_measured": 192,
+  "jpeg_quality": 80,
+  "frame_resolution_wxh": "1920x1080",
+  "bytes": {
+    "raw_bgr": {
+      "mean": 6220800,
+      "min": 6220800,
+      "max": 6220800,
+      "median": 6220800.0
+    },
+    "jpeg": {
+      "mean": 270468.375,
+      "min": 217422,
+      "max": 307236,
+      "median": 270825.0
+    },
+    "base64": {
+      "mean": 360624.5,
+      "min": 289896,
+      "max": 409648,
+      "median": 361100.0
+    },
+    "json_message": {
+      "mean": 360748.5,
+      "min": 290020,
+      "max": 409772,
+      "median": 361224.0
+    },
+    "lz4_compressed_message": {
+      "mean": 360791.5833333333,
+      "min": 290059,
+      "max": 409819,
+      "median": 361267.0
+    }
+  },
+  "ratios": {
+    "jpeg_vs_raw": 0.04347806954089506,
+    "base64_overhead_vs_jpeg": 1.3333333333333333,
+    "json_envelope_vs_base64": 1.0003438479637408,
+    "lz4_ratio_vs_message": 1.0001194276160077,
+    "wire_vs_jpeg": 1.3339510888595878
+  },
+  "fps_4_bandwidth_KBps": {
+    "json_uncompressed": 1409.173828125,
+    "lz4_on_wire": 1409.3421223958333
+  }
+}

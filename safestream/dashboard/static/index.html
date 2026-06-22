@@ -199,16 +199,7 @@
   }
   .top-unsafe-name { color: var(--text); overflow-wrap: anywhere; }
   .top-unsafe-count { color: var(--unsafe); font-weight: 700; }
-  .risk-camera {
-    display: grid; gap: 8px; padding: 10px;
-    background: var(--subtle); border: 1px solid var(--border); border-radius: 8px;
-  }
-  .risk-camera .name { font-size: 22px; font-weight: 800; }
-  .risk-camera .ratio-value { color: var(--unsafe); font-size: 28px; font-weight: 800; }
-  .risk-camera .meta { color: var(--muted); font-size: 12px; }
-  .risk-bar { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
-  .risk-bar > div { height: 100%; background: var(--unsafe); transition: width 0.4s ease; }
-  #trendChart, #safeUnsafeChart { width: 100%; max-height: 210px; }
+  #trendChart { width: 100%; max-height: 210px; }
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
@@ -225,6 +216,7 @@
     <h1>SafeStream-Kafka — Live Safety Dashboard</h1>
     <div>
       <span class="pill" id="status">connecting...</span>
+      <span class="pill" id="agg-mode"></span>
       <span class="pill" id="settings"></span>
     </div>
   </header>
@@ -235,6 +227,7 @@
       <div class="overview-card"><div class="k">Processed Frames</div><div class="v" id="overview-frames">0</div><div class="sub">since dashboard start</div></div>
       <div class="overview-card"><div class="k">Cumulative Safe</div><div class="v safe" id="overview-safe">0</div><div class="sub">detections</div></div>
       <div class="overview-card"><div class="k">Cumulative Unsafe</div><div class="v unsafe" id="overview-unsafe">0</div><div class="sub">detections</div></div>
+      <div class="overview-card"><div class="k">Alerts Emitted</div><div class="v unsafe" id="overview-alerts">0</div><div class="sub">since dashboard start</div></div>
       <div class="overview-card"><div class="k">Sliding Window</div><div class="v" id="overview-window">60s</div><div class="sub" id="overview-threshold">alert threshold</div></div>
       <div class="overview-card"><div class="k">Model / Device</div><div class="v" id="overview-device">auto</div><div class="sub" id="overview-model">weights</div></div>
       <div class="overview-card"><div class="k">Kafka Topics</div><div class="v" id="overview-topics">3</div><div class="sub" id="overview-topic-names">frames → detections → alerts</div></div>
@@ -242,17 +235,6 @@
     </section>
 
     <section class="metrics-panel">
-      <div class="metrics-card">
-        <h2>Highest Risk Camera</h2>
-        <div id="highestRisk"><div class="empty">waiting for camera data.</div></div>
-      </div>
-
-      <div class="metrics-card">
-        <h2>Safe vs Unsafe Overall</h2>
-        <canvas id="safeUnsafeChart" height="180"></canvas>
-        <div class="note">Cumulative detections across all active cameras.</div>
-      </div>
-
       <div class="metrics-card">
         <h2>Top Unsafe Behaviors</h2>
         <div id="topUnsafe"><div class="empty">no unsafe behavior yet.</div></div>
@@ -337,7 +319,6 @@
   };
   let latestMetrics = null;
   let trendChart = null;
-  let safeUnsafeChart = null;
 
   function fmtRatio(r) {
     return (100 * (r || 0)).toFixed(1) + '%';
@@ -417,6 +398,7 @@
     $('overview-frames').textContent = frames;
     $('overview-safe').textContent = safe;
     $('overview-unsafe').textContent = unsafe;
+    $('overview-alerts').textContent = (cams || {})._alerts_emitted || 0;
     $('overview-window').textContent = `${dashboardSettings.window_seconds}s`;
     $('overview-threshold').textContent = `warn >= ${(100 * dashboardSettings.unsafe_ratio_alert).toFixed(0)}% unsafe, min ${dashboardSettings.min_window_obs || 0} obs, cooldown ${dashboardSettings.alert_cooldown_seconds || 0}s`;
     $('overview-device').textContent = dashboardSettings.detector_device || 'auto';
@@ -611,6 +593,32 @@
     }
   }
 
+  function updateAggBadge() {
+    const el = $('agg-mode');
+    if (!el) return;
+    el.style.cursor = 'pointer';
+    el.title = 'Click to toggle the aggregator (runtime-only)';
+    const enabled = dashboardSettings.agg_enabled !== false;
+    if (enabled) {
+      el.textContent = 'Aggregator: ON';
+      el.style.color = '';
+      el.style.borderColor = '';
+    } else {
+      el.textContent = 'Aggregator: OFF — naive per-frame alerting';
+      el.style.color = 'var(--warn)';
+      el.style.borderColor = 'var(--warn)';
+    }
+  }
+
+  async function toggleAggMode() {
+    try {
+      const r = await fetch('/api/agg-mode', { method: 'POST' });
+      dashboardSettings = await r.json();
+      updateAggBadge();
+    } catch (e) { /* ignore */ }
+  }
+  $('agg-mode')?.addEventListener('click', toggleAggMode);
+
   function renderAlerts(alerts) {
     const root = $('alerts');
     if (!alerts || alerts.length === 0) {
@@ -651,79 +659,6 @@
         </div>
       `)
       .join('');
-  }
-
-  function cameraEntries(cams) {
-    return Object.entries(cams || {}).filter(([cam]) => !cam.startsWith("_"));
-  }
-
-  function renderHighestRisk(cams) {
-    const root = $('highestRisk');
-    if (!root) return;
-
-    const entries = cameraEntries(cams);
-    if (entries.length === 0) {
-      root.innerHTML = '<div class="empty">waiting for camera data.</div>';
-      return;
-    }
-
-    const [cam, v] = entries
-      .slice()
-      .sort((a, b) => {
-        const ratioDiff = (b[1].rolling_ratio || 0) - (a[1].rolling_ratio || 0);
-        if (ratioDiff !== 0) return ratioDiff;
-        return (b[1].rolling_unsafe || 0) - (a[1].rolling_unsafe || 0);
-      })[0];
-    const ratio = v.rolling_ratio || 0;
-    const unsafe = v.rolling_unsafe || 0;
-    const total = v.rolling_total || 0;
-    const status = statusText(ratio);
-
-    root.innerHTML = `
-      <div class="risk-camera">
-        <div class="name">${cam}</div>
-        <div class="ratio-value">${fmtRatio(ratio)}</div>
-        <div class="risk-bar"><div style="width:${Math.min(100, ratio * 100).toFixed(1)}%"></div></div>
-        <div class="meta">${status} - ${unsafe}/${total} unsafe in the current window</div>
-      </div>
-    `;
-  }
-
-  function renderSafeUnsafeChart(cams) {
-    const canvas = $('safeUnsafeChart');
-    if (!canvas || typeof Chart === 'undefined') return;
-
-    const entries = cameraEntries(cams);
-    const safe = entries.reduce((sum, [, v]) => sum + (v.cumulative_safe || 0), 0);
-    const unsafe = entries.reduce((sum, [, v]) => sum + (v.cumulative_unsafe || 0), 0);
-
-    if (!safeUnsafeChart) {
-      safeUnsafeChart = new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-          labels: ['Safe', 'Unsafe'],
-          datasets: [{
-            data: [safe, unsafe],
-            backgroundColor: ['#15803d', '#dc2626'],
-            borderColor: '#ffffff',
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          animation: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
-            }
-          }
-        }
-      });
-      return;
-    }
-
-    safeUnsafeChart.data.datasets[0].data = [safe, unsafe];
-    safeUnsafeChart.update();
   }
 
   function renderTrendChart(trend) {
@@ -786,13 +721,12 @@
         renderMetrics(latestMetrics);
       } catch (e) { /* ignore */ }
       dashboardSettings = j.settings;
+      updateAggBadge();
       $('settings').textContent =
         `window=${j.settings.window_seconds}s  ratio≥${j.settings.unsafe_ratio_alert}`;
       $('topic').textContent = j.settings.topic_detections;
       renderOverview(j.cameras);
       renderCameras(j.cameras, {});
-      renderHighestRisk(j.cameras);
-      renderSafeUnsafeChart(j.cameras);
       renderTopUnsafe(j.cameras?._top_unsafe_behaviors);
       renderTrendChart(j.cameras?._trend_chart);
       refreshViolationFrames(j.cameras);
@@ -820,7 +754,7 @@
     ws.onmessage = (ev) => {
       try {
         const data = JSON.parse(ev.data);
-        if (data.settings) dashboardSettings = data.settings;
+        if (data.settings) { dashboardSettings = data.settings; updateAggBadge(); }
         if (data.status) latestStatus = data.status;
         if (data.metrics) {
           latestMetrics = data.metrics;
@@ -829,8 +763,6 @@
         renderOverview(data.cameras);
         renderCameras(data.cameras, data.frame_ages);
         renderAlerts(data.recent_alerts);
-        renderHighestRisk(data.cameras);
-        renderSafeUnsafeChart(data.cameras);
         renderTopUnsafe(data.cameras?._top_unsafe_behaviors);
         renderTrendChart(data.cameras?._trend_chart);
         refreshViolationFrames(data.cameras);

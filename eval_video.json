@@ -1,0 +1,19 @@
+{
+  "note": "Temporal model runs\\ablation_video\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "video",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.7554779927091104,
+  "macro_ap_8class": 0.7014155822227386,
+  "precision": 0.5631067961165048,
+  "recall": 0.90625,
+  "f1": 0.6946107784431137,
+  "accuracy": 0.592,
+  "top1_accuracy_8class": 0.472,
+  "confusion": {
+    "tp": 58,
+    "fp": 45,
+    "fn": 6,
+    "tn": 16
+  },
+  "clips": 125
+}

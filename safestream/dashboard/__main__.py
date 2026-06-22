@@ -18,13 +18,14 @@ import logging
 import threading
 import time
 from collections import deque
+from functools import lru_cache
 from pathlib import Path
 from typing import Deque, Dict, List, Optional
 
 import cv2
 import uvicorn
 from confluent_kafka import KafkaError
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 
 from safestream.aggregator.aggregator import SafetyAggregator
@@ -51,9 +52,19 @@ AGG = SafetyAggregator(
     unsafe_ratio_alert=SETTINGS.agg_unsafe_ratio_alert,
     min_window_obs=SETTINGS.agg_min_window_obs,
     alert_cooldown_seconds=SETTINGS.agg_alert_cooldown_seconds,
+    use_prob=SETTINGS.agg_use_prob,
+    ewma_halflife=SETTINGS.agg_ewma_halflife,
+    enter_threshold=SETTINGS.agg_enter_threshold,
+    exit_threshold=SETTINGS.agg_exit_threshold,
+    min_dwell=SETTINGS.agg_min_dwell,
 )
 STOP_EVENT = threading.Event()
 STARTED_AT = time.time()
+
+# Runtime-mutable copy of the aggregator mode. Seeded from settings but toggled
+# live via POST /api/agg-mode (resets to the .env default on restart). A plain
+# bool read/assign is atomic in CPython, so the consumer thread needs no lock.
+AGG_ENABLED = SETTINGS.agg_enabled
 
 _frame_lock = threading.Lock()
 LATEST_FRAMES: Dict[str, str] = {}       # camera_id → image_b64
@@ -73,6 +84,7 @@ FRAME_DISPLAY_INTERVAL = 1.0 / max(SETTINGS.dashboard_frame_fps, 0.1)
 
 def _settings_payload() -> dict:
     return {
+        "agg_enabled": AGG_ENABLED,
         "window_seconds": SETTINGS.agg_window_seconds,
         "unsafe_ratio_alert": SETTINGS.agg_unsafe_ratio_alert,
         "min_window_obs": SETTINGS.agg_min_window_obs,
@@ -133,6 +145,31 @@ def _prediction_category(detections: List[dict]) -> str:
     return "other"
 
 
+def _naive_alert(payload: dict) -> Optional[dict]:
+    """Build a per-frame alert that ignores the rolling window/threshold/cooldown.
+
+    Used when AGG_ENABLED=false: every detection message with at least one unsafe
+    detection fires an alert, so the dashboard shows the raw alert volume the
+    aggregator normally collapses. Returns None for frames with no unsafe detections.
+    """
+    u = int(payload.get("unsafe_count", 0))
+    if u <= 0:
+        return None
+    s = int(payload.get("safe_count", 0))
+    total = s + u
+    ratio = u / total if total else 1.0
+    unsafe = [d for d in payload.get("detections", []) if d.get("category") == "unsafe"]
+    return {
+        "camera_id": str(payload.get("camera_id", "unknown")),
+        "timestamp": float(payload.get("timestamp", time.time())),
+        "rolling_unsafe": u,
+        "rolling_total": total,
+        "rolling_ratio": ratio,
+        "severity": "HIGH" if ratio >= AGG.high_ratio else "WARN",
+        "violation_label": unsafe[0].get("label") if unsafe else None,
+    }
+
+
 def _record_live_metrics(payload: dict, received_at: float) -> None:
     global LAST_DETECTION_TS
     source_ts = float(payload.get("timestamp", received_at) or received_at)
@@ -152,6 +189,45 @@ def _record_live_metrics(payload: dict, received_at: float) -> None:
                 CONFUSION["fp"] += 1
             elif truth == "unsafe" and pred == "safe":
                 CONFUSION["fn"] += 1
+
+
+# Repo root, for locating the optional computed-metrics file.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# Fallback used when eval_results.json is absent. These reproduce
+# scripts/evaluate.py on previous_weights/best.pt over yolo_dataset/test, with
+# honest classification-AP names (NOT bbox mAP — this is a classifier).
+_OFFLINE_METRICS_FALLBACK = {
+    "note": "Hard-coded fallback (run scripts/evaluate.py to regenerate eval_results.json). "
+            "Classification AP (PR-AUC), not bbox IoU mAP.",
+    "positive_class": "unsafe",
+    "binary_unsafe_ap": 0.942,
+    "macro_ap_8class": 0.678,
+    "precision": 0.862,
+    "recall": 0.943,
+    "f1": 0.901,
+    "accuracy": 0.843,
+    "top1_accuracy_8class": 0.655,
+    "confusion": {"tp": 600, "fp": 96, "fn": 36, "tn": 108},
+    "samples": 840,
+}
+
+
+@lru_cache(maxsize=1)
+def _load_offline_metrics() -> dict:
+    """Load computed offline metrics from eval_results.json (repo root) if present,
+    else return the hard-coded fallback. Cached for the process lifetime."""
+    path = _REPO_ROOT / "eval_results.json"
+    try:
+        with path.open(encoding="utf-8") as fh:
+            data = json.load(fh)
+        logger.info("Loaded offline detector metrics from %s", path)
+        return data
+    except FileNotFoundError:
+        logger.info("No eval_results.json found; using hard-coded offline metrics fallback.")
+    except Exception as e:
+        logger.warning("Failed to read %s (%s); using fallback.", path, e)
+    return dict(_OFFLINE_METRICS_FALLBACK)
 
 
 def _metrics_payload() -> dict:
@@ -191,17 +267,7 @@ def _metrics_payload() -> dict:
             "samples": total,
             "confusion": confusion,
         },
-        "offline_detector_metrics": {
-            "note": "Computed with previous_weights/best.pt on yolo_dataset/test (840 sampled frames). Values are classification AP proxies, not bbox IoU mAP.",
-            "map50": 0.942,
-            "map50_95": 0.678,
-            "precision": 0.862,
-            "recall": 0.943,
-            "f1": 0.901,
-            "accuracy": 0.843,
-            "top1_accuracy_8class": 0.655,
-            "confusion": {"tp": 600, "fp": 96, "fn": 36, "tn": 108},
-        },
+        "offline_detector_metrics": _load_offline_metrics(),
     }
 
 
@@ -238,6 +304,12 @@ def _kafka_loop() -> None:
             received_at = time.time()
             cam = payload.get("camera_id", "unknown")
             _snap, alert = AGG.update(payload)
+            if not AGG_ENABLED:
+                # Aggregator off: ignore the windowed alert and fire one per unsafe
+                # frame, recording it so the UI's alert feed reflects the firehose.
+                alert = _naive_alert(payload)
+                if alert is not None:
+                    AGG.record_external_alert(alert)
             _record_live_metrics(payload, received_at)
             with _frame_lock:
                 DETECTION_MESSAGES_SEEN += 1
@@ -357,6 +429,25 @@ def api_snapshot() -> JSONResponse:
 @app.get("/api/alerts")
 def api_alerts(limit: int = 25) -> JSONResponse:
     return JSONResponse({"alerts": AGG.recent_alerts(limit=limit)})
+
+
+@app.post("/api/agg-mode")
+async def api_agg_mode(request: Request) -> JSONResponse:
+    """Toggle the aggregator mode at runtime (resets to .env default on restart).
+
+    Body is optional: {"enabled": true|false} sets it explicitly; an empty/invalid
+    body flips the current value.
+    """
+    global AGG_ENABLED
+    enabled: Optional[bool] = None
+    try:
+        body = await request.json()
+        if isinstance(body, dict) and "enabled" in body:
+            enabled = bool(body["enabled"])
+    except Exception:
+        pass
+    AGG_ENABLED = (not AGG_ENABLED) if enabled is None else enabled
+    return JSONResponse(_settings_payload())
 
 
 @app.get("/api/status")

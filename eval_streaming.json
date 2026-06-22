@@ -1,0 +1,30 @@
+{
+  "clips_scored": 125,
+  "fps": 4.0,
+  "results": [
+    {
+      "aggregator": "naive",
+      "alert_precision": 0.6436781609195402,
+      "alert_recall": 0.875,
+      "false_alert_rate": 0.5081967213114754,
+      "mean_detection_latency_frames": 5,
+      "confusion_clips": {
+        "tp": 56,
+        "fp": 31,
+        "fn": 8
+      }
+    },
+    {
+      "aggregator": "smart",
+      "alert_precision": 0.6962025316455697,
+      "alert_recall": 0.859375,
+      "false_alert_rate": 0.39344262295081966,
+      "mean_detection_latency_frames": 5.072727272727272,
+      "confusion_clips": {
+        "tp": 55,
+        "fp": 24,
+        "fn": 9
+      }
+    }
+  ]
+}

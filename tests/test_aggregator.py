@@ -22,6 +22,14 @@ def _msg_with_detection(cam, ts, label, conf):
     return msg
 
 
+def _prob_msg(cam, ts, prob):
+    """A temporal-detector message carrying a continuous unsafe probability."""
+    unsafe = 1 if prob >= 0.5 else 0
+    msg = _msg(cam, ts, 1 - unsafe, unsafe)
+    msg["unsafe_prob"] = prob
+    return msg
+
+
 def test_classify_label_basic():
     assert classify_label("wearing_helmet") == "safe"
     assert classify_label("no_helmet") == "unsafe"
@@ -106,6 +114,76 @@ def test_alert_cooldown_limits_repeated_alerts():
     assert a1 is not None
     assert a2 is None
     assert a3 is not None
+
+
+def test_prob_path_fires_after_min_dwell():
+    """EWMA+hysteresis fires only after the smoothed score is sustained."""
+    agg = SafetyAggregator(
+        use_prob=True, ewma_halflife=10.0,
+        enter_threshold=0.5, exit_threshold=0.3, min_dwell=3,
+    )
+    t0 = 1000.0
+    _, a1 = agg.update(_prob_msg("cam-01", t0,     0.9))  # dwell 1
+    _, a2 = agg.update(_prob_msg("cam-01", t0 + 1, 0.9))  # dwell 2
+    _, a3 = agg.update(_prob_msg("cam-01", t0 + 2, 0.9))  # dwell 3 -> fire
+    assert a1 is None and a2 is None
+    assert a3 is not None
+    assert a3["severity"] == "HIGH"          # score >= high_ratio (0.6)
+    assert a3["smoothed_score"] >= 0.5
+
+
+def test_prob_path_does_not_flap_within_one_episode():
+    """A single sustained episode yields exactly one alert (no per-frame spam)."""
+    agg = SafetyAggregator(
+        use_prob=True, ewma_halflife=10.0,
+        enter_threshold=0.5, exit_threshold=0.3, min_dwell=2,
+    )
+    t0 = 1000.0
+    alerts = [agg.update(_prob_msg("cam-01", t0 + i, 0.95))[1] for i in range(10)]
+    fired = [a for a in alerts if a is not None]
+    assert len(fired) == 1
+
+
+def test_prob_path_rearms_after_recovery():
+    """Dropping below exit_threshold clears state so a new episode can fire."""
+    agg = SafetyAggregator(
+        use_prob=True, ewma_halflife=0.5,   # fast decay so the dip registers
+        enter_threshold=0.5, exit_threshold=0.3, min_dwell=2,
+    )
+    t0 = 1000.0
+    # Episode 1
+    agg.update(_prob_msg("cam-01", t0,     0.95))
+    _, first = agg.update(_prob_msg("cam-01", t0 + 1, 0.95))
+    assert first is not None
+    # Recovery well below exit_threshold (large gaps fully decay toward the new value)
+    agg.update(_prob_msg("cam-01", t0 + 10, 0.0))
+    agg.update(_prob_msg("cam-01", t0 + 20, 0.0))
+    # Episode 2
+    agg.update(_prob_msg("cam-01", t0 + 30, 0.95))
+    _, second = agg.update(_prob_msg("cam-01", t0 + 31, 0.95))
+    assert second is not None
+
+
+def test_prob_path_ignored_when_use_prob_false():
+    """With use_prob=False the legacy count-ratio path runs even if prob present."""
+    agg = SafetyAggregator(
+        use_prob=False, unsafe_ratio_alert=0.30, min_window_obs=1,
+    )
+    t0 = time.time()
+    _, a = agg.update(_prob_msg("cam-01", t0, 0.95))  # unsafe=1 -> ratio 1.0
+    assert a is not None
+    assert "smoothed_score" not in a                   # legacy dict shape
+
+
+def test_messages_without_prob_use_legacy_path():
+    """Back-compat: count-only messages keep the original behaviour."""
+    agg = SafetyAggregator(use_prob=True, unsafe_ratio_alert=0.30, min_window_obs=3)
+    t0 = time.time()
+    _, a1 = agg.update(_msg("cam-01", t0,     5, 0))
+    _, a2 = agg.update(_msg("cam-01", t0 + 1, 4, 0))
+    _, a3 = agg.update(_msg("cam-01", t0 + 2, 0, 6))
+    assert a1 is None and a2 is None
+    assert a3 is not None and "rolling_ratio" in a3
 
 
 def test_last_violation_tracks_latest_unsafe_detection():

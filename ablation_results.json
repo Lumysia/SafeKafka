@@ -1,0 +1,1114 @@
+{
+  "config": {
+    "epochs": 30,
+    "window": 16,
+    "models": [
+      "head",
+      "video",
+      "mvit",
+      "swin3d",
+      "hiera"
+    ],
+    "data": "clips_manifest.csv",
+    "smoke": false,
+    "device": "auto",
+    "reuse_weights": true,
+    "cal_objective": "target-recall",
+    "cal_target_recall": 0.95,
+    "cal_exit_ratio": 0.6
+  },
+  "rows": [
+    {
+      "model": "YOLOv8 (per-frame)",
+      "kind": "yolo",
+      "status": "ok",
+      "regime": "per-frame classifier",
+      "params_total": null,
+      "params_trainable": null,
+      "latency_ms_per_frame": 6.404727999470197,
+      "offline": {
+        "binary_unsafe_ap": 0.8874320570159768,
+        "f1": 0.8034825870646767,
+        "top1_accuracy_8class": 0.6413333333333333,
+        "macro_ap_8class": 0.7286954071396627
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.7323943661971831,
+        "alert_recall": 0.8125,
+        "false_alert_rate": 0.3114754098360656,
+        "mean_detection_latency_frames": 4.75,
+        "confusion_clips": {
+          "tp": 52,
+          "fp": 19,
+          "fn": 12
+        }
+      },
+      "source": "eval_results.json",
+      "streaming_cal_enter": 0.6,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.6,
+          "exit_threshold": 0.36
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.6,
+          "exit_threshold": 0.36,
+          "alert_recall": 0.9659090909090909,
+          "false_alert_rate": 0.2857142857142857,
+          "alert_precision": 0.9340659340659341
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.7619047619047619,
+            "alert_precision": 0.8461538461538461
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.7619047619047619,
+            "alert_precision": 0.8461538461538461
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.7142857142857143,
+            "alert_precision": 0.8543689320388349
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.7142857142857143,
+            "alert_precision": 0.8543689320388349
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.6190476190476191,
+            "alert_precision": 0.8712871287128713
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.6190476190476191,
+            "alert_precision": 0.8712871287128713
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.5714285714285714,
+            "alert_precision": 0.88
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.47619047619047616,
+            "alert_precision": 0.8979591836734694
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.47619047619047616,
+            "alert_precision": 0.8979591836734694
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.42857142857142855,
+            "alert_precision": 0.9072164948453608
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 0.9886363636363636,
+            "false_alert_rate": 0.38095238095238093,
+            "alert_precision": 0.9157894736842105
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.2857142857142857,
+            "alert_precision": 0.9340659340659341
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.9204545454545454,
+            "false_alert_rate": 0.23809523809523808,
+            "alert_precision": 0.9418604651162791
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.8863636363636364,
+            "false_alert_rate": 0.23809523809523808,
+            "alert_precision": 0.9397590361445783
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.8863636363636364,
+            "false_alert_rate": 0.19047619047619047,
+            "alert_precision": 0.9512195121951219
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.8636363636363636,
+            "false_alert_rate": 0.19047619047619047,
+            "alert_precision": 0.95
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.8295454545454546,
+            "false_alert_rate": 0.19047619047619047,
+            "alert_precision": 0.948051948051948
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.8068181818181818,
+            "false_alert_rate": 0.0,
+            "alert_precision": 1.0
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.7272727272727273,
+            "false_alert_rate": 0.0,
+            "alert_precision": 1.0
+          }
+        ]
+      }
+    },
+    {
+      "model": "head (ResNet18+GRU)",
+      "kind": "head",
+      "status": "ok",
+      "regime": "frozen encoder + GRU head",
+      "params_total": 12363849,
+      "params_trainable": 1187337,
+      "latency_ms_per_frame": 13.633643999928609,
+      "offline": {
+        "binary_unsafe_ap": 0.8624254081201603,
+        "f1": 0.7039106145251397,
+        "top1_accuracy_8class": 0.44,
+        "macro_ap_8class": 0.6692624687674552
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.6344086021505376,
+        "alert_recall": 0.921875,
+        "false_alert_rate": 0.5573770491803278,
+        "mean_detection_latency_frames": 2.0508474576271185,
+        "confusion_clips": {
+          "tp": 59,
+          "fp": 34,
+          "fn": 5
+        }
+      },
+      "streaming_cal_enter": 0.65,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39,
+          "alert_recall": 0.9659090909090909,
+          "false_alert_rate": 0.6190476190476191,
+          "alert_precision": 0.8673469387755102
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 0.9772727272727273,
+            "false_alert_rate": 0.8095238095238095,
+            "alert_precision": 0.8349514563106796
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.6190476190476191,
+            "alert_precision": 0.8673469387755102
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.8977272727272727,
+            "false_alert_rate": 0.38095238095238093,
+            "alert_precision": 0.9080459770114943
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.8181818181818182,
+            "false_alert_rate": 0.3333333333333333,
+            "alert_precision": 0.9113924050632911
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.7613636363636364,
+            "false_alert_rate": 0.2857142857142857,
+            "alert_precision": 0.9178082191780822
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.5909090909090909,
+            "false_alert_rate": 0.23809523809523808,
+            "alert_precision": 0.9122807017543859
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.5340909090909091,
+            "false_alert_rate": 0.14285714285714285,
+            "alert_precision": 0.94
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.38636363636363635,
+            "false_alert_rate": 0.09523809523809523,
+            "alert_precision": 0.9444444444444444
+          }
+        ]
+      },
+      "weights": "runs\\ablation_head\\best.pt"
+    },
+    {
+      "model": "video (R(2+1)D-18)",
+      "kind": "video",
+      "status": "ok",
+      "regime": "full fine-tune",
+      "params_total": 31304229,
+      "params_trainable": 31304229,
+      "latency_ms_per_frame": 26.385513999848627,
+      "offline": {
+        "binary_unsafe_ap": 0.7554779927091104,
+        "f1": 0.6946107784431137,
+        "top1_accuracy_8class": 0.472,
+        "macro_ap_8class": 0.7014155822227386
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.5784313725490197,
+        "alert_recall": 0.921875,
+        "false_alert_rate": 0.7049180327868853,
+        "mean_detection_latency_frames": 3,
+        "confusion_clips": {
+          "tp": 59,
+          "fp": 43,
+          "fn": 5
+        }
+      },
+      "streaming_cal_enter": 0.65,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39,
+          "alert_recall": 0.9545454545454546,
+          "false_alert_rate": 0.8095238095238095,
+          "alert_precision": 0.8316831683168316
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 0.9772727272727273,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.819047619047619
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.8173076923076923
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8252427184466019
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.9545454545454546,
+            "false_alert_rate": 0.8095238095238095,
+            "alert_precision": 0.8316831683168316
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.9431818181818182,
+            "false_alert_rate": 0.8095238095238095,
+            "alert_precision": 0.83
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.9431818181818182,
+            "false_alert_rate": 0.7619047619047619,
+            "alert_precision": 0.8383838383838383
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.9204545454545454,
+            "false_alert_rate": 0.7619047619047619,
+            "alert_precision": 0.8350515463917526
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.875,
+            "false_alert_rate": 0.7142857142857143,
+            "alert_precision": 0.8369565217391305
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.8636363636363636,
+            "false_alert_rate": 0.5714285714285714,
+            "alert_precision": 0.8636363636363636
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.5909090909090909,
+            "false_alert_rate": 0.5238095238095238,
+            "alert_precision": 0.8253968253968254
+          }
+        ]
+      },
+      "weights": "runs\\ablation_video\\best.pt"
+    },
+    {
+      "model": "MViTv2-S",
+      "kind": "mvit",
+      "status": "ok",
+      "regime": "frozen backbone (linear probe)",
+      "params_total": 34236296,
+      "params_trainable": 6152,
+      "latency_ms_per_frame": 48.3806880004704,
+      "offline": {
+        "binary_unsafe_ap": 0.7954773410414144,
+        "f1": 0.707182320441989,
+        "top1_accuracy_8class": 0.488,
+        "macro_ap_8class": 0.6563506747817791
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.543859649122807,
+        "alert_recall": 0.96875,
+        "false_alert_rate": 0.8524590163934426,
+        "mean_detection_latency_frames": 5.564516129032258,
+        "confusion_clips": {
+          "tp": 62,
+          "fp": 52,
+          "fn": 2
+        }
+      },
+      "streaming_cal_enter": 0.65,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.65,
+          "exit_threshold": 0.39,
+          "alert_recall": 0.9659090909090909,
+          "false_alert_rate": 0.7619047619047619,
+          "alert_precision": 0.8415841584158416
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8301886792452831
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 0.9886363636363636,
+            "false_alert_rate": 0.8095238095238095,
+            "alert_precision": 0.8365384615384616
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.7619047619047619,
+            "alert_precision": 0.8415841584158416
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.9318181818181818,
+            "false_alert_rate": 0.6666666666666666,
+            "alert_precision": 0.8541666666666666
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.75,
+            "false_alert_rate": 0.42857142857142855,
+            "alert_precision": 0.88
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.5795454545454546,
+            "false_alert_rate": 0.3333333333333333,
+            "alert_precision": 0.8793103448275862
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.29545454545454547,
+            "false_alert_rate": 0.09523809523809523,
+            "alert_precision": 0.9285714285714286
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.011363636363636364,
+            "false_alert_rate": 0.0,
+            "alert_precision": 1.0
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          }
+        ]
+      },
+      "weights": "runs\\ablation_mvit\\best.pt"
+    },
+    {
+      "model": "Video Swin-T",
+      "kind": "swin3d",
+      "status": "ok",
+      "regime": "frozen backbone (linear probe)",
+      "params_total": 27856622,
+      "params_trainable": 6152,
+      "latency_ms_per_frame": 39.755566000239924,
+      "offline": {
+        "binary_unsafe_ap": 0.8048003954834956,
+        "f1": 0.7023809523809524,
+        "top1_accuracy_8class": 0.48,
+        "macro_ap_8class": 0.6746438900584899
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.5957446808510638,
+        "alert_recall": 0.875,
+        "false_alert_rate": 0.6229508196721312,
+        "mean_detection_latency_frames": 7.625,
+        "confusion_clips": {
+          "tp": 56,
+          "fp": 38,
+          "fn": 8
+        }
+      },
+      "streaming_cal_enter": 0.7,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.7,
+          "exit_threshold": 0.42
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.7,
+          "exit_threshold": 0.42,
+          "alert_recall": 0.9659090909090909,
+          "false_alert_rate": 0.6190476190476191,
+          "alert_precision": 0.8673469387755102
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9523809523809523,
+            "alert_precision": 0.8148148148148148
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 1.0,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.822429906542056
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.9772727272727273,
+            "false_alert_rate": 0.9047619047619048,
+            "alert_precision": 0.819047619047619
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.9659090909090909,
+            "false_alert_rate": 0.6190476190476191,
+            "alert_precision": 0.8673469387755102
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.7272727272727273,
+            "false_alert_rate": 0.19047619047619047,
+            "alert_precision": 0.9411764705882353
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.48863636363636365,
+            "false_alert_rate": 0.09523809523809523,
+            "alert_precision": 0.9555555555555556
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.3068181818181818,
+            "false_alert_rate": 0.09523809523809523,
+            "alert_precision": 0.9310344827586207
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.23863636363636365,
+            "false_alert_rate": 0.0,
+            "alert_precision": 1.0
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.03409090909090909,
+            "false_alert_rate": 0.0,
+            "alert_precision": 1.0
+          }
+        ]
+      },
+      "weights": "runs\\ablation_swin3d\\best.pt"
+    },
+    {
+      "model": "Hiera-B",
+      "kind": "hiera",
+      "status": "ok",
+      "regime": "frozen backbone (linear probe)",
+      "params_total": 50791112,
+      "params_trainable": 6152,
+      "latency_ms_per_frame": 46.956087999860756,
+      "offline": {
+        "binary_unsafe_ap": 0.862110648842213,
+        "f1": 0.7272727272727272,
+        "top1_accuracy_8class": 0.536,
+        "macro_ap_8class": 0.7133454803153908
+      },
+      "streaming_smart": {
+        "aggregator": "smart",
+        "alert_precision": 0.5714285714285714,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.7868852459016393,
+        "mean_detection_latency_frames": 6.6875,
+        "confusion_clips": {
+          "tp": 64,
+          "fp": 48,
+          "fn": 0
+        }
+      },
+      "streaming_cal_enter": 0.45,
+      "streaming_cal": {
+        "calibrate_split": "val",
+        "objective": "target-recall",
+        "target_recall": 0.95,
+        "exit_ratio": 0.6,
+        "chosen": {
+          "enter_threshold": 0.45,
+          "exit_threshold": 0.27
+        },
+        "val_operating_point": {
+          "enter_threshold": 0.45,
+          "exit_threshold": 0.27,
+          "alert_recall": 0.9886363636363636,
+          "false_alert_rate": 0.8571428571428571,
+          "alert_precision": 0.8285714285714286
+        },
+        "fallback_used": false,
+        "sweep": [
+          {
+            "enter_threshold": 0.05,
+            "exit_threshold": 0.03,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.1,
+            "exit_threshold": 0.06,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.15,
+            "exit_threshold": 0.09,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.2,
+            "exit_threshold": 0.12,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.25,
+            "exit_threshold": 0.15,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.3,
+            "exit_threshold": 0.18,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.35,
+            "exit_threshold": 0.21,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.4,
+            "exit_threshold": 0.24,
+            "alert_recall": 1.0,
+            "false_alert_rate": 1.0,
+            "alert_precision": 0.8073394495412844
+          },
+          {
+            "enter_threshold": 0.45,
+            "exit_threshold": 0.27,
+            "alert_recall": 0.9886363636363636,
+            "false_alert_rate": 0.8571428571428571,
+            "alert_precision": 0.8285714285714286
+          },
+          {
+            "enter_threshold": 0.5,
+            "exit_threshold": 0.3,
+            "alert_recall": 0.6818181818181818,
+            "false_alert_rate": 0.38095238095238093,
+            "alert_precision": 0.8823529411764706
+          },
+          {
+            "enter_threshold": 0.55,
+            "exit_threshold": 0.33,
+            "alert_recall": 0.5454545454545454,
+            "false_alert_rate": 0.19047619047619047,
+            "alert_precision": 0.9230769230769231
+          },
+          {
+            "enter_threshold": 0.6,
+            "exit_threshold": 0.36,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.65,
+            "exit_threshold": 0.39,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.7,
+            "exit_threshold": 0.42,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.75,
+            "exit_threshold": 0.44999999999999996,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.8,
+            "exit_threshold": 0.48,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.85,
+            "exit_threshold": 0.51,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.9,
+            "exit_threshold": 0.54,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          },
+          {
+            "enter_threshold": 0.95,
+            "exit_threshold": 0.57,
+            "alert_recall": 0.0,
+            "false_alert_rate": 0.0,
+            "alert_precision": null
+          }
+        ]
+      },
+      "weights": "runs\\ablation_hiera\\best.pt"
+    }
+  ]
+}

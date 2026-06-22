@@ -39,6 +39,11 @@ class SafetyAggregator:
         min_window_obs: int = 5,
         max_history: int = 5000,
         alert_cooldown_seconds: float = 0.0,
+        use_prob: bool = True,
+        ewma_halflife: float = 10.0,
+        enter_threshold: float = 0.5,
+        exit_threshold: float = 0.30,
+        min_dwell: int = 3,
     ):
         self.window = float(window_seconds)
         self.ratio_alert = float(unsafe_ratio_alert)
@@ -47,11 +52,27 @@ class SafetyAggregator:
         self.max_history = int(max_history)
         self.alert_cooldown_seconds = float(alert_cooldown_seconds)
 
+        # Confidence-aware smoothing (engaged per-message only when the record
+        # carries a continuous `unsafe_prob`, e.g. from the temporal detector).
+        self.use_prob = bool(use_prob)
+        self.ewma_halflife = float(ewma_halflife)
+        self.enter_threshold = float(enter_threshold)
+        self.exit_threshold = float(exit_threshold)
+        self.min_dwell = int(min_dwell)
+
         self._windows: Dict[str, _Window] = defaultdict(_Window)
         self._totals: Dict[str, _Totals] = defaultdict(_Totals)
         self._history: Deque[Dict[str, Any]] = deque(maxlen=max_history)
         self._alerts: Deque[Dict[str, Any]] = deque(maxlen=max_history)
+        self._alerts_emitted = 0  # lifetime count (not capped like _alerts)
         self._last_alert_ts: Dict[str, float] = {}
+
+        # Per-camera EWMA + hysteresis state for the smoothed alert path.
+        self._ewma: Dict[str, float] = {}
+        self._ewma_ts: Dict[str, float] = {}
+        self._in_alert: Dict[str, bool] = {}
+        self._dwell: Dict[str, int] = {}
+
         self._lock = threading.Lock()
 
     def update(self, msg: Dict[str, Any]) -> Tuple[Dict[str, Any], Optional[Dict[str, Any]]]:
@@ -120,22 +141,76 @@ class SafetyAggregator:
             }
             self._history.append(snap)
 
+            cooldown_ok = (
+                ts - self._last_alert_ts.get(cam, -float("inf"))
+                >= self.alert_cooldown_seconds
+            )
+            violation_label = tot.last_violation["label"] if tot.last_violation else None
+
+            raw_prob = msg.get("unsafe_prob")
             alert: Optional[Dict[str, Any]] = None
-            if (
-                roll_total >= self.min_window_obs
-                and roll_ratio >= self.ratio_alert
-                and ts - self._last_alert_ts.get(cam, -float("inf")) >= self.alert_cooldown_seconds
-            ):
-                alert = {
-                    "camera_id": cam,
-                    "timestamp": ts,
-                    "rolling_unsafe": roll_unsafe,
-                    "rolling_total": roll_total,
-                    "rolling_ratio": roll_ratio,
-                    "severity": "HIGH" if roll_ratio >= self.high_ratio else "WARN",
-                    "violation_label": tot.last_violation["label"] if tot.last_violation else None,
-                }
+
+            if self.use_prob and raw_prob is not None:
+                # --- Confidence-aware EWMA + hysteresis path ------------------
+                # Smooth the per-frame unsafe probability with a time-decayed
+                # EWMA, then fire on a rising edge (sustained >= enter_threshold
+                # for min_dwell obs) and clear below exit_threshold. This emits
+                # one alert per unsafe *episode* instead of per noisy frame.
+                prob = float(raw_prob)
+                prev = self._ewma.get(cam)
+                if prev is None:
+                    score = prob
+                else:
+                    dt = max(0.0, ts - self._ewma_ts.get(cam, ts))
+                    decay = (
+                        0.5 ** (dt / self.ewma_halflife)
+                        if self.ewma_halflife > 0 else 0.0
+                    )
+                    score = decay * prev + (1.0 - decay) * prob
+                self._ewma[cam] = score
+                self._ewma_ts[cam] = ts
+
+                if not self._in_alert.get(cam, False):
+                    if score >= self.enter_threshold:
+                        self._dwell[cam] = self._dwell.get(cam, 0) + 1
+                    else:
+                        self._dwell[cam] = 0
+                    if self._dwell.get(cam, 0) >= self.min_dwell and cooldown_ok:
+                        self._in_alert[cam] = True
+                        alert = {
+                            "camera_id": cam,
+                            "timestamp": ts,
+                            "rolling_unsafe": roll_unsafe,
+                            "rolling_total": roll_total,
+                            "rolling_ratio": roll_ratio,
+                            "smoothed_score": score,
+                            "severity": "HIGH" if score >= self.high_ratio else "WARN",
+                            "violation_label": violation_label,
+                        }
+                elif score < self.exit_threshold:
+                    # Recovered: arm the next episode.
+                    self._in_alert[cam] = False
+                    self._dwell[cam] = 0
+            else:
+                # --- Legacy count-ratio path (unchanged behaviour) -----------
+                if (
+                    roll_total >= self.min_window_obs
+                    and roll_ratio >= self.ratio_alert
+                    and cooldown_ok
+                ):
+                    alert = {
+                        "camera_id": cam,
+                        "timestamp": ts,
+                        "rolling_unsafe": roll_unsafe,
+                        "rolling_total": roll_total,
+                        "rolling_ratio": roll_ratio,
+                        "severity": "HIGH" if roll_ratio >= self.high_ratio else "WARN",
+                        "violation_label": violation_label,
+                    }
+
+            if alert is not None:
                 self._alerts.append(alert)
+                self._alerts_emitted += 1
                 self._last_alert_ts[cam] = ts
 
             return snap, alert
@@ -192,7 +267,20 @@ class SafetyAggregator:
             # 3. Trend Chart data, last 60 detection events
             out["_trend_chart"] = list(self._history)[-60:]
 
+            # 4. Lifetime count of alerts emitted across all cameras
+            out["_alerts_emitted"] = self._alerts_emitted
+
             return out
+
+    def record_external_alert(self, alert: Dict[str, Any]) -> None:
+        """Append an alert produced outside the normal window logic.
+
+        Used by the dashboard's naive (AGG_ENABLED=false) demo mode so per-frame
+        alerts still surface in the UI's alert feed / history.
+        """
+        with self._lock:
+            self._alerts.append(alert)
+            self._alerts_emitted += 1
 
     def recent_alerts(self, limit: int = 25) -> List[Dict[str, Any]]:
         with self._lock:

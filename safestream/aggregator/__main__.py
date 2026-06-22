@@ -51,6 +51,11 @@ def run() -> int:
         unsafe_ratio_alert=s.agg_unsafe_ratio_alert,
         min_window_obs=s.agg_min_window_obs,
         alert_cooldown_seconds=s.agg_alert_cooldown_seconds,
+        use_prob=s.agg_use_prob,
+        ewma_halflife=s.agg_ewma_halflife,
+        enter_threshold=s.agg_enter_threshold,
+        exit_threshold=s.agg_exit_threshold,
+        min_dwell=s.agg_min_dwell,
     )
 
     consumer = make_consumer("safestream-aggregator")
@@ -101,7 +106,7 @@ def run() -> int:
                     "Aggregated %d records | per-camera: %s",
                     n,
                     {c: f"safe={v['cumulative_safe']} unsafe={v['cumulative_unsafe']}"
-                     for c, v in shot.items()},
+                     for c, v in shot.items() if not c.startswith("_")},
                 )
                 last_log = time.time()
     finally:

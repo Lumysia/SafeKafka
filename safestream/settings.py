@@ -51,6 +51,13 @@ class Settings:
     detector_weights: str = os.environ.get("DETECTOR_WEIGHTS", "yolov8m.pt")
     detector_device: str = os.environ.get("DETECTOR_DEVICE", "auto")
     detector_conf: float = float(os.environ.get("DETECTOR_CONF", "0.25"))
+    # frame  -> per-frame YOLOv8 classifier (legacy default)
+    # temporal -> sliding-window temporal model emitting a calibrated unsafe_prob
+    detector_mode: str = os.environ.get("DETECTOR_MODE", "frame")
+    temporal_weights: str = os.environ.get(
+        "TEMPORAL_WEIGHTS", "runs/temporal/best.pt"
+    )
+    temporal_window: int = int(os.environ.get("TEMPORAL_WINDOW", "16"))
 
     # Aggregator
     agg_window_seconds: float = float(os.environ.get("AGG_WINDOW_SECONDS", "60"))
@@ -59,8 +66,21 @@ class Settings:
     )
     agg_min_window_obs: int = int(os.environ.get("AGG_MIN_WINDOW_OBS", "5"))
     agg_alert_cooldown_seconds: float = float(
-        os.environ.get("AGG_ALERT_COOLDOWN_SECONDS", "5")
+        os.environ.get("AGG_ALERT_COOLDOWN_SECONDS", "0")
     )
+    # Confidence-aware smoothing for the alert decision (used when detections
+    # carry a continuous `unsafe_prob`, i.e. the temporal detector). EWMA has a
+    # time half-life; hysteresis enters ALERT at enter_threshold (held min_dwell
+    # observations) and clears below exit_threshold to stop alert flapping.
+    agg_use_prob: bool = _bool("AGG_USE_PROB", True)
+    agg_ewma_halflife: float = float(os.environ.get("AGG_EWMA_HALFLIFE", "10"))
+    agg_enter_threshold: float = float(os.environ.get("AGG_ENTER_THRESHOLD", "0.5"))
+    agg_exit_threshold: float = float(os.environ.get("AGG_EXIT_THRESHOLD", "0.30"))
+    agg_min_dwell: int = int(os.environ.get("AGG_MIN_DWELL", "3"))
+    # Demo toggle: when false the dashboard bypasses the rolling-window/threshold/
+    # cooldown logic and fires one naive alert per unsafe frame, so you can see the
+    # alert noise the aggregator normally suppresses.
+    agg_enabled: bool = _bool("AGG_ENABLED", True)
 
     # Dashboard
     dashboard_host: str = os.environ.get("DASHBOARD_HOST", "127.0.0.1")
@@ -77,6 +97,7 @@ class Settings:
             f"detector_device     = {self.detector_device}",
             f"agg_window_seconds  = {self.agg_window_seconds}",
             f"agg_unsafe_ratio    = {self.agg_unsafe_ratio_alert}",
+            f"agg_enabled         = {self.agg_enabled}",
         ]
         return "\n".join(lines)
 

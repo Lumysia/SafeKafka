@@ -1,0 +1,19 @@
+{
+  "note": "Temporal model runs\\ablation_swin3d\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "swin3d",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.8048003954834956,
+  "macro_ap_8class": 0.6746438900584899,
+  "precision": 0.5673076923076923,
+  "recall": 0.921875,
+  "f1": 0.7023809523809524,
+  "accuracy": 0.6,
+  "top1_accuracy_8class": 0.48,
+  "confusion": {
+    "tp": 59,
+    "fp": 45,
+    "fn": 5,
+    "tn": 16
+  },
+  "clips": 125
+}

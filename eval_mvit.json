@@ -1,0 +1,19 @@
+{
+  "note": "Temporal model runs\\ablation_mvit\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "mvit",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.7954773410414144,
+  "macro_ap_8class": 0.6563506747817791,
+  "precision": 0.5470085470085471,
+  "recall": 1.0,
+  "f1": 0.707182320441989,
+  "accuracy": 0.576,
+  "top1_accuracy_8class": 0.488,
+  "confusion": {
+    "tp": 64,
+    "fp": 53,
+    "fn": 0,
+    "tn": 8
+  },
+  "clips": 125
+}

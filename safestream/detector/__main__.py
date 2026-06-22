@@ -40,6 +40,14 @@ def parse_args() -> argparse.Namespace:
                    help="auto | mps | cuda | cpu")
     p.add_argument("--conf", type=float, default=s.detector_conf)
     p.add_argument("--group-id", default="safestream-detector")
+    p.add_argument("--mode", default=s.detector_mode,
+                   choices=["frame", "temporal"],
+                   help="frame = per-frame YOLOv8 classifier; "
+                        "temporal = sliding-window temporal model (unsafe_prob)")
+    p.add_argument("--temporal-weights", default=s.temporal_weights,
+                   help="Temporal model checkpoint (used when --mode temporal)")
+    p.add_argument("--temporal-window", type=int, default=s.temporal_window,
+                   help="Sliding window length (defaults to the checkpoint's)")
     return p.parse_args()
 
 
@@ -67,17 +75,25 @@ def run() -> int:
     _install_signal_handlers()
 
     device = detect_device(args.device)
-    logger.info("YOLO device: %s", device)
+    logger.info("Detector mode=%s device=%s", args.mode, device)
 
-    # Import lazily so the producer/aggregator services don't pay torch import cost
-    from ultralytics import YOLO
-
-    logger.info("Loading YOLO weights: %s", args.weights)
-    model = YOLO(args.weights)
-    try:
-        model.to(device)
-    except Exception as e:
-        logger.warning("model.to(%s) failed: %s -- falling back to default", device, e)
+    model = None
+    temporal = None
+    if args.mode == "temporal":
+        from safestream.detector.temporal import TemporalInfer
+        logger.info("Loading temporal model: %s", args.temporal_weights)
+        temporal = TemporalInfer(
+            args.temporal_weights, device=device, window=args.temporal_window
+        )
+    else:
+        # Import lazily so the producer/aggregator services don't pay torch import cost
+        from ultralytics import YOLO
+        logger.info("Loading YOLO weights: %s", args.weights)
+        model = YOLO(args.weights)
+        try:
+            model.to(device)
+        except Exception as e:
+            logger.warning("model.to(%s) failed: %s -- falling back to default", device, e)
 
     consumer = make_consumer(args.group_id)
     producer = make_producer()
@@ -112,9 +128,51 @@ def run() -> int:
                 continue
 
             # Inference
-            preds = model(frame, conf=args.conf, verbose=False)
             detections: List[Dict[str, Any]] = []
             safe_c = unsafe_c = 0
+            unsafe_prob = None
+
+            if temporal is not None:
+                # Temporal mode: sliding-window model -> calibrated unsafe_prob.
+                label, cat, conf, unsafe_prob = temporal.infer(
+                    str(payload.get("camera_id")), frame
+                )
+                if cat == "safe":
+                    safe_c += 1
+                elif cat == "unsafe":
+                    unsafe_c += 1
+                detections.append(
+                    {"label": label, "category": cat, "conf": conf,
+                     "unsafe_prob": unsafe_prob}
+                )
+                out = {
+                    "camera_id": payload.get("camera_id"),
+                    "frame_id": payload.get("frame_id"),
+                    "source": payload.get("source"),
+                    "timestamp": payload.get("timestamp", time.time()),
+                    "detections": detections,
+                    "safe_count": safe_c,
+                    "unsafe_count": unsafe_c,
+                    "total_detections": len(detections),
+                    "unsafe_prob": unsafe_prob,
+                }
+                producer.produce(
+                    s.topic_detections,
+                    key=str(payload.get("camera_id")),
+                    value=json.dumps(out),
+                    on_delivery=_delivery_report,
+                )
+                producer.poll(0)
+                n += 1
+                if time.time() - last_log > 5.0:
+                    logger.info(
+                        "Processed %d frames (last: cam=%s unsafe_prob=%.2f)",
+                        n, payload.get("camera_id"), unsafe_prob,
+                    )
+                    last_log = time.time()
+                continue
+
+            preds = model(frame, conf=args.conf, verbose=False)
 
             probs = getattr(preds[0], "probs", None) if preds else None
             if probs is not None:

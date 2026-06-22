@@ -247,7 +247,7 @@ def main() -> int:
     print("Then use the trained weights with the detector:")
     print()
     print('  python -m safestream.detector \\')
-    print('      --weights runs/classify/runs/safestream_yolov8m/weights/best.pt')
+    print('      --weights runs/safestream_yolov8m/weights/best.pt')
     print("=" * 72)
     return 0
 
