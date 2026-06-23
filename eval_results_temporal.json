@@ -1,0 +1,19 @@
+{
+  "note": "Temporal model runs/temporal/best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "head",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.897647549357606,
+  "macro_ap_8class": 0.6764141662386035,
+  "precision": 0.6883116883116883,
+  "recall": 0.828125,
+  "f1": 0.7517730496453902,
+  "accuracy": 0.72,
+  "top1_accuracy_8class": 0.528,
+  "confusion": {
+    "tp": 53,
+    "fp": 24,
+    "fn": 11,
+    "tn": 37
+  },
+  "clips": 125
+}

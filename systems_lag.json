@@ -1,0 +1,22 @@
+{
+  "broker": "Confluent Cloud (SASL_SSL)",
+  "topic_partitions": {"cctv-frames": 3, "safety-detections": 3},
+  "steady_state_4fps": {
+    "safestream-detector/cctv-frames": 0,
+    "safestream-dashboard/safety-detections": 0
+  },
+  "after_946_frame_burst": {
+    "safestream-detector/cctv-frames": 0,
+    "note": "detector absorbed and drained the burst back to zero lag"
+  },
+  "idle_unconsumed_group_growth": {
+    "group": "safestream-aggregator/safety-detections",
+    "samples_over_session": [159, 719],
+    "note": "standalone aggregator not running; its committed offset is static so backlog accumulates in the broker, bounded by topic retention -- the buffering that absorbs backpressure"
+  },
+  "producer_upload_ceiling_observed": {
+    "approx_MBps": 10.6,
+    "approx_fps_at_356KB_frame": 30,
+    "note": "on this link the fat base64 frame upload, not detector inference, was the first bottleneck under a flat-out burst"
+  }
+}

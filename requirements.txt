@@ -2,10 +2,22 @@
 confluent-kafka>=2.4.0
 python-dotenv>=1.0.0
 
-# Vision / inference (Apple Silicon: torch ships MPS support out of the box on macOS)
+# Vision / inference
+# torch/torchvision are pinned to CUDA 13.0 wheels for NVIDIA GPU training on this
+# Windows machine (RTX 3060 Ti). The --extra-index-url points pip at PyTorch's CUDA
+# index; PyPI is still used for everything else.
+#   * Apple Silicon / macOS: drop the "+cu130" suffix and the --extra-index-url line
+#     (the default macOS wheels ship MPS support).
+#   * CPU-only / no NVIDIA GPU: same — remove "+cu130" and the --extra-index-url line.
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.12.1+cu130
+torchvision==0.27.1+cu130
 ultralytics>=8.2.0
 opencv-python>=4.9.0
 numpy>=1.26.0
+scikit-learn>=1.4.0
+# Hiera-B (K400) backbone for the temporal ablation; pure-PyTorch, imports as `hiera`.
+hiera-transformer>=0.1.4
 Pillow>=10.0.0
 
 # Dashboard

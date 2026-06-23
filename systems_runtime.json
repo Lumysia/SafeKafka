@@ -1,0 +1,15 @@
+{
+  "broker": "Confluent Cloud (SASL_SSL)",
+  "detector_mode": "frame (per-frame YOLOv8 classifier, previous_weights/best.pt)",
+  "detector_device": "cuda",
+  "producer_fps": 4,
+  "frames_streamed": 560,
+  "end_to_end_latency_seconds": {
+    "mean_60s": 0.198283309218275,
+    "max_60s": 0.3791790008544922,
+    "span": "producer publish timestamp -> cctv-frames (Confluent) -> detector consume+infer+publish -> safety-detections (Confluent) -> dashboard ingest"
+  },
+  "throughput_fps_60s": 3.9833333333333334,
+  "latest_detection_age_s": 0.12,
+  "note": "Dashboard ~1 Hz WebSocket refresh adds up to ~1 s display latency on top of ingest, reported separately."
+}

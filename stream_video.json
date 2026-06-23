@@ -1,0 +1,183 @@
+{
+  "clips_scored": 125,
+  "fps": 4.0,
+  "results": [
+    {
+      "aggregator": "naive",
+      "alert_precision": 0.5625,
+      "alert_recall": 0.984375,
+      "false_alert_rate": 0.8032786885245902,
+      "mean_detection_latency_frames": 4.619047619047619,
+      "confusion_clips": {
+        "tp": 63,
+        "fp": 49,
+        "fn": 1
+      }
+    },
+    {
+      "aggregator": "smart",
+      "alert_precision": 0.5784313725490197,
+      "alert_recall": 0.921875,
+      "false_alert_rate": 0.7049180327868853,
+      "mean_detection_latency_frames": 3,
+      "confusion_clips": {
+        "tp": 59,
+        "fp": 43,
+        "fn": 5
+      }
+    }
+  ],
+  "calibration": {
+    "calibrate_split": "val",
+    "objective": "target-recall",
+    "target_recall": 0.95,
+    "exit_ratio": 0.6,
+    "chosen": {
+      "enter_threshold": 0.65,
+      "exit_threshold": 0.39
+    },
+    "val_operating_point": {
+      "enter_threshold": 0.65,
+      "exit_threshold": 0.39,
+      "alert_recall": 0.9545454545454546,
+      "false_alert_rate": 0.8095238095238095,
+      "alert_precision": 0.8316831683168316
+    },
+    "fallback_used": false,
+    "sweep": [
+      {
+        "enter_threshold": 0.05,
+        "exit_threshold": 0.03,
+        "alert_recall": 1.0,
+        "false_alert_rate": 1.0,
+        "alert_precision": 0.8073394495412844
+      },
+      {
+        "enter_threshold": 0.1,
+        "exit_threshold": 0.06,
+        "alert_recall": 1.0,
+        "false_alert_rate": 1.0,
+        "alert_precision": 0.8073394495412844
+      },
+      {
+        "enter_threshold": 0.15,
+        "exit_threshold": 0.09,
+        "alert_recall": 1.0,
+        "false_alert_rate": 1.0,
+        "alert_precision": 0.8073394495412844
+      },
+      {
+        "enter_threshold": 0.2,
+        "exit_threshold": 0.12,
+        "alert_recall": 1.0,
+        "false_alert_rate": 1.0,
+        "alert_precision": 0.8073394495412844
+      },
+      {
+        "enter_threshold": 0.25,
+        "exit_threshold": 0.15,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.9523809523809523,
+        "alert_precision": 0.8148148148148148
+      },
+      {
+        "enter_threshold": 0.3,
+        "exit_threshold": 0.18,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.9523809523809523,
+        "alert_precision": 0.8148148148148148
+      },
+      {
+        "enter_threshold": 0.35,
+        "exit_threshold": 0.21,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.9047619047619048,
+        "alert_precision": 0.822429906542056
+      },
+      {
+        "enter_threshold": 0.4,
+        "exit_threshold": 0.24,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.9047619047619048,
+        "alert_precision": 0.822429906542056
+      },
+      {
+        "enter_threshold": 0.45,
+        "exit_threshold": 0.27,
+        "alert_recall": 1.0,
+        "false_alert_rate": 0.9047619047619048,
+        "alert_precision": 0.822429906542056
+      },
+      {
+        "enter_threshold": 0.5,
+        "exit_threshold": 0.3,
+        "alert_recall": 0.9772727272727273,
+        "false_alert_rate": 0.9047619047619048,
+        "alert_precision": 0.819047619047619
+      },
+      {
+        "enter_threshold": 0.55,
+        "exit_threshold": 0.33,
+        "alert_recall": 0.9659090909090909,
+        "false_alert_rate": 0.9047619047619048,
+        "alert_precision": 0.8173076923076923
+      },
+      {
+        "enter_threshold": 0.6,
+        "exit_threshold": 0.36,
+        "alert_recall": 0.9659090909090909,
+        "false_alert_rate": 0.8571428571428571,
+        "alert_precision": 0.8252427184466019
+      },
+      {
+        "enter_threshold": 0.65,
+        "exit_threshold": 0.39,
+        "alert_recall": 0.9545454545454546,
+        "false_alert_rate": 0.8095238095238095,
+        "alert_precision": 0.8316831683168316
+      },
+      {
+        "enter_threshold": 0.7,
+        "exit_threshold": 0.42,
+        "alert_recall": 0.9431818181818182,
+        "false_alert_rate": 0.8095238095238095,
+        "alert_precision": 0.83
+      },
+      {
+        "enter_threshold": 0.75,
+        "exit_threshold": 0.44999999999999996,
+        "alert_recall": 0.9431818181818182,
+        "false_alert_rate": 0.7619047619047619,
+        "alert_precision": 0.8383838383838383
+      },
+      {
+        "enter_threshold": 0.8,
+        "exit_threshold": 0.48,
+        "alert_recall": 0.9204545454545454,
+        "false_alert_rate": 0.7619047619047619,
+        "alert_precision": 0.8350515463917526
+      },
+      {
+        "enter_threshold": 0.85,
+        "exit_threshold": 0.51,
+        "alert_recall": 0.875,
+        "false_alert_rate": 0.7142857142857143,
+        "alert_precision": 0.8369565217391305
+      },
+      {
+        "enter_threshold": 0.9,
+        "exit_threshold": 0.54,
+        "alert_recall": 0.8636363636363636,
+        "false_alert_rate": 0.5714285714285714,
+        "alert_precision": 0.8636363636363636
+      },
+      {
+        "enter_threshold": 0.95,
+        "exit_threshold": 0.57,
+        "alert_recall": 0.5909090909090909,
+        "false_alert_rate": 0.5238095238095238,
+        "alert_precision": 0.8253968253968254
+      }
+    ]
+  }
+}

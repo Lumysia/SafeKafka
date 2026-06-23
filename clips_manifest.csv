@@ -1,0 +1,692 @@
+video_path,label,split
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te1.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te10.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te11.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te12.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te13.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te14.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te15.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te16.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te17.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te18.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te19.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te2.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te20.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te21.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te22.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te23.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te24.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te25.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te26.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te27.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te28.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te29.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te3.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te30.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te31.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te32.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te4.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te5.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te6.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te7.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te8.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te9.mp4,0_safe_walkway_violation,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te1.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te10.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te11.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te2.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te3.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te4.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te5.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te6.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te7.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te8.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te9.mp4,1_unauthorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te1.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te10.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te11.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te12.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te13.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te2.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te3.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te4.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te5.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te6.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te7.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te8.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te9.mp4,2_opened_panel cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te1.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te2.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te3.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te4.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te5.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te6.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te7.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te8.mp4,3_carrying_overload_with_forklift,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te1.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te10.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te11.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te12.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te13.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te14.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te15.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te16.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te17.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te18.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te19.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te2.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te20.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te21.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te22.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te23.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te24.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te25.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te3.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te4.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te5.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te6.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te7.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te8.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te9.mp4,4_safe_walkway,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te1.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te10.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te11.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te12.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te13.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te14.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te15.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te2.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te3.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te4.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te5.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te6.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te7.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te8.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te9.mp4,5_authorized_intervention,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te1.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te10.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te11.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te12.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te13.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te2.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te3.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te4.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te5.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te6.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te7.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te8.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te9.mp4,6_closed_panel_cover,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te1.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te2.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te3.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te4.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te5.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te6.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te7.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te8.mp4,7_safe_carrying,test
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr73.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr131.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr112.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr153.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr110.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr69.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr157.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr32.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr33.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr116.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr67.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr137.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr121.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr100.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr42.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr6.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr165.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr81.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr90.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr147.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr54.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr77.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr139.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr126.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr146.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr154.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr62.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr65.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr53.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr95.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr3.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr94.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr96.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr47.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr57.mp4,0_safe_walkway_violation,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr24.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr170.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr158.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr1.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr40.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr113.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr159.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr174.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr82.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr43.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr63.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr29.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr133.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr166.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr138.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr168.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr46.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr83.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr28.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr5.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr80.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr101.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr52.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr50.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr60.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr128.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr17.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr111.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr45.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr171.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr148.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr161.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr23.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr114.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr129.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr115.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr4.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr8.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr156.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr48.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr61.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr164.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr123.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr51.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr30.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr145.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr72.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr102.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr59.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr87.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr136.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr98.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr7.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr79.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr31.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr76.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr84.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr71.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr58.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr22.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr160.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr118.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr39.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr169.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr107.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr173.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr70.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr19.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr13.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr176.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr66.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr14.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr141.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr56.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr140.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr34.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr172.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr151.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr93.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr142.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr11.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr38.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr49.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr37.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr108.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr132.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr27.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr125.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr175.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr103.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr88.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr2.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr143.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr21.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr167.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr117.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr25.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr127.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr44.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr109.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr16.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr18.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr20.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr120.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr26.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr99.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr92.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr177.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr85.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr134.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr9.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr178.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr89.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr135.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr10.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr163.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr74.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr41.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr15.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr35.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr91.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr144.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr68.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr97.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr78.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr55.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr152.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr149.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr12.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr105.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr106.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr36.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr75.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr119.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr64.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr122.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr130.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr150.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr155.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr162.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr104.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr124.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\0_safe_walkway_violation\0_tr86.mp4,0_safe_walkway_violation,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr88.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr77.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr63.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr9.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr51.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr14.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr93.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr18.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr2.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr53.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr83.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr27.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr47.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr6.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr55.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr58.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr74.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr26.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr96.mp4,1_unauthorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr16.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr31.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr94.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr44.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr67.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr62.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr57.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr28.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr82.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr10.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr30.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr85.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr68.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr79.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr41.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr3.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr81.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr43.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr15.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr20.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr33.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr54.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr78.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr97.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr5.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr42.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr84.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr40.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr21.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr80.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr48.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr25.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr87.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr39.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr76.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr89.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr69.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr65.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr22.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr12.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr46.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr50.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr13.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr1.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr91.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr36.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr11.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr49.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr92.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr35.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr38.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr23.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr61.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr7.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr60.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr52.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr56.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr45.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr32.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr72.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr34.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr59.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr8.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr70.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr4.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr29.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr73.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr64.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr86.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr90.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr24.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr71.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr17.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr66.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr95.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr19.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr75.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\1_unauthorized_intervention\1_tr37.mp4,1_unauthorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr121.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr111.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr34.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr49.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr74.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr100.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr25.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr109.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr11.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr23.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr10.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr52.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr21.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr6.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr37.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr90.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr3.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr17.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr64.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr24.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr107.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr72.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr79.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr114.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr46.mp4,2_opened_panel cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr61.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr101.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr22.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr81.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr8.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr78.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr4.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr14.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr94.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr62.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr36.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr33.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr124.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr50.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr115.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr57.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr55.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr88.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr119.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr76.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr113.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr128.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr110.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr13.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr32.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr98.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr83.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr18.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr84.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr89.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr102.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr9.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr60.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr125.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr75.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr2.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr99.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr54.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr28.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr44.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr53.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr69.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr122.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr92.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr80.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr42.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr30.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr58.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr103.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr127.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr48.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr112.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr93.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr126.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr56.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr51.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr106.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr12.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr108.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr41.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr66.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr117.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr43.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr40.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr96.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr70.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr104.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr7.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr19.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr71.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr45.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr68.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr5.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr91.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr95.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr16.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr120.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr116.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr97.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr65.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr59.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr47.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr85.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr67.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr63.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr31.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr15.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr35.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr86.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr73.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr129.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr27.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr1.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr26.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr118.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr105.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr87.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr29.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr82.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr123.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr38.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr39.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr77.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\2_opened_panel cover\2_tr20.mp4,2_opened_panel cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr24.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr23.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr42.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr4.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr33.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr28.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr19.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr14.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr38.mp4,3_carrying_overload_with_forklift,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr5.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr31.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr22.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr20.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr39.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr26.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr3.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr47.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr21.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr25.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr36.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr12.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr43.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr48.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr29.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr15.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr37.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr10.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr45.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr32.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr35.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr2.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr27.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr44.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr17.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr8.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr46.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr6.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr30.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr11.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr40.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr18.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr13.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr16.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr1.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr9.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr34.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr7.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\3_carrying_overload_with_forklift\3_tr41.mp4,3_carrying_overload_with_forklift,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr23.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr8.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr35.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr44.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr16.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr24.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr30.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr5.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr40.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr48.mp4,4_safe_walkway,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr46.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr15.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr28.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr7.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr18.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr39.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr34.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr2.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr21.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr38.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr45.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr9.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr26.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr14.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr17.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr12.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr1.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr19.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr4.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr33.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr42.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr43.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr49.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr41.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr13.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr25.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr29.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr32.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr50.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr10.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr47.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr6.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr27.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr3.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr36.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr20.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr22.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr37.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr11.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\4_safe_walkway\4_tr31.mp4,4_safe_walkway,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr1.mp4,5_authorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr22.mp4,5_authorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr23.mp4,5_authorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr10.mp4,5_authorized_intervention,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr2.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr20.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr16.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr4.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr9.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr17.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr13.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr21.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr14.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr15.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr5.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr3.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr18.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr12.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr7.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr6.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr19.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr8.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\5_authorized_intervention\5_tr11.mp4,5_authorized_intervention,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr5.mp4,6_closed_panel_cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr7.mp4,6_closed_panel_cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr11.mp4,6_closed_panel_cover,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr9.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr10.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr19.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr4.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr17.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr16.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr14.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr2.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr6.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr15.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr12.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr13.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr18.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr1.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr8.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\6_closed_panel_cover\6_tr3.mp4,6_closed_panel_cover,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr22.mp4,7_safe_carrying,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr14.mp4,7_safe_carrying,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr10.mp4,7_safe_carrying,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr15.mp4,7_safe_carrying,val
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr17.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr21.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr3.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr2.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr7.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr1.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr6.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr20.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr12.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr13.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr5.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr16.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr8.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr19.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr4.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr18.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr11.mp4,7_safe_carrying,train
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\train\7_safe_carrying\7_tr9.mp4,7_safe_carrying,train

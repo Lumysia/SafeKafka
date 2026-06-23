@@ -1,0 +1,612 @@
+Ablation: models=['head', 'mvit', 'hiera'] epochs=2 data=clips_manifest.csv device=auto smoke=True
+
+========================================================================
+head
+========================================================================
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.train_temporal --model head --name ablation_head --window 16 --epochs 2 --data clips_manifest.csv --device auto
+Training kind=head device=cuda imgsz=224 window=16
+Classes (8): ['0_safe_walkway_violation', '1_unauthorized_intervention', '2_opened_panel_cover', '3_carrying_overload_with_forklift', '4_safe_walkway', '5_authorized_intervention', '6_closed_panel_cover', '7_safe_carrying']
+Unsafe class indices: [0, 1, 2, 3]
+epoch   1  train_loss=1.496 acc=0.452  val_loss=1.181 acc=0.606  <- best
+epoch   2  train_loss=1.152 acc=0.577  val_loss=1.137 acc=0.596
+
+Done. Best val acc=0.606. Weights: runs\ablation_head\best.pt
+Evaluate: python -m scripts.evaluate_temporal --weights runs\ablation_head\best.pt --data clips_manifest.csv
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_temporal --weights runs\ablation_head\best.pt --data clips_manifest.csv --out eval_head.json --device auto
+INFO    Loaded runs\ablation_head\best.pt (kind=head, 8 classes) on cuda
+{
+  "note": "Temporal model runs\\ablation_head\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "head",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.8334262593968729,
+  "macro_ap_8class": 0.5862735854771364,
+  "precision": 0.512,
+  "recall": 1.0,
+  "f1": 0.6772486772486772,
+  "accuracy": 0.512,
+  "top1_accuracy_8class": 0.416,
+  "confusion": {
+    "tp": 64,
+    "fp": 61,
+    "fn": 0,
+    "tn": 0
+  },
+  "clips": 125
+}
+
+Wrote eval_head.json
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_streaming --weights runs\ablation_head\best.pt --data clips_manifest.csv --out stream_head.json --device auto
+[1/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[2/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[3/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[4/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[5/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[6/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te14.mp4  truth=UNSAFE  naive@4  smart@2
+[7/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te15.mp4  truth=UNSAFE  naive@4  smart@2
+[8/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te16.mp4  truth=UNSAFE  naive@4  smart@2
+[9/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te17.mp4  truth=UNSAFE  naive@4  smart@2
+[10/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te18.mp4  truth=UNSAFE  naive@4  smart@2
+[11/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te19.mp4  truth=UNSAFE  naive@4  smart@2
+[12/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[13/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te20.mp4  truth=UNSAFE  naive@4  smart@2
+[14/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te21.mp4  truth=UNSAFE  naive@4  smart@2
+[15/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te22.mp4  truth=UNSAFE  naive@4  smart@2
+[16/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te23.mp4  truth=UNSAFE  naive@4  smart@2
+[17/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te24.mp4  truth=UNSAFE  naive@4  smart@2
+[18/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te25.mp4  truth=UNSAFE  naive@4  smart@2
+[19/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te26.mp4  truth=UNSAFE  naive@4  smart@2
+[20/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te27.mp4  truth=UNSAFE  naive@4  smart@2
+[21/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te28.mp4  truth=UNSAFE  naive@4  smart@2
+[22/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te29.mp4  truth=UNSAFE  naive@4  smart@2
+[23/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[24/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te30.mp4  truth=UNSAFE  naive@4  smart@2
+[25/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te31.mp4  truth=UNSAFE  naive@4  smart@2
+[26/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te32.mp4  truth=UNSAFE  naive@4  smart@2
+[27/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[28/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[29/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[30/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[31/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[32/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[33/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[34/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[35/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[36/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[37/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[38/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[39/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[40/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[41/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[42/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[43/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[44/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[45/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[46/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[47/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[48/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[49/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[50/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[51/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[52/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[53/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[54/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[55/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[56/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[57/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[58/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[59/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[60/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[61/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[62/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[63/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[64/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[65/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te1.mp4  truth=safe  naive@4  smart@2
+[66/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te10.mp4  truth=safe  naive@4  smart@2
+[67/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te11.mp4  truth=safe  naive@4  smart@2
+[68/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te12.mp4  truth=safe  naive@4  smart@2
+[69/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te13.mp4  truth=safe  naive@4  smart@2
+[70/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te14.mp4  truth=safe  naive@4  smart@2
+[71/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te15.mp4  truth=safe  naive@4  smart@2
+[72/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te16.mp4  truth=safe  naive@4  smart@2
+[73/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te17.mp4  truth=safe  naive@4  smart@2
+[74/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te18.mp4  truth=safe  naive@4  smart@2
+[75/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te19.mp4  truth=safe  naive@4  smart@2
+[76/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te2.mp4  truth=safe  naive@4  smart@2
+[77/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te20.mp4  truth=safe  naive@4  smart@2
+[78/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te21.mp4  truth=safe  naive@4  smart@2
+[79/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te22.mp4  truth=safe  naive@4  smart@2
+[80/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te23.mp4  truth=safe  naive@4  smart@2
+[81/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te24.mp4  truth=safe  naive@4  smart@2
+[82/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te25.mp4  truth=safe  naive@4  smart@2
+[83/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te3.mp4  truth=safe  naive@4  smart@2
+[84/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te4.mp4  truth=safe  naive@4  smart@2
+[85/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te5.mp4  truth=safe  naive@4  smart@2
+[86/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te6.mp4  truth=safe  naive@4  smart@2
+[87/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te7.mp4  truth=safe  naive@4  smart@2
+[88/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te8.mp4  truth=safe  naive@4  smart@2
+[89/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te9.mp4  truth=safe  naive@4  smart@2
+[90/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te1.mp4  truth=safe  naive@4  smart@2
+[91/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te10.mp4  truth=safe  naive@4  smart@2
+[92/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te11.mp4  truth=safe  naive@4  smart@2
+[93/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te12.mp4  truth=safe  naive@4  smart@2
+[94/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te13.mp4  truth=safe  naive@4  smart@2
+[95/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te14.mp4  truth=safe  naive@4  smart@2
+[96/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te15.mp4  truth=safe  naive@4  smart@2
+[97/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te2.mp4  truth=safe  naive@4  smart@2
+[98/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te3.mp4  truth=safe  naive@4  smart@2
+[99/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te4.mp4  truth=safe  naive@4  smart@2
+[100/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te5.mp4  truth=safe  naive@4  smart@2
+[101/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te6.mp4  truth=safe  naive@4  smart@2
+[102/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te7.mp4  truth=safe  naive@4  smart@2
+[103/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te8.mp4  truth=safe  naive@4  smart@2
+[104/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te9.mp4  truth=safe  naive@4  smart@2
+[105/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te1.mp4  truth=safe  naive@4  smart@2
+[106/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te10.mp4  truth=safe  naive@4  smart@2
+[107/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te11.mp4  truth=safe  naive@4  smart@2
+[108/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te12.mp4  truth=safe  naive@4  smart@2
+[109/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te13.mp4  truth=safe  naive@4  smart@2
+[110/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te2.mp4  truth=safe  naive@4  smart@2
+[111/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te3.mp4  truth=safe  naive@4  smart@2
+[112/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te4.mp4  truth=safe  naive@4  smart@2
+[113/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te5.mp4  truth=safe  naive@4  smart@2
+[114/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te6.mp4  truth=safe  naive@4  smart@2
+[115/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te7.mp4  truth=safe  naive@4  smart@2
+[116/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te8.mp4  truth=safe  naive@4  smart@2
+[117/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te9.mp4  truth=safe  naive@4  smart@2
+[118/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te1.mp4  truth=safe  naive@4  smart@2
+[119/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te2.mp4  truth=safe  naive@4  smart@2
+[120/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te3.mp4  truth=safe  naive@4  smart@2
+[121/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te4.mp4  truth=safe  naive@4  smart@2
+[122/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te5.mp4  truth=safe  naive@4  smart@2
+[123/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te6.mp4  truth=safe  naive@4  smart@2
+[124/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te7.mp4  truth=safe  naive@4  smart@2
+[125/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te8.mp4  truth=safe  naive@4  smart@2
+
+[
+  {
+    "aggregator": "naive",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 4,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  },
+  {
+    "aggregator": "smart",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 2,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  }
+]
+
+Wrote stream_head.json
+
+========================================================================
+mvit
+========================================================================
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.train_temporal --model mvit --name ablation_mvit --window 16 --epochs 2 --data clips_manifest.csv --device auto
+Training kind=mvit device=cuda imgsz=224 window=16
+Classes (8): ['0_safe_walkway_violation', '1_unauthorized_intervention', '2_opened_panel_cover', '3_carrying_overload_with_forklift', '4_safe_walkway', '5_authorized_intervention', '6_closed_panel_cover', '7_safe_carrying']
+Unsafe class indices: [0, 1, 2, 3]
+Downloading: "https://download.pytorch.org/models/mvit_v2_s-ae3be167.pth" to C:\Users\Isabella/.cache\torch\hub\checkpoints\mvit_v2_s-ae3be167.pth
+  0%|          | 0.00/132M [00:00<?, ?B/s]  1%|          | 1.00M/132M [00:00<00:13, 10.2MB/s]  2%|1         | 2.12M/132M [00:00<00:12, 11.0MB/s]  2%|2         | 3.25M/132M [00:00<00:12, 11.2MB/s]  3%|3         | 4.38M/132M [00:00<00:11, 11.3MB/s]  4%|4         | 5.50M/132M [00:00<00:11, 11.4MB/s]  5%|5         | 6.62M/132M [00:00<00:11, 11.4MB/s]  6%|5         | 7.75M/132M [00:00<00:11, 11.4MB/s]  7%|6         | 8.88M/132M [00:00<00:11, 11.4MB/s]  8%|7         | 10.0M/132M [00:00<00:11, 11.4MB/s]  8%|8         | 11.1M/132M [00:01<00:11, 11.5MB/s]  9%|9         | 12.2M/132M [00:01<00:10, 11.5MB/s] 10%|#         | 13.4M/132M [00:01<00:10, 11.4MB/s] 11%|#         | 14.5M/132M [00:01<00:10, 11.5MB/s] 12%|#1        | 15.6M/132M [00:01<00:10, 11.5MB/s] 13%|#2        | 16.8M/132M [00:01<00:10, 11.5MB/s] 14%|#3        | 17.9M/132M [00:01<00:10, 11.4MB/s] 14%|#4        | 19.0M/132M [00:01<00:10, 11.4MB/s] 15%|#5        | 20.1M/132M [00:01<00:10, 11.4MB/s] 16%|#6        | 21.2M/132M [00:01<00:10, 11.5MB/s] 17%|#6        | 22.4M/132M [00:02<00:10, 11.5MB/s] 18%|#7        | 23.5M/132M [00:02<00:09, 11.5MB/s] 19%|#8        | 24.6M/132M [00:02<00:09, 11.5MB/s] 20%|#9        | 25.8M/132M [00:02<00:09, 11.5MB/s] 20%|##        | 26.9M/132M [00:02<00:09, 11.5MB/s] 21%|##1       | 28.0M/132M [00:02<00:09, 11.5MB/s] 22%|##2       | 29.1M/132M [00:02<00:09, 11.5MB/s] 23%|##2       | 30.2M/132M [00:02<00:09, 11.5MB/s] 24%|##3       | 31.4M/132M [00:02<00:09, 11.5MB/s] 25%|##4       | 32.5M/132M [00:02<00:09, 11.5MB/s] 25%|##5       | 33.6M/132M [00:03<00:08, 11.5MB/s] 26%|##6       | 34.8M/132M [00:03<00:08, 11.5MB/s] 27%|##7       | 35.9M/132M [00:03<00:08, 11.5MB/s] 28%|##8       | 37.0M/132M [00:03<00:08, 11.5MB/s] 29%|##8       | 38.1M/132M [00:03<00:08, 11.5MB/s] 30%|##9       | 39.2M/132M [00:03<00:08, 11.5MB/s] 31%|###       | 40.4M/132M [00:03<00:08, 11.5MB/s] 31%|###1      | 41.5M/132M [00:03<00:08, 11.5MB/s] 32%|###2      | 42.6M/132M [00:03<00:08, 11.5MB/s] 33%|###3      | 43.8M/132M [00:04<00:08, 11.5MB/s] 34%|###4      | 44.9M/132M [00:04<00:07, 11.5MB/s] 35%|###4      | 46.0M/132M [00:04<00:07, 11.5MB/s] 36%|###5      | 47.1M/132M [00:04<00:07, 11.5MB/s] 37%|###6      | 48.2M/132M [00:04<00:07, 11.5MB/s] 37%|###7      | 49.4M/132M [00:04<00:07, 11.5MB/s] 38%|###8      | 50.5M/132M [00:04<00:07, 11.5MB/s] 39%|###9      | 51.6M/132M [00:04<00:07, 11.5MB/s] 40%|###9      | 52.8M/132M [00:04<00:07, 11.5MB/s] 41%|####      | 53.9M/132M [00:04<00:07, 11.5MB/s] 42%|####1     | 55.0M/132M [00:05<00:07, 11.5MB/s] 43%|####2     | 56.1M/132M [00:05<00:06, 11.5MB/s] 43%|####3     | 57.2M/132M [00:05<00:06, 11.5MB/s] 44%|####4     | 58.4M/132M [00:05<00:06, 11.4MB/s] 45%|####5     | 59.5M/132M [00:05<00:06, 11.5MB/s] 46%|####5     | 60.6M/132M [00:05<00:06, 11.5MB/s] 47%|####6     | 61.8M/132M [00:05<00:06, 11.5MB/s] 48%|####7     | 62.9M/132M [00:05<00:06, 11.5MB/s] 49%|####8     | 64.0M/132M [00:05<00:06, 11.5MB/s] 49%|####9     | 65.1M/132M [00:05<00:06, 11.5MB/s] 50%|#####     | 66.2M/132M [00:06<00:06, 11.5MB/s] 51%|#####1    | 67.4M/132M [00:06<00:05, 11.5MB/s] 52%|#####1    | 68.5M/132M [00:06<00:05, 11.5MB/s] 53%|#####2    | 69.6M/132M [00:06<00:05, 11.5MB/s] 54%|#####3    | 70.8M/132M [00:06<00:05, 11.5MB/s] 54%|#####4    | 71.9M/132M [00:06<00:05, 11.5MB/s] 55%|#####5    | 73.0M/132M [00:06<00:05, 11.5MB/s] 56%|#####6    | 74.1M/132M [00:06<00:05, 11.4MB/s] 57%|#####7    | 75.2M/132M [00:06<00:05, 11.5MB/s] 58%|#####7    | 76.4M/132M [00:06<00:05, 11.5MB/s] 59%|#####8    | 77.5M/132M [00:07<00:04, 11.5MB/s] 60%|#####9    | 78.6M/132M [00:07<00:04, 11.5MB/s] 60%|######    | 79.8M/132M [00:07<00:04, 11.5MB/s] 61%|######1   | 80.9M/132M [00:07<00:04, 11.5MB/s] 62%|######2   | 82.0M/132M [00:07<00:04, 11.5MB/s] 63%|######3   | 83.1M/132M [00:07<00:04, 11.5MB/s] 64%|######3   | 84.2M/132M [00:07<00:04, 11.5MB/s] 65%|######4   | 85.4M/132M [00:07<00:04, 11.5MB/s] 66%|######5   | 86.5M/132M [00:07<00:04, 11.5MB/s] 66%|######6   | 87.6M/132M [00:08<00:04, 11.5MB/s] 67%|######7   | 88.8M/132M [00:08<00:03, 11.5MB/s] 68%|######8   | 89.9M/132M [00:08<00:03, 11.5MB/s] 69%|######9   | 91.0M/132M [00:08<00:03, 11.5MB/s] 70%|######9   | 92.1M/132M [00:08<00:03, 11.5MB/s] 71%|#######   | 93.2M/132M [00:08<00:03, 11.5MB/s] 72%|#######1  | 94.4M/132M [00:08<00:03, 11.5MB/s] 72%|#######2  | 95.5M/132M [00:08<00:03, 11.5MB/s] 73%|#######3  | 96.6M/132M [00:08<00:03, 11.5MB/s] 74%|#######4  | 97.8M/132M [00:08<00:03, 11.5MB/s] 75%|#######4  | 98.9M/132M [00:09<00:03, 11.5MB/s] 76%|#######5  | 100M/132M [00:09<00:02, 11.5MB/s]  77%|#######6  | 101M/132M [00:09<00:02, 11.5MB/s] 78%|#######7  | 102M/132M [00:09<00:02, 11.5MB/s] 78%|#######8  | 103M/132M [00:09<00:02, 11.5MB/s] 79%|#######9  | 104M/132M [00:09<00:02, 11.5MB/s] 80%|########  | 106M/132M [00:09<00:02, 11.5MB/s] 81%|########  | 107M/132M [00:09<00:02, 11.5MB/s] 82%|########1 | 108M/132M [00:09<00:02, 11.5MB/s] 83%|########2 | 109M/132M [00:09<00:02, 11.5MB/s] 84%|########3 | 110M/132M [00:10<00:03, 7.39MB/s] 84%|########4 | 111M/132M [00:10<00:02, 8.25MB/s] 85%|########5 | 112M/132M [00:10<00:02, 9.02MB/s] 86%|########6 | 114M/132M [00:10<00:01, 9.64MB/s] 87%|########6 | 115M/132M [00:10<00:01, 10.1MB/s] 88%|########7 | 116M/132M [00:10<00:01, 10.5MB/s] 89%|########8 | 117M/132M [00:10<00:01, 10.8MB/s] 89%|########9 | 118M/132M [00:10<00:01, 11.0MB/s] 90%|######### | 119M/132M [00:11<00:01, 11.1MB/s] 91%|#########1| 120M/132M [00:11<00:01, 11.2MB/s] 92%|#########2| 121M/132M [00:11<00:00, 11.3MB/s] 93%|#########2| 122M/132M [00:11<00:00, 11.3MB/s] 94%|#########3| 124M/132M [00:11<00:00, 11.4MB/s] 95%|#########4| 125M/132M [00:11<00:00, 11.4MB/s] 95%|#########5| 126M/132M [00:11<00:00, 11.4MB/s] 96%|#########6| 127M/132M [00:11<00:00, 11.4MB/s] 97%|#########7| 128M/132M [00:11<00:00, 11.5MB/s] 98%|#########8| 129M/132M [00:12<00:00, 11.5MB/s] 99%|#########8| 130M/132M [00:12<00:00, 11.5MB/s]100%|#########9| 132M/132M [00:12<00:00, 11.5MB/s]100%|##########| 132M/132M [00:12<00:00, 11.3MB/s]
+epoch   1  train_loss=1.645 acc=0.432  val_loss=1.326 acc=0.606  <- best
+epoch   2  train_loss=1.331 acc=0.548  val_loss=1.184 acc=0.615  <- best
+
+Done. Best val acc=0.615. Weights: runs\ablation_mvit\best.pt
+Evaluate: python -m scripts.evaluate_temporal --weights runs\ablation_mvit\best.pt --data clips_manifest.csv
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_temporal --weights runs\ablation_mvit\best.pt --data clips_manifest.csv --out eval_mvit.json --device auto
+INFO    Loaded runs\ablation_mvit\best.pt (kind=mvit, 8 classes) on cuda
+{
+  "note": "Temporal model runs\\ablation_mvit\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "mvit",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.6720901310038309,
+  "macro_ap_8class": 0.4887697162615802,
+  "precision": 0.512,
+  "recall": 1.0,
+  "f1": 0.6772486772486772,
+  "accuracy": 0.512,
+  "top1_accuracy_8class": 0.384,
+  "confusion": {
+    "tp": 64,
+    "fp": 61,
+    "fn": 0,
+    "tn": 0
+  },
+  "clips": 125
+}
+
+Wrote eval_mvit.json
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_streaming --weights runs\ablation_mvit\best.pt --data clips_manifest.csv --out stream_mvit.json --device auto
+[1/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[2/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[3/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[4/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[5/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[6/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te14.mp4  truth=UNSAFE  naive@4  smart@2
+[7/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te15.mp4  truth=UNSAFE  naive@4  smart@2
+[8/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te16.mp4  truth=UNSAFE  naive@4  smart@2
+[9/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te17.mp4  truth=UNSAFE  naive@4  smart@2
+[10/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te18.mp4  truth=UNSAFE  naive@4  smart@2
+[11/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te19.mp4  truth=UNSAFE  naive@4  smart@2
+[12/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[13/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te20.mp4  truth=UNSAFE  naive@4  smart@2
+[14/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te21.mp4  truth=UNSAFE  naive@4  smart@2
+[15/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te22.mp4  truth=UNSAFE  naive@4  smart@2
+[16/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te23.mp4  truth=UNSAFE  naive@4  smart@2
+[17/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te24.mp4  truth=UNSAFE  naive@4  smart@2
+[18/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te25.mp4  truth=UNSAFE  naive@4  smart@2
+[19/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te26.mp4  truth=UNSAFE  naive@4  smart@2
+[20/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te27.mp4  truth=UNSAFE  naive@4  smart@2
+[21/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te28.mp4  truth=UNSAFE  naive@4  smart@2
+[22/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te29.mp4  truth=UNSAFE  naive@4  smart@2
+[23/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[24/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te30.mp4  truth=UNSAFE  naive@4  smart@2
+[25/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te31.mp4  truth=UNSAFE  naive@4  smart@2
+[26/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te32.mp4  truth=UNSAFE  naive@4  smart@2
+[27/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[28/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[29/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[30/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[31/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[32/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[33/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[34/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[35/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[36/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[37/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[38/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[39/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[40/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[41/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[42/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[43/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[44/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[45/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[46/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[47/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[48/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[49/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[50/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[51/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[52/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[53/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[54/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[55/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[56/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[57/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[58/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[59/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[60/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[61/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[62/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[63/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[64/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[65/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te1.mp4  truth=safe  naive@4  smart@2
+[66/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te10.mp4  truth=safe  naive@4  smart@2
+[67/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te11.mp4  truth=safe  naive@4  smart@2
+[68/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te12.mp4  truth=safe  naive@4  smart@2
+[69/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te13.mp4  truth=safe  naive@4  smart@2
+[70/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te14.mp4  truth=safe  naive@4  smart@2
+[71/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te15.mp4  truth=safe  naive@4  smart@2
+[72/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te16.mp4  truth=safe  naive@4  smart@2
+[73/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te17.mp4  truth=safe  naive@4  smart@2
+[74/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te18.mp4  truth=safe  naive@4  smart@2
+[75/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te19.mp4  truth=safe  naive@4  smart@2
+[76/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te2.mp4  truth=safe  naive@4  smart@2
+[77/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te20.mp4  truth=safe  naive@4  smart@2
+[78/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te21.mp4  truth=safe  naive@4  smart@2
+[79/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te22.mp4  truth=safe  naive@4  smart@2
+[80/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te23.mp4  truth=safe  naive@4  smart@2
+[81/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te24.mp4  truth=safe  naive@4  smart@2
+[82/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te25.mp4  truth=safe  naive@4  smart@2
+[83/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te3.mp4  truth=safe  naive@4  smart@2
+[84/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te4.mp4  truth=safe  naive@4  smart@2
+[85/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te5.mp4  truth=safe  naive@4  smart@2
+[86/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te6.mp4  truth=safe  naive@4  smart@2
+[87/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te7.mp4  truth=safe  naive@4  smart@2
+[88/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te8.mp4  truth=safe  naive@4  smart@2
+[89/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te9.mp4  truth=safe  naive@4  smart@2
+[90/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te1.mp4  truth=safe  naive@4  smart@2
+[91/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te10.mp4  truth=safe  naive@4  smart@2
+[92/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te11.mp4  truth=safe  naive@4  smart@2
+[93/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te12.mp4  truth=safe  naive@4  smart@2
+[94/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te13.mp4  truth=safe  naive@4  smart@2
+[95/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te14.mp4  truth=safe  naive@4  smart@2
+[96/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te15.mp4  truth=safe  naive@4  smart@2
+[97/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te2.mp4  truth=safe  naive@4  smart@2
+[98/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te3.mp4  truth=safe  naive@4  smart@2
+[99/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te4.mp4  truth=safe  naive@4  smart@2
+[100/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te5.mp4  truth=safe  naive@4  smart@2
+[101/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te6.mp4  truth=safe  naive@4  smart@2
+[102/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te7.mp4  truth=safe  naive@4  smart@2
+[103/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te8.mp4  truth=safe  naive@4  smart@2
+[104/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te9.mp4  truth=safe  naive@4  smart@2
+[105/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te1.mp4  truth=safe  naive@4  smart@2
+[106/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te10.mp4  truth=safe  naive@4  smart@2
+[107/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te11.mp4  truth=safe  naive@4  smart@2
+[108/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te12.mp4  truth=safe  naive@4  smart@2
+[109/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te13.mp4  truth=safe  naive@4  smart@2
+[110/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te2.mp4  truth=safe  naive@4  smart@2
+[111/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te3.mp4  truth=safe  naive@4  smart@2
+[112/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te4.mp4  truth=safe  naive@4  smart@2
+[113/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te5.mp4  truth=safe  naive@4  smart@2
+[114/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te6.mp4  truth=safe  naive@4  smart@2
+[115/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te7.mp4  truth=safe  naive@4  smart@2
+[116/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te8.mp4  truth=safe  naive@4  smart@2
+[117/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te9.mp4  truth=safe  naive@4  smart@2
+[118/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te1.mp4  truth=safe  naive@4  smart@2
+[119/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te2.mp4  truth=safe  naive@4  smart@2
+[120/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te3.mp4  truth=safe  naive@4  smart@2
+[121/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te4.mp4  truth=safe  naive@4  smart@2
+[122/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te5.mp4  truth=safe  naive@4  smart@2
+[123/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te6.mp4  truth=safe  naive@4  smart@2
+[124/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te7.mp4  truth=safe  naive@4  smart@2
+[125/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te8.mp4  truth=safe  naive@4  smart@2
+
+[
+  {
+    "aggregator": "naive",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 4,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  },
+  {
+    "aggregator": "smart",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 2,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  }
+]
+
+Wrote stream_mvit.json
+
+========================================================================
+hiera
+========================================================================
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.train_temporal --model hiera --name ablation_hiera --window 16 --epochs 2 --data clips_manifest.csv --device auto
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Lib\site-packages\timm\models\layers\__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Training kind=hiera device=cuda imgsz=224 window=16
+Classes (8): ['0_safe_walkway_violation', '1_unauthorized_intervention', '2_opened_panel_cover', '3_carrying_overload_with_forklift', '4_safe_walkway', '5_authorized_intervention', '6_closed_panel_cover', '7_safe_carrying']
+Unsafe class indices: [0, 1, 2, 3]
+Downloading: "https://dl.fbaipublicfiles.com/hiera/hiera_base_16x224.pth" to C:\Users\Isabella/.cache\torch\hub\checkpoints\hiera_base_16x224.pth
+  0%|          | 0.00/585M [00:00<?, ?B/s]  0%|          | 128k/585M [00:00<08:49, 1.16MB/s]  0%|          | 384k/585M [00:00<05:26, 1.88MB/s]  0%|          | 1.38M/585M [00:00<01:53, 5.37MB/s]  0%|          | 2.50M/585M [00:00<01:19, 7.65MB/s]  1%|          | 3.62M/585M [00:00<01:07, 9.03MB/s]  1%|          | 4.75M/585M [00:00<01:01, 9.85MB/s]  1%|1         | 5.88M/585M [00:00<00:58, 10.4MB/s]  1%|1         | 7.00M/585M [00:00<00:56, 10.7MB/s]  1%|1         | 8.12M/585M [00:00<00:55, 10.9MB/s]  2%|1         | 9.25M/585M [00:01<00:54, 11.1MB/s]  2%|1         | 10.4M/585M [00:01<00:53, 11.3MB/s]  2%|1         | 11.5M/585M [00:01<00:53, 11.3MB/s]  2%|2         | 12.6M/585M [00:01<00:52, 11.4MB/s]  2%|2         | 13.8M/585M [00:01<00:52, 11.4MB/s]  3%|2         | 14.9M/585M [00:01<00:52, 11.4MB/s]  3%|2         | 16.0M/585M [00:01<00:52, 11.4MB/s]  3%|2         | 17.1M/585M [00:01<00:52, 11.4MB/s]  3%|3         | 18.2M/585M [00:01<00:51, 11.5MB/s]  3%|3         | 19.4M/585M [00:01<00:51, 11.5MB/s]  4%|3         | 20.5M/585M [00:02<00:51, 11.5MB/s]  4%|3         | 21.6M/585M [00:02<00:51, 11.5MB/s]  4%|3         | 22.8M/585M [00:02<00:51, 11.5MB/s]  4%|4         | 23.9M/585M [00:02<00:51, 11.5MB/s]  4%|4         | 25.0M/585M [00:02<00:51, 11.5MB/s]  4%|4         | 26.1M/585M [00:02<00:51, 11.5MB/s]  5%|4         | 27.2M/585M [00:02<00:50, 11.5MB/s]  5%|4         | 28.4M/585M [00:02<00:50, 11.5MB/s]  5%|5         | 29.5M/585M [00:02<00:50, 11.5MB/s]  5%|5         | 30.6M/585M [00:03<00:50, 11.5MB/s]  5%|5         | 31.8M/585M [00:03<00:50, 11.5MB/s]  6%|5         | 32.9M/585M [00:03<00:50, 11.5MB/s]  6%|5         | 34.0M/585M [00:03<00:50, 11.5MB/s]  6%|6         | 35.1M/585M [00:03<00:50, 11.5MB/s]  6%|6         | 36.2M/585M [00:03<00:50, 11.5MB/s]  6%|6         | 37.4M/585M [00:03<00:49, 11.5MB/s]  7%|6         | 38.5M/585M [00:03<00:49, 11.5MB/s]  7%|6         | 39.6M/585M [00:03<00:49, 11.5MB/s]  7%|6         | 40.8M/585M [00:03<00:49, 11.5MB/s]  7%|7         | 41.9M/585M [00:04<00:49, 11.5MB/s]  7%|7         | 43.0M/585M [00:04<00:49, 11.5MB/s]  8%|7         | 44.1M/585M [00:04<00:49, 11.5MB/s]  8%|7         | 45.2M/585M [00:04<00:49, 11.5MB/s]  8%|7         | 46.4M/585M [00:04<00:49, 11.5MB/s]  8%|8         | 47.5M/585M [00:04<00:49, 11.5MB/s]  8%|8         | 48.6M/585M [00:04<00:49, 11.5MB/s]  9%|8         | 49.8M/585M [00:04<00:49, 11.4MB/s]  9%|8         | 50.9M/585M [00:04<00:48, 11.4MB/s]  9%|8         | 52.0M/585M [00:04<00:48, 11.4MB/s]  9%|9         | 53.1M/585M [00:05<00:48, 11.5MB/s]  9%|9         | 54.2M/585M [00:05<00:48, 11.5MB/s]  9%|9         | 55.4M/585M [00:05<00:48, 11.5MB/s] 10%|9         | 56.5M/585M [00:05<00:48, 11.5MB/s] 10%|9         | 57.6M/585M [00:05<00:48, 11.5MB/s] 10%|#         | 58.8M/585M [00:05<00:48, 11.5MB/s] 10%|#         | 59.9M/585M [00:05<00:47, 11.5MB/s] 10%|#         | 61.0M/585M [00:05<00:47, 11.5MB/s] 11%|#         | 62.1M/585M [00:05<00:50, 10.8MB/s] 11%|#         | 63.2M/585M [00:06<00:49, 11.0MB/s] 11%|#1        | 64.4M/585M [00:06<00:49, 11.1MB/s] 11%|#1        | 65.5M/585M [00:06<00:48, 11.2MB/s] 11%|#1        | 66.6M/585M [00:06<00:47, 11.3MB/s] 12%|#1        | 67.8M/585M [00:06<00:47, 11.4MB/s] 12%|#1        | 68.9M/585M [00:06<00:47, 11.4MB/s] 12%|#1        | 70.0M/585M [00:06<00:47, 11.4MB/s] 12%|#2        | 71.1M/585M [00:06<00:47, 11.4MB/s] 12%|#2        | 72.2M/585M [00:06<00:46, 11.5MB/s] 13%|#2        | 73.4M/585M [00:06<00:46, 11.5MB/s] 13%|#2        | 74.5M/585M [00:07<00:46, 11.5MB/s] 13%|#2        | 75.6M/585M [00:07<00:46, 11.4MB/s] 13%|#3        | 76.8M/585M [00:07<00:46, 11.4MB/s] 13%|#3        | 77.9M/585M [00:07<00:46, 11.5MB/s] 14%|#3        | 79.0M/585M [00:07<00:46, 11.4MB/s] 14%|#3        | 80.1M/585M [00:07<00:46, 11.5MB/s] 14%|#3        | 81.2M/585M [00:07<00:45, 11.5MB/s] 14%|#4        | 82.4M/585M [00:07<00:45, 11.5MB/s] 14%|#4        | 83.5M/585M [00:07<00:45, 11.5MB/s] 14%|#4        | 84.6M/585M [00:07<00:45, 11.5MB/s] 15%|#4        | 85.8M/585M [00:08<00:45, 11.5MB/s] 15%|#4        | 86.9M/585M [00:08<00:45, 11.5MB/s] 15%|#5        | 88.0M/585M [00:08<00:45, 11.5MB/s] 15%|#5        | 89.1M/585M [00:08<00:45, 11.5MB/s] 15%|#5        | 90.2M/585M [00:08<00:45, 11.5MB/s] 16%|#5        | 91.4M/585M [00:08<00:45, 11.5MB/s] 16%|#5        | 92.5M/585M [00:08<00:45, 11.4MB/s] 16%|#6        | 93.6M/585M [00:08<00:44, 11.5MB/s] 16%|#6        | 94.8M/585M [00:08<00:44, 11.5MB/s] 16%|#6        | 95.9M/585M [00:08<00:44, 11.5MB/s] 17%|#6        | 97.0M/585M [00:09<00:44, 11.5MB/s] 17%|#6        | 98.1M/585M [00:09<00:44, 11.5MB/s] 17%|#6        | 99.2M/585M [00:09<00:44, 11.5MB/s] 17%|#7        | 100M/585M [00:09<00:44, 11.5MB/s]  17%|#7        | 102M/585M [00:09<00:44, 11.5MB/s] 18%|#7        | 103M/585M [00:09<00:44, 11.5MB/s] 18%|#7        | 104M/585M [00:09<00:43, 11.5MB/s] 18%|#7        | 105M/585M [00:09<00:43, 11.5MB/s] 18%|#8        | 106M/585M [00:09<00:43, 11.5MB/s] 18%|#8        | 107M/585M [00:10<00:43, 11.5MB/s] 19%|#8        | 108M/585M [00:10<00:43, 11.5MB/s] 19%|#8        | 109M/585M [00:10<00:43, 11.5MB/s] 19%|#8        | 110M/585M [00:10<01:07, 7.37MB/s] 19%|#9        | 112M/585M [00:10<01:00, 8.25MB/s] 19%|#9        | 113M/585M [00:10<00:55, 9.00MB/s] 19%|#9        | 114M/585M [00:10<00:51, 9.63MB/s] 20%|#9        | 115M/585M [00:10<00:48, 10.1MB/s] 20%|#9        | 116M/585M [00:11<00:46, 10.5MB/s] 20%|##        | 117M/585M [00:11<00:45, 10.8MB/s] 20%|##        | 118M/585M [00:11<00:44, 11.0MB/s] 20%|##        | 120M/585M [00:11<00:43, 11.1MB/s] 21%|##        | 121M/585M [00:11<00:43, 11.2MB/s] 21%|##        | 122M/585M [00:11<00:43, 11.3MB/s] 21%|##1       | 123M/585M [00:11<00:42, 11.3MB/s] 21%|##1       | 124M/585M [00:11<00:42, 11.4MB/s] 21%|##1       | 125M/585M [00:11<00:42, 11.4MB/s] 22%|##1       | 126M/585M [00:11<00:41, 11.5MB/s] 22%|##1       | 127M/585M [00:12<00:41, 11.4MB/s] 22%|##1       | 128M/585M [00:12<00:41, 11.5MB/s] 22%|##2       | 130M/585M [00:12<00:41, 11.5MB/s] 22%|##2       | 131M/585M [00:12<00:41, 11.5MB/s] 23%|##2       | 132M/585M [00:12<00:41, 11.5MB/s] 23%|##2       | 133M/585M [00:12<00:41, 11.5MB/s] 23%|##2       | 134M/585M [00:12<00:41, 11.5MB/s] 23%|##3       | 135M/585M [00:12<00:41, 11.5MB/s] 23%|##3       | 136M/585M [00:12<00:40, 11.5MB/s] 24%|##3       | 138M/585M [00:12<00:40, 11.5MB/s] 24%|##3       | 139M/585M [00:13<00:40, 11.5MB/s] 24%|##3       | 140M/585M [00:13<00:40, 11.5MB/s] 24%|##4       | 141M/585M [00:13<00:40, 11.5MB/s] 24%|##4       | 142M/585M [00:13<00:40, 11.5MB/s] 24%|##4       | 143M/585M [00:13<00:40, 11.5MB/s] 25%|##4       | 144M/585M [00:13<00:40, 11.5MB/s] 25%|##4       | 145M/585M [00:13<00:40, 11.5MB/s] 25%|##5       | 146M/585M [00:13<00:39, 11.5MB/s] 25%|##5       | 148M/585M [00:13<00:39, 11.5MB/s] 25%|##5       | 149M/585M [00:14<00:39, 11.5MB/s] 26%|##5       | 150M/585M [00:14<00:39, 11.5MB/s] 26%|##5       | 151M/585M [00:14<00:39, 11.5MB/s] 26%|##6       | 152M/585M [00:14<00:39, 11.5MB/s] 26%|##6       | 153M/585M [00:14<00:39, 11.5MB/s] 26%|##6       | 154M/585M [00:14<00:39, 11.5MB/s] 27%|##6       | 156M/585M [00:14<00:39, 11.5MB/s] 27%|##6       | 157M/585M [00:14<00:39, 11.5MB/s] 27%|##6       | 158M/585M [00:14<00:38, 11.5MB/s] 27%|##7       | 159M/585M [00:14<00:38, 11.5MB/s] 27%|##7       | 160M/585M [00:15<00:38, 11.5MB/s] 28%|##7       | 161M/585M [00:15<00:38, 11.5MB/s] 28%|##7       | 162M/585M [00:15<00:38, 11.5MB/s] 28%|##7       | 163M/585M [00:15<00:38, 11.5MB/s] 28%|##8       | 164M/585M [00:15<00:38, 11.5MB/s] 28%|##8       | 166M/585M [00:15<00:38, 11.5MB/s] 29%|##8       | 167M/585M [00:15<00:38, 11.5MB/s] 29%|##8       | 168M/585M [00:15<00:38, 11.5MB/s] 29%|##8       | 169M/585M [00:15<00:38, 11.5MB/s] 29%|##9       | 170M/585M [00:15<00:37, 11.5MB/s] 29%|##9       | 171M/585M [00:16<00:37, 11.5MB/s] 29%|##9       | 172M/585M [00:16<00:37, 11.5MB/s] 30%|##9       | 174M/585M [00:16<00:37, 11.5MB/s] 30%|##9       | 175M/585M [00:16<00:37, 11.5MB/s] 30%|###       | 176M/585M [00:16<00:37, 11.5MB/s] 30%|###       | 177M/585M [00:16<00:37, 11.5MB/s] 30%|###       | 178M/585M [00:16<00:37, 11.5MB/s] 31%|###       | 179M/585M [00:16<00:37, 11.5MB/s] 31%|###       | 180M/585M [00:16<00:36, 11.5MB/s] 31%|###1      | 181M/585M [00:16<00:36, 11.5MB/s] 31%|###1      | 182M/585M [00:17<00:36, 11.5MB/s] 31%|###1      | 184M/585M [00:17<00:36, 11.5MB/s] 32%|###1      | 185M/585M [00:17<00:36, 11.5MB/s] 32%|###1      | 186M/585M [00:17<00:36, 11.5MB/s] 32%|###1      | 187M/585M [00:17<00:36, 11.5MB/s] 32%|###2      | 188M/585M [00:17<00:36, 11.5MB/s] 32%|###2      | 189M/585M [00:17<00:36, 11.5MB/s] 33%|###2      | 190M/585M [00:17<00:36, 11.5MB/s] 33%|###2      | 192M/585M [00:17<00:35, 11.5MB/s] 33%|###2      | 193M/585M [00:18<00:35, 11.5MB/s] 33%|###3      | 194M/585M [00:18<00:35, 11.5MB/s] 33%|###3      | 195M/585M [00:18<00:35, 11.5MB/s] 34%|###3      | 196M/585M [00:18<00:35, 11.5MB/s] 34%|###3      | 197M/585M [00:18<00:35, 11.5MB/s] 34%|###3      | 198M/585M [00:18<00:35, 11.5MB/s] 34%|###4      | 199M/585M [00:18<00:35, 11.5MB/s] 34%|###4      | 200M/585M [00:18<00:35, 11.5MB/s] 34%|###4      | 202M/585M [00:18<00:34, 11.5MB/s] 35%|###4      | 203M/585M [00:18<00:34, 11.5MB/s] 35%|###4      | 204M/585M [00:19<00:34, 11.5MB/s] 35%|###5      | 205M/585M [00:19<00:34, 11.5MB/s] 35%|###5      | 206M/585M [00:19<00:34, 11.5MB/s] 35%|###5      | 207M/585M [00:19<00:34, 11.5MB/s] 36%|###5      | 208M/585M [00:19<00:34, 11.5MB/s] 36%|###5      | 210M/585M [00:19<00:34, 11.5MB/s] 36%|###6      | 211M/585M [00:19<00:34, 11.5MB/s] 36%|###6      | 212M/585M [00:19<00:34, 11.5MB/s] 36%|###6      | 213M/585M [00:19<00:33, 11.5MB/s] 37%|###6      | 214M/585M [00:19<00:33, 11.5MB/s] 37%|###6      | 215M/585M [00:20<00:33, 11.5MB/s] 37%|###6      | 216M/585M [00:20<00:33, 11.5MB/s] 37%|###7      | 217M/585M [00:20<00:33, 11.5MB/s] 37%|###7      | 218M/585M [00:20<00:33, 11.5MB/s] 38%|###7      | 220M/585M [00:20<00:49, 7.77MB/s] 38%|###7      | 221M/585M [00:20<00:47, 8.01MB/s] 38%|###7      | 222M/585M [00:20<00:43, 8.82MB/s] 38%|###8      | 223M/585M [00:20<00:39, 9.51MB/s] 38%|###8      | 224M/585M [00:21<00:37, 10.0MB/s] 38%|###8      | 225M/585M [00:21<00:36, 10.4MB/s] 39%|###8      | 226M/585M [00:21<00:35, 10.7MB/s] 39%|###8      | 227M/585M [00:21<00:34, 10.9MB/s] 39%|###9      | 228M/585M [00:21<00:33, 11.1MB/s] 39%|###9      | 230M/585M [00:21<00:33, 11.2MB/s] 39%|###9      | 231M/585M [00:21<00:32, 11.3MB/s] 40%|###9      | 232M/585M [00:21<00:32, 11.4MB/s] 40%|###9      | 233M/585M [00:21<00:32, 11.4MB/s] 40%|####      | 234M/585M [00:21<00:32, 11.4MB/s] 40%|####      | 235M/585M [00:22<00:31, 11.5MB/s] 40%|####      | 236M/585M [00:22<00:31, 11.5MB/s] 41%|####      | 238M/585M [00:22<00:31, 11.5MB/s] 41%|####      | 239M/585M [00:22<00:31, 11.5MB/s] 41%|####      | 240M/585M [00:22<00:31, 11.5MB/s] 41%|####1     | 241M/585M [00:22<00:31, 11.5MB/s] 41%|####1     | 242M/585M [00:22<00:31, 11.5MB/s] 42%|####1     | 243M/585M [00:22<00:31, 11.5MB/s] 42%|####1     | 244M/585M [00:22<00:31, 11.5MB/s] 42%|####1     | 245M/585M [00:23<00:30, 11.5MB/s] 42%|####2     | 246M/585M [00:23<00:30, 11.5MB/s] 42%|####2     | 248M/585M [00:23<00:30, 11.5MB/s] 43%|####2     | 249M/585M [00:23<00:30, 11.5MB/s] 43%|####2     | 250M/585M [00:23<00:30, 11.5MB/s] 43%|####2     | 251M/585M [00:23<00:30, 11.5MB/s] 43%|####3     | 252M/585M [00:23<00:30, 11.5MB/s] 43%|####3     | 253M/585M [00:23<00:30, 11.5MB/s] 43%|####3     | 254M/585M [00:23<00:30, 11.5MB/s] 44%|####3     | 256M/585M [00:23<00:30, 11.5MB/s] 44%|####3     | 257M/585M [00:24<00:30, 11.5MB/s] 44%|####4     | 258M/585M [00:24<00:29, 11.5MB/s] 44%|####4     | 259M/585M [00:24<00:29, 11.5MB/s] 44%|####4     | 260M/585M [00:24<00:29, 11.5MB/s] 45%|####4     | 261M/585M [00:24<00:29, 11.5MB/s] 45%|####4     | 262M/585M [00:24<00:29, 11.5MB/s] 45%|####5     | 263M/585M [00:24<00:29, 11.5MB/s] 45%|####5     | 264M/585M [00:24<00:29, 11.5MB/s] 45%|####5     | 266M/585M [00:24<00:29, 11.5MB/s] 46%|####5     | 267M/585M [00:24<00:29, 11.5MB/s] 46%|####5     | 268M/585M [00:25<00:28, 11.5MB/s] 46%|####5     | 269M/585M [00:25<00:28, 11.5MB/s] 46%|####6     | 270M/585M [00:25<00:28, 11.5MB/s] 46%|####6     | 271M/585M [00:25<00:28, 11.5MB/s] 47%|####6     | 272M/585M [00:25<00:28, 11.5MB/s] 47%|####6     | 274M/585M [00:25<00:28, 11.5MB/s] 47%|####6     | 275M/585M [00:25<00:28, 11.5MB/s] 47%|####7     | 276M/585M [00:25<00:28, 11.5MB/s] 47%|####7     | 277M/585M [00:25<00:28, 11.5MB/s] 48%|####7     | 278M/585M [00:25<00:27, 11.5MB/s] 48%|####7     | 279M/585M [00:26<00:27, 11.5MB/s] 48%|####7     | 280M/585M [00:26<00:27, 11.5MB/s] 48%|####8     | 281M/585M [00:26<00:27, 11.5MB/s] 48%|####8     | 282M/585M [00:26<00:27, 11.5MB/s] 48%|####8     | 284M/585M [00:26<00:27, 11.5MB/s] 49%|####8     | 285M/585M [00:26<00:27, 11.5MB/s] 49%|####8     | 286M/585M [00:26<00:27, 11.5MB/s] 49%|####9     | 287M/585M [00:26<00:27, 11.5MB/s] 49%|####9     | 288M/585M [00:26<00:27, 11.5MB/s] 49%|####9     | 289M/585M [00:27<00:26, 11.5MB/s] 50%|####9     | 290M/585M [00:27<00:26, 11.5MB/s] 50%|####9     | 292M/585M [00:27<00:26, 11.5MB/s] 50%|#####     | 293M/585M [00:27<00:26, 11.5MB/s] 50%|#####     | 294M/585M [00:27<00:26, 11.5MB/s] 50%|#####     | 295M/585M [00:27<00:26, 11.5MB/s] 51%|#####     | 296M/585M [00:27<00:26, 11.5MB/s] 51%|#####     | 297M/585M [00:27<00:26, 11.5MB/s] 51%|#####     | 298M/585M [00:27<00:26, 11.5MB/s] 51%|#####1    | 299M/585M [00:27<00:26, 11.5MB/s] 51%|#####1    | 300M/585M [00:28<00:25, 11.5MB/s] 52%|#####1    | 302M/585M [00:28<00:25, 11.5MB/s] 52%|#####1    | 303M/585M [00:28<00:25, 11.5MB/s] 52%|#####1    | 304M/585M [00:28<00:25, 11.5MB/s] 52%|#####2    | 305M/585M [00:28<00:25, 11.5MB/s] 52%|#####2    | 306M/585M [00:28<00:25, 11.5MB/s] 53%|#####2    | 307M/585M [00:28<00:25, 11.5MB/s] 53%|#####2    | 308M/585M [00:28<00:25, 11.5MB/s] 53%|#####2    | 310M/585M [00:28<00:25, 11.5MB/s] 53%|#####3    | 311M/585M [00:28<00:25, 11.5MB/s] 53%|#####3    | 312M/585M [00:29<00:24, 11.5MB/s] 53%|#####3    | 313M/585M [00:29<00:24, 11.5MB/s] 54%|#####3    | 314M/585M [00:29<00:24, 11.5MB/s] 54%|#####3    | 315M/585M [00:29<00:24, 11.5MB/s] 54%|#####4    | 316M/585M [00:29<00:24, 11.5MB/s] 54%|#####4    | 317M/585M [00:29<00:24, 11.5MB/s] 54%|#####4    | 318M/585M [00:29<00:24, 11.5MB/s] 55%|#####4    | 320M/585M [00:29<00:24, 11.5MB/s] 55%|#####4    | 321M/585M [00:29<00:24, 11.5MB/s] 55%|#####5    | 322M/585M [00:30<00:24, 11.5MB/s] 55%|#####5    | 323M/585M [00:30<00:23, 11.5MB/s] 55%|#####5    | 324M/585M [00:30<00:23, 11.5MB/s] 56%|#####5    | 325M/585M [00:30<00:23, 11.5MB/s] 56%|#####5    | 326M/585M [00:30<00:23, 11.5MB/s] 56%|#####5    | 328M/585M [00:30<00:23, 11.5MB/s] 56%|#####6    | 329M/585M [00:30<00:23, 11.5MB/s] 56%|#####6    | 330M/585M [00:30<00:36, 7.39MB/s] 57%|#####6    | 331M/585M [00:31<00:32, 8.28MB/s] 57%|#####6    | 332M/585M [00:31<00:29, 9.04MB/s] 57%|#####6    | 333M/585M [00:31<00:27, 9.66MB/s] 57%|#####7    | 334M/585M [00:31<00:25, 10.1MB/s] 57%|#####7    | 335M/585M [00:31<00:24, 10.5MB/s] 58%|#####7    | 336M/585M [00:31<00:24, 10.8MB/s] 58%|#####7    | 338M/585M [00:31<00:23, 11.0MB/s] 58%|#####7    | 339M/585M [00:31<00:23, 11.1MB/s] 58%|#####8    | 340M/585M [00:31<00:22, 11.3MB/s] 58%|#####8    | 341M/585M [00:31<00:22, 11.3MB/s] 58%|#####8    | 342M/585M [00:32<00:22, 11.3MB/s] 59%|#####8    | 343M/585M [00:32<00:22, 11.4MB/s] 59%|#####8    | 344M/585M [00:32<00:22, 11.4MB/s] 59%|#####9    | 346M/585M [00:32<00:21, 11.5MB/s] 59%|#####9    | 347M/585M [00:32<00:21, 11.5MB/s] 59%|#####9    | 348M/585M [00:32<00:21, 11.5MB/s] 60%|#####9    | 349M/585M [00:32<00:21, 11.5MB/s] 60%|#####9    | 350M/585M [00:32<00:21, 11.5MB/s] 60%|######    | 351M/585M [00:32<00:21, 11.5MB/s] 60%|######    | 352M/585M [00:32<00:21, 11.5MB/s] 60%|######    | 353M/585M [00:33<00:21, 11.5MB/s] 61%|######    | 354M/585M [00:33<00:21, 11.5MB/s] 61%|######    | 356M/585M [00:33<00:20, 11.5MB/s] 61%|######    | 357M/585M [00:33<00:20, 11.5MB/s] 61%|######1   | 358M/585M [00:33<00:20, 11.5MB/s] 61%|######1   | 359M/585M [00:33<00:20, 11.5MB/s] 62%|######1   | 360M/585M [00:33<00:20, 11.5MB/s] 62%|######1   | 361M/585M [00:33<00:20, 11.5MB/s] 62%|######1   | 362M/585M [00:33<00:20, 11.5MB/s] 62%|######2   | 364M/585M [00:33<00:20, 11.5MB/s] 62%|######2   | 365M/585M [00:34<00:20, 11.5MB/s] 63%|######2   | 366M/585M [00:34<00:20, 11.5MB/s] 63%|######2   | 367M/585M [00:34<00:19, 11.5MB/s] 63%|######2   | 368M/585M [00:34<00:19, 11.5MB/s] 63%|######3   | 369M/585M [00:34<00:19, 11.5MB/s] 63%|######3   | 370M/585M [00:34<00:19, 11.5MB/s] 63%|######3   | 371M/585M [00:34<00:19, 11.5MB/s] 64%|######3   | 372M/585M [00:34<00:19, 11.5MB/s] 64%|######3   | 374M/585M [00:34<00:19, 11.5MB/s] 64%|######4   | 375M/585M [00:35<00:19, 11.4MB/s] 64%|######4   | 376M/585M [00:35<00:19, 11.5MB/s] 64%|######4   | 377M/585M [00:35<00:19, 11.5MB/s] 65%|######4   | 378M/585M [00:35<00:18, 11.5MB/s] 65%|######4   | 379M/585M [00:35<00:18, 11.5MB/s] 65%|######5   | 380M/585M [00:35<00:18, 11.5MB/s] 65%|######5   | 382M/585M [00:35<00:18, 11.5MB/s] 65%|######5   | 383M/585M [00:35<00:18, 11.5MB/s] 66%|######5   | 384M/585M [00:35<00:18, 11.5MB/s] 66%|######5   | 385M/585M [00:35<00:18, 11.5MB/s] 66%|######5   | 386M/585M [00:36<00:18, 11.5MB/s] 66%|######6   | 387M/585M [00:36<00:18, 11.5MB/s] 66%|######6   | 388M/585M [00:36<00:17, 11.5MB/s] 67%|######6   | 389M/585M [00:36<00:17, 11.5MB/s] 67%|######6   | 390M/585M [00:36<00:17, 11.5MB/s] 67%|######6   | 392M/585M [00:36<00:17, 11.5MB/s] 67%|######7   | 393M/585M [00:36<00:17, 11.5MB/s] 67%|######7   | 394M/585M [00:36<00:17, 11.5MB/s] 68%|######7   | 395M/585M [00:36<00:17, 11.5MB/s] 68%|######7   | 396M/585M [00:36<00:17, 11.5MB/s] 68%|######7   | 397M/585M [00:37<00:17, 11.5MB/s] 68%|######8   | 398M/585M [00:37<00:17, 11.5MB/s] 68%|######8   | 400M/585M [00:37<00:16, 11.5MB/s] 68%|######8   | 401M/585M [00:37<00:16, 11.5MB/s] 69%|######8   | 402M/585M [00:37<00:16, 11.5MB/s] 69%|######8   | 403M/585M [00:37<00:16, 11.5MB/s] 69%|######9   | 404M/585M [00:37<00:16, 11.5MB/s] 69%|######9   | 405M/585M [00:37<00:16, 11.5MB/s] 69%|######9   | 406M/585M [00:37<00:16, 11.5MB/s] 70%|######9   | 407M/585M [00:37<00:16, 11.5MB/s] 70%|######9   | 408M/585M [00:38<00:16, 11.5MB/s] 70%|#######   | 410M/585M [00:38<00:15, 11.5MB/s] 70%|#######   | 411M/585M [00:38<00:15, 11.5MB/s] 70%|#######   | 412M/585M [00:38<00:15, 11.5MB/s] 71%|#######   | 413M/585M [00:38<00:15, 11.5MB/s] 71%|#######   | 414M/585M [00:38<00:15, 11.5MB/s] 71%|#######   | 415M/585M [00:38<00:15, 11.5MB/s] 71%|#######1  | 416M/585M [00:38<00:15, 11.5MB/s] 71%|#######1  | 418M/585M [00:38<00:15, 11.5MB/s] 72%|#######1  | 419M/585M [00:39<00:15, 11.5MB/s] 72%|#######1  | 420M/585M [00:39<00:15, 11.5MB/s] 72%|#######1  | 421M/585M [00:39<00:14, 11.5MB/s] 72%|#######2  | 422M/585M [00:39<00:14, 11.5MB/s] 72%|#######2  | 423M/585M [00:39<00:14, 11.5MB/s] 73%|#######2  | 424M/585M [00:39<00:14, 11.5MB/s] 73%|#######2  | 425M/585M [00:39<00:14, 11.5MB/s] 73%|#######2  | 426M/585M [00:39<00:14, 11.5MB/s] 73%|#######3  | 428M/585M [00:39<00:14, 11.5MB/s] 73%|#######3  | 429M/585M [00:39<00:14, 11.5MB/s] 73%|#######3  | 430M/585M [00:40<00:14, 11.5MB/s] 74%|#######3  | 431M/585M [00:40<00:14, 11.5MB/s] 74%|#######3  | 432M/585M [00:40<00:13, 11.5MB/s] 74%|#######4  | 433M/585M [00:40<00:13, 11.5MB/s] 74%|#######4  | 434M/585M [00:40<00:13, 11.5MB/s] 74%|#######4  | 436M/585M [00:40<00:13, 11.5MB/s] 75%|#######4  | 437M/585M [00:40<00:13, 11.5MB/s] 75%|#######4  | 438M/585M [00:40<00:13, 11.5MB/s] 75%|#######5  | 439M/585M [00:40<00:13, 11.5MB/s] 75%|#######5  | 440M/585M [00:41<00:20, 7.40MB/s] 75%|#######5  | 441M/585M [00:41<00:18, 8.29MB/s] 76%|#######5  | 442M/585M [00:41<00:16, 9.04MB/s] 76%|#######5  | 443M/585M [00:41<00:15, 9.65MB/s] 76%|#######5  | 444M/585M [00:41<00:14, 10.1MB/s] 76%|#######6  | 446M/585M [00:41<00:13, 10.5MB/s] 76%|#######6  | 447M/585M [00:41<00:13, 10.8MB/s] 77%|#######6  | 448M/585M [00:41<00:13, 11.0MB/s] 77%|#######6  | 449M/585M [00:41<00:12, 11.1MB/s] 77%|#######6  | 450M/585M [00:42<00:12, 11.2MB/s] 77%|#######7  | 451M/585M [00:42<00:12, 11.3MB/s] 77%|#######7  | 452M/585M [00:42<00:12, 11.3MB/s] 78%|#######7  | 454M/585M [00:42<00:12, 11.4MB/s] 78%|#######7  | 455M/585M [00:42<00:11, 11.4MB/s] 78%|#######7  | 456M/585M [00:42<00:11, 11.4MB/s] 78%|#######8  | 457M/585M [00:42<00:11, 11.5MB/s] 78%|#######8  | 458M/585M [00:42<00:11, 11.5MB/s] 78%|#######8  | 459M/585M [00:42<00:11, 11.5MB/s] 79%|#######8  | 460M/585M [00:43<00:11, 11.5MB/s] 79%|#######8  | 461M/585M [00:43<00:11, 11.5MB/s] 79%|#######9  | 462M/585M [00:43<00:11, 11.5MB/s] 79%|#######9  | 464M/585M [00:43<00:11, 11.5MB/s] 79%|#######9  | 465M/585M [00:43<00:10, 11.5MB/s] 80%|#######9  | 466M/585M [00:43<00:10, 11.5MB/s] 80%|#######9  | 467M/585M [00:43<00:10, 11.5MB/s] 80%|########  | 468M/585M [00:43<00:10, 11.5MB/s] 80%|########  | 469M/585M [00:43<00:10, 11.5MB/s] 80%|########  | 470M/585M [00:43<00:10, 11.5MB/s] 81%|########  | 472M/585M [00:44<00:10, 11.5MB/s] 81%|########  | 473M/585M [00:44<00:10, 11.5MB/s] 81%|########  | 474M/585M [00:44<00:10, 11.5MB/s] 81%|########1 | 475M/585M [00:44<00:10, 11.5MB/s] 81%|########1 | 476M/585M [00:44<00:09, 11.5MB/s] 82%|########1 | 477M/585M [00:44<00:09, 11.5MB/s] 82%|########1 | 478M/585M [00:44<00:09, 11.5MB/s] 82%|########1 | 479M/585M [00:44<00:09, 11.5MB/s] 82%|########2 | 480M/585M [00:44<00:09, 11.5MB/s] 82%|########2 | 482M/585M [00:44<00:09, 11.5MB/s] 83%|########2 | 483M/585M [00:45<00:09, 11.5MB/s] 83%|########2 | 484M/585M [00:45<00:09, 11.5MB/s] 83%|########2 | 485M/585M [00:45<00:09, 11.5MB/s] 83%|########3 | 486M/585M [00:45<00:09, 11.5MB/s] 83%|########3 | 487M/585M [00:45<00:08, 11.5MB/s] 83%|########3 | 488M/585M [00:45<00:08, 11.5MB/s] 84%|########3 | 490M/585M [00:45<00:08, 11.5MB/s] 84%|########3 | 491M/585M [00:45<00:08, 11.5MB/s] 84%|########4 | 492M/585M [00:45<00:08, 11.5MB/s] 84%|########4 | 493M/585M [00:45<00:08, 11.5MB/s] 84%|########4 | 494M/585M [00:46<00:08, 11.5MB/s] 85%|########4 | 495M/585M [00:46<00:08, 11.5MB/s] 85%|########4 | 496M/585M [00:46<00:08, 11.5MB/s] 85%|########5 | 497M/585M [00:46<00:07, 11.5MB/s] 85%|########5 | 498M/585M [00:46<00:07, 11.5MB/s] 85%|########5 | 500M/585M [00:46<00:07, 11.5MB/s] 86%|########5 | 501M/585M [00:46<00:07, 11.5MB/s] 86%|########5 | 502M/585M [00:46<00:07, 11.5MB/s] 86%|########5 | 503M/585M [00:46<00:07, 11.5MB/s] 86%|########6 | 504M/585M [00:47<00:07, 11.5MB/s] 86%|########6 | 505M/585M [00:47<00:07, 11.5MB/s] 87%|########6 | 506M/585M [00:47<00:07, 11.5MB/s] 87%|########6 | 508M/585M [00:47<00:07, 11.5MB/s] 87%|########6 | 509M/585M [00:47<00:06, 11.5MB/s] 87%|########7 | 510M/585M [00:47<00:06, 11.5MB/s] 87%|########7 | 511M/585M [00:47<00:06, 11.5MB/s] 88%|########7 | 512M/585M [00:47<00:06, 11.5MB/s] 88%|########7 | 513M/585M [00:47<00:06, 11.5MB/s] 88%|########7 | 514M/585M [00:47<00:06, 11.5MB/s] 88%|########8 | 515M/585M [00:48<00:06, 11.5MB/s] 88%|########8 | 516M/585M [00:48<00:06, 11.5MB/s] 88%|########8 | 518M/585M [00:48<00:06, 11.5MB/s] 89%|########8 | 519M/585M [00:48<00:06, 11.5MB/s] 89%|########8 | 520M/585M [00:48<00:05, 11.5MB/s] 89%|########9 | 521M/585M [00:48<00:05, 11.5MB/s] 89%|########9 | 522M/585M [00:48<00:05, 11.5MB/s] 89%|########9 | 523M/585M [00:48<00:05, 11.5MB/s] 90%|########9 | 524M/585M [00:48<00:05, 11.5MB/s] 90%|########9 | 526M/585M [00:48<00:05, 11.5MB/s] 90%|######### | 527M/585M [00:49<00:05, 11.5MB/s] 90%|######### | 528M/585M [00:49<00:05, 11.5MB/s] 90%|######### | 529M/585M [00:49<00:05, 11.5MB/s] 91%|######### | 530M/585M [00:49<00:05, 11.5MB/s] 91%|######### | 531M/585M [00:49<00:04, 11.5MB/s] 91%|######### | 532M/585M [00:49<00:04, 11.5MB/s] 91%|#########1| 533M/585M [00:49<00:04, 11.5MB/s] 91%|#########1| 534M/585M [00:49<00:04, 11.5MB/s] 92%|#########1| 536M/585M [00:49<00:04, 11.5MB/s] 92%|#########1| 537M/585M [00:49<00:04, 11.5MB/s] 92%|#########1| 538M/585M [00:50<00:04, 11.5MB/s] 92%|#########2| 539M/585M [00:50<00:04, 11.5MB/s] 92%|#########2| 540M/585M [00:50<00:04, 11.5MB/s] 93%|#########2| 541M/585M [00:50<00:03, 11.5MB/s] 93%|#########2| 542M/585M [00:50<00:03, 11.5MB/s] 93%|#########2| 544M/585M [00:50<00:03, 11.5MB/s] 93%|#########3| 545M/585M [00:50<00:03, 11.5MB/s] 93%|#########3| 546M/585M [00:50<00:03, 11.5MB/s] 93%|#########3| 547M/585M [00:50<00:03, 11.5MB/s] 94%|#########3| 548M/585M [00:51<00:03, 11.5MB/s] 94%|#########3| 549M/585M [00:51<00:03, 11.5MB/s] 94%|#########4| 550M/585M [00:51<00:04, 7.37MB/s] 94%|#########4| 551M/585M [00:51<00:04, 8.26MB/s] 94%|#########4| 552M/585M [00:51<00:03, 9.00MB/s] 95%|#########4| 554M/585M [00:51<00:03, 9.62MB/s] 95%|#########4| 555M/585M [00:51<00:03, 10.1MB/s] 95%|#########5| 556M/585M [00:51<00:02, 10.5MB/s] 95%|#########5| 557M/585M [00:52<00:02, 10.8MB/s] 95%|#########5| 558M/585M [00:52<00:02, 11.0MB/s] 96%|#########5| 559M/585M [00:52<00:02, 11.1MB/s] 96%|#########5| 560M/585M [00:52<00:02, 11.2MB/s] 96%|#########5| 562M/585M [00:52<00:02, 11.3MB/s] 96%|#########6| 563M/585M [00:52<00:02, 11.4MB/s] 96%|#########6| 564M/585M [00:52<00:01, 11.4MB/s] 97%|#########6| 565M/585M [00:52<00:01, 11.4MB/s] 97%|#########6| 566M/585M [00:52<00:01, 11.5MB/s] 97%|#########6| 567M/585M [00:52<00:01, 11.5MB/s] 97%|#########7| 568M/585M [00:53<00:01, 11.5MB/s] 97%|#########7| 569M/585M [00:53<00:01, 11.5MB/s] 98%|#########7| 570M/585M [00:53<00:01, 11.4MB/s] 98%|#########7| 572M/585M [00:53<00:01, 11.5MB/s] 98%|#########7| 573M/585M [00:53<00:01, 11.5MB/s] 98%|#########8| 574M/585M [00:53<00:01, 11.5MB/s] 98%|#########8| 575M/585M [00:53<00:00, 11.5MB/s] 98%|#########8| 576M/585M [00:53<00:00, 11.5MB/s] 99%|#########8| 577M/585M [00:53<00:00, 11.5MB/s] 99%|#########8| 578M/585M [00:53<00:00, 11.5MB/s] 99%|#########9| 580M/585M [00:54<00:00, 11.5MB/s] 99%|#########9| 581M/585M [00:54<00:00, 11.5MB/s] 99%|#########9| 582M/585M [00:54<00:00, 11.5MB/s]100%|#########9| 583M/585M [00:54<00:00, 11.5MB/s]100%|#########9| 584M/585M [00:54<00:00, 11.5MB/s]100%|##########| 585M/585M [00:54<00:00, 11.2MB/s]
+epoch   1  train_loss=1.464 acc=0.493  val_loss=1.845 acc=0.578  <- best
+epoch   2  train_loss=1.124 acc=0.592  val_loss=1.844 acc=0.523
+
+Done. Best val acc=0.578. Weights: runs\ablation_hiera\best.pt
+Evaluate: python -m scripts.evaluate_temporal --weights runs\ablation_hiera\best.pt --data clips_manifest.csv
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_temporal --weights runs\ablation_hiera\best.pt --data clips_manifest.csv --out eval_hiera.json --device auto
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Lib\site-packages\timm\models\layers\__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+INFO    Loaded runs\ablation_hiera\best.pt (kind=hiera, 8 classes) on cuda
+{
+  "note": "Temporal model runs\\ablation_hiera\\best.pt on clips_manifest.csv/test (125 clips). Clip-level classification AP, not bbox mAP.",
+  "model_kind": "hiera",
+  "positive_class": "unsafe",
+  "binary_unsafe_ap": 0.6828180742497003,
+  "macro_ap_8class": 0.542479733900215,
+  "precision": 0.512,
+  "recall": 1.0,
+  "f1": 0.6772486772486772,
+  "accuracy": 0.512,
+  "top1_accuracy_8class": 0.376,
+  "confusion": {
+    "tp": 64,
+    "fp": 61,
+    "fn": 0,
+    "tn": 0
+  },
+  "clips": 125
+}
+
+Wrote eval_hiera.json
+
+$ C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Scripts\python.exe -m scripts.evaluate_streaming --weights runs\ablation_hiera\best.pt --data clips_manifest.csv --out stream_hiera.json --device auto
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Lib\site-packages\timm\models\layers\__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+[1/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[2/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[3/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[4/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[5/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[6/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te14.mp4  truth=UNSAFE  naive@4  smart@2
+[7/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te15.mp4  truth=UNSAFE  naive@4  smart@2
+[8/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te16.mp4  truth=UNSAFE  naive@4  smart@2
+[9/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te17.mp4  truth=UNSAFE  naive@4  smart@2
+[10/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te18.mp4  truth=UNSAFE  naive@4  smart@2
+[11/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te19.mp4  truth=UNSAFE  naive@4  smart@2
+[12/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[13/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te20.mp4  truth=UNSAFE  naive@4  smart@2
+[14/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te21.mp4  truth=UNSAFE  naive@4  smart@2
+[15/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te22.mp4  truth=UNSAFE  naive@4  smart@2
+[16/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te23.mp4  truth=UNSAFE  naive@4  smart@2
+[17/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te24.mp4  truth=UNSAFE  naive@4  smart@2
+[18/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te25.mp4  truth=UNSAFE  naive@4  smart@2
+[19/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te26.mp4  truth=UNSAFE  naive@4  smart@2
+[20/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te27.mp4  truth=UNSAFE  naive@4  smart@2
+[21/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te28.mp4  truth=UNSAFE  naive@4  smart@2
+[22/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te29.mp4  truth=UNSAFE  naive@4  smart@2
+[23/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[24/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te30.mp4  truth=UNSAFE  naive@4  smart@2
+[25/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te31.mp4  truth=UNSAFE  naive@4  smart@2
+[26/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te32.mp4  truth=UNSAFE  naive@4  smart@2
+[27/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[28/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[29/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[30/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[31/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[32/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\0_safe_walkway_violation\0_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[33/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[34/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[35/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[36/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[37/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[38/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[39/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[40/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[41/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[42/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[43/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\1_unauthorized_intervention\1_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[44/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[45/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te10.mp4  truth=UNSAFE  naive@4  smart@2
+[46/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te11.mp4  truth=UNSAFE  naive@4  smart@2
+[47/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te12.mp4  truth=UNSAFE  naive@4  smart@2
+[48/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te13.mp4  truth=UNSAFE  naive@4  smart@2
+[49/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[50/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[51/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[52/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[53/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[54/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[55/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[56/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\2_opened_panel cover\2_te9.mp4  truth=UNSAFE  naive@4  smart@2
+[57/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te1.mp4  truth=UNSAFE  naive@4  smart@2
+[58/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te2.mp4  truth=UNSAFE  naive@4  smart@2
+[59/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te3.mp4  truth=UNSAFE  naive@4  smart@2
+[60/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te4.mp4  truth=UNSAFE  naive@4  smart@2
+[61/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te5.mp4  truth=UNSAFE  naive@4  smart@2
+[62/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te6.mp4  truth=UNSAFE  naive@4  smart@2
+[63/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te7.mp4  truth=UNSAFE  naive@4  smart@2
+[64/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\3_carrying_overload_with_forklift\3_te8.mp4  truth=UNSAFE  naive@4  smart@2
+[65/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te1.mp4  truth=safe  naive@4  smart@2
+[66/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te10.mp4  truth=safe  naive@4  smart@2
+[67/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te11.mp4  truth=safe  naive@4  smart@2
+[68/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te12.mp4  truth=safe  naive@4  smart@2
+[69/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te13.mp4  truth=safe  naive@4  smart@2
+[70/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te14.mp4  truth=safe  naive@4  smart@2
+[71/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te15.mp4  truth=safe  naive@4  smart@2
+[72/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te16.mp4  truth=safe  naive@4  smart@2
+[73/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te17.mp4  truth=safe  naive@4  smart@2
+[74/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te18.mp4  truth=safe  naive@4  smart@2
+[75/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te19.mp4  truth=safe  naive@4  smart@2
+[76/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te2.mp4  truth=safe  naive@4  smart@2
+[77/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te20.mp4  truth=safe  naive@4  smart@2
+[78/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te21.mp4  truth=safe  naive@4  smart@2
+[79/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te22.mp4  truth=safe  naive@4  smart@2
+[80/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te23.mp4  truth=safe  naive@4  smart@2
+[81/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te24.mp4  truth=safe  naive@4  smart@2
+[82/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te25.mp4  truth=safe  naive@4  smart@2
+[83/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te3.mp4  truth=safe  naive@4  smart@2
+[84/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te4.mp4  truth=safe  naive@4  smart@2
+[85/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te5.mp4  truth=safe  naive@4  smart@2
+[86/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te6.mp4  truth=safe  naive@4  smart@2
+[87/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te7.mp4  truth=safe  naive@4  smart@2
+[88/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te8.mp4  truth=safe  naive@4  smart@2
+[89/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\4_safe_walkway\4_te9.mp4  truth=safe  naive@4  smart@2
+[90/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te1.mp4  truth=safe  naive@4  smart@2
+[91/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te10.mp4  truth=safe  naive@4  smart@2
+[92/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te11.mp4  truth=safe  naive@4  smart@2
+[93/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te12.mp4  truth=safe  naive@4  smart@2
+[94/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te13.mp4  truth=safe  naive@4  smart@2
+[95/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te14.mp4  truth=safe  naive@4  smart@2
+[96/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te15.mp4  truth=safe  naive@4  smart@2
+[97/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te2.mp4  truth=safe  naive@4  smart@2
+[98/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te3.mp4  truth=safe  naive@4  smart@2
+[99/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te4.mp4  truth=safe  naive@4  smart@2
+[100/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te5.mp4  truth=safe  naive@4  smart@2
+[101/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te6.mp4  truth=safe  naive@4  smart@2
+[102/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te7.mp4  truth=safe  naive@4  smart@2
+[103/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te8.mp4  truth=safe  naive@4  smart@2
+[104/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\5_authorized_intervention\5_te9.mp4  truth=safe  naive@4  smart@2
+[105/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te1.mp4  truth=safe  naive@4  smart@2
+[106/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te10.mp4  truth=safe  naive@4  smart@2
+[107/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te11.mp4  truth=safe  naive@4  smart@2
+[108/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te12.mp4  truth=safe  naive@4  smart@2
+[109/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te13.mp4  truth=safe  naive@4  smart@2
+[110/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te2.mp4  truth=safe  naive@4  smart@2
+[111/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te3.mp4  truth=safe  naive@4  smart@2
+[112/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te4.mp4  truth=safe  naive@4  smart@2
+[113/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te5.mp4  truth=safe  naive@4  smart@2
+[114/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te6.mp4  truth=safe  naive@4  smart@2
+[115/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te7.mp4  truth=safe  naive@4  smart@2
+[116/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te8.mp4  truth=safe  naive@4  smart@2
+[117/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\6_closed_panel_cover\6_te9.mp4  truth=safe  naive@4  smart@2
+[118/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te1.mp4  truth=safe  naive@4  smart@2
+[119/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te2.mp4  truth=safe  naive@4  smart@2
+[120/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te3.mp4  truth=safe  naive@4  smart@2
+[121/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te4.mp4  truth=safe  naive@4  smart@2
+[122/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te5.mp4  truth=safe  naive@4  smart@2
+[123/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te6.mp4  truth=safe  naive@4  smart@2
+[124/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te7.mp4  truth=safe  naive@4  smart@2
+[125/125] C:\Users\Isabella\Documents\GitHub\SafeKafka2\full_dataset\test\7_safe_carrying\7_te8.mp4  truth=safe  naive@4  smart@2
+
+[
+  {
+    "aggregator": "naive",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 4,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  },
+  {
+    "aggregator": "smart",
+    "alert_precision": 0.512,
+    "alert_recall": 1.0,
+    "false_alert_rate": 1.0,
+    "mean_detection_latency_frames": 2,
+    "confusion_clips": {
+      "tp": 64,
+      "fp": 61,
+      "fn": 0
+    }
+  }
+]
+
+Wrote stream_hiera.json
+C:\Users\Isabella\Documents\GitHub\SafeKafka2\.venv\Lib\site-packages\timm\models\layers\__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+
+# SOTA ablation — temporal safety-behaviour models
+
+Window=16, epochs=2, data=`clips_manifest.csv`  _(smoke run)_.
+
+**Controlled:** same manifest splits & `sample_frames` selection, window=16, epochs, seed, AdamW, and identical `evaluate_temporal`/`evaluate_streaming` metric code.  
+**Inherent differences (see Regime):** input resolution (112 for R(2+1)D-18, 224 for the rest) and fine-tune regime.
+
+| Model | Params (train/total) | Offline unsafe AP | F1 | 8-cls top-1 | Smart false-alert rate | Alert P/R | Latency ms/frame | Regime |
+|---|---|---|---|---|---|---|---|---|
+| YOLOv8 (per-frame) | — | 0.887 | 0.803 | 0.000 | — | — | — | per-frame classifier |
+| head (ResNet18+GRU) | 1.19M / 12.4M | 0.833 | 0.677 | 0.416 | 1.000 | 0.512 / 1.000 | 13.83 | frozen encoder + GRU head |
+| MViTv2-S | 0.01M / 34.2M | 0.672 | 0.677 | 0.384 | 1.000 | 0.512 / 1.000 | 49.45 | frozen backbone (linear probe) |
+| Hiera-B | 0.01M / 50.8M | 0.683 | 0.677 | 0.376 | 1.000 | 0.512 / 1.000 | 46.64 | frozen backbone (linear probe) |
+
+
+Wrote ablation_results.json and ablation_results.md
