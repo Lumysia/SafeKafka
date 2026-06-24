@@ -38,8 +38,9 @@ LINE = "#1E5D83"
 LIGHT_LINE = "#8DB9D4"
 SCRIPT_DIR = Path(__file__).resolve().parent
 ONTARIO_TECH_LOGO = SCRIPT_DIR / "assets" / "ontario_tech_logo.png"
-ARCHITECTURE_DIAGRAM = SCRIPT_DIR / "assets" / "architecture.png"
+ARCHITECTURE_DIAGRAM = SCRIPT_DIR / "assets" / "safestream_architecture.png"
 STREAMING_EVAL_DIAGRAM = SCRIPT_DIR / "assets" / "streaming_evaluation.png"
+DASHBOARD_IMAGE = SCRIPT_DIR / "assets" / "dashboard1.png"
 
 
 @dataclass(frozen=True)
@@ -242,20 +243,20 @@ def draw_header(image: Image.Image, draw: ImageDraw.ImageDraw) -> None:
     draw.text((badge_x + 54, 240), "FastAPI", font=load_font(54, bold=True), fill=CALLOUT)
 
 
-def draw_gap_cards(draw: ImageDraw.ImageDraw, box: Box) -> None:
+def draw_research_question_cards(draw: ImageDraw.ImageDraw, box: Box) -> None:
     titles = [
-        "Hospital Setting\nApplication",
-        "Privacy-Preserving\nMonitoring",
-        "Integrated\nMultimodal Fusion",
-        "Limited Real-\nWorld Validation",
+        "RQ1\nOffline vs.\nStreaming",
+        "RQ2\nTemporal vs.\nSingle Frame",
+        "RQ3\nThreshold\nCalibration",
+        "System\nPipeline\nBehavior",
     ]
     bodies = [
-        "Limited real-time system that detects unsafe behavior in hospitals or workplaces using streaming fusion",
-        "Video methods raise ethical and privacy concerns without careful aggregation and display controls",
-        "Existing systems usually evaluate video or wearable data separately rather than one live pipeline",
-        "Public benchmarks rarely report streaming false-alert behavior under deployment constraints",
+        "Does offline classification accuracy predict streaming false-alert behavior, or must both be measured separately?",
+        "Do 16-frame temporal window models outperform a YOLOv8 per-frame classifier for visible workplace safety behaviors?",
+        "Can one fixed alert threshold serve every model, or does each unsafe-probability scale need validation calibration?",
+        "Can a Kafka pipeline sustain live frame transport, low latency, zero consumer lag, and dashboard updates?",
     ]
-    impacts = ["deployment gap", "privacy risk", "fusion gap", "validation gap"]
+    impacts = ["offline != stream", "temporal test", "calibrated alerting", "systems metric"]
     gap = 56
     card_w = (box.w - gap * 3) // 4
     for index, (title, body) in enumerate(zip(titles, bodies)):
@@ -314,20 +315,20 @@ def draw_stream_contract_card(draw: ImageDraw.ImageDraw, box: Box) -> None:
 def draw_contributions(draw: ImageDraw.ImageDraw, box: Box) -> None:
     items = [
         (
-            "Multimodal\nDetection\nFramework",
-            ["Kafka separates camera ingestion, inference, aggregation, and dashboard rendering.", "Each camera keeps ordered state through camera_id keyed topics.", "Frame events become rolling safety counts and alert levels."],
+            "Kafka\nStreaming\nPrototype",
+            ["Producer, detector, aggregator, and dashboard communicate through three Kafka topics.", "Frames are keyed by camera_id to preserve ordered per-camera state.", "The pipeline supports files, RTSP streams, webcams, and replayed CCTV."],
         ),
         (
-            "Feature\nEngineering and\nSelection",
-            ["Raw YOLO labels are mapped into safe, unsafe, or other classes.", "Unsafe evidence is smoothed before alert decisions are published.", "Model thresholds are calibrated instead of assumed globally."],
+            "YOLOv8\nSafety\nClassifier",
+            ["Voxel51 workplace clips are converted into a YOLO classification tree.", "Raw labels map to safe, unsafe, or other categories.", "The detector also keeps a bounding-box mode for future datasets."],
         ),
         (
-            "Real-World\nClinical\nValidation",
-            ["Replayable clips simulate continuous camera streams and realistic latency.", "Dashboard tracks frames, alerts, throughput, and unsafe-ratio trends.", "Streaming metrics are reported separately from offline accuracy."],
+            "Dual-Rule\nAlert\nAggregator",
+            ["Rolling windows compute unsafe ratios over the last 60 seconds.", "EWMA smoothing uses calibrated enter and exit thresholds.", "Alerts publish warning or high-severity state to safety-alerts."],
         ),
         (
-            "High Accuracy\nwith Attention\nMechanism",
-            ["YOLOv8 remains strongest for visible single-frame safety behavior.", "Temporal models are compared against alert quality and per-frame cost.", "The selected deployment path minimizes repeated false alerts."],
+            "Six-Model\nStreaming\nEvaluation",
+            ["YOLOv8 is compared with ResNet18+GRU, R(2+1)D-18, MViTv2-S, Video Swin-T, and Hiera-B.", "Offline quality and streaming alert behavior are reported separately.", "Per-frame YOLO produced the fewest safe-clip alerts and lowest cost."],
         ),
     ]
     gap = 110
@@ -356,22 +357,22 @@ def draw_contributions(draw: ImageDraw.ImageDraw, box: Box) -> None:
             y_text = draw_wrapped(draw, bullet, (x + 88, y_text), FONT_SMALL, INK, card_w - 146, 5)
             y_text += 18
         draw.line((x + 58, body_y + body_h - 70, x + card_w - 58, body_y + body_h - 70), fill=LIGHT_LINE, width=2)
-        draw_centered(draw, Box(x + 58, body_y + body_h - 58, card_w - 116, 38), "STREAMING-FIRST", FONT_TINY_BOLD, TEAL)
+        draw_centered(draw, Box(x + 58, body_y + body_h - 58, card_w - 116, 38), "PAPER-ALIGNED", FONT_TINY_BOLD, TEAL)
 
 
 def draw_architecture(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
     draw.rounded_rectangle((box.x + 20, box.y + 70, box.x + box.w - 20, box.y + box.h - 70), radius=42, fill="white", outline=ORANGE_LIGHT, width=3)
     draw.rectangle((box.x + box.w // 2 - 220, box.y + 42, box.x + box.w // 2 + 220, box.y + 105), fill=ORANGE)
-    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "Mermaid System Flow", FONT_SMALL_BOLD, "white")
-    diagram = Box(box.x + 70, box.y + 130, box.w - 140, 210)
+    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "Paper Architecture", FONT_SMALL_BOLD, "white")
+    diagram = Box(box.x + 70, box.y + 130, box.w - 140, 430)
     draw.rounded_rectangle((diagram.x, diagram.y, diagram.x + diagram.w, diagram.y + diagram.h), radius=18, fill="#FAFAFA", outline="#D6D6D6", width=2)
     paste_image_fit(canvas, ARCHITECTURE_DIAGRAM, diagram, 18)
-    contract = Box(box.x + 130, box.y + 358, box.w - 260, 210)
+    contract = Box(box.x + 130, box.y + 590, box.w - 260, 150)
     draw.text((contract.x, contract.y), "Kafka topic contract", font=FONT_HEADING, fill=TEAL)
     topic_rows = [
-        ("cctv-frames", "raw camera frames"),
-        ("safety-detections", "model counts + labels"),
-        ("safety-alerts", "aggregated alert state"),
+        ("cctv-frames", "camera_id, frame_id, timestamp, image_b64"),
+        ("safety-detections", "labels, confidences, safe_count, unsafe_count"),
+        ("safety-alerts", "level, unsafe_ratio, camera_id, timestamp"),
     ]
     row_y = contract.y + 58
     for topic, detail in topic_rows:
@@ -387,14 +388,14 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
     for sub in [left, right]:
         draw.rounded_rectangle((sub.x, sub.y, sub.x + sub.w, sub.y + sub.h), radius=80, fill="white", outline=INK, width=2)
 
-    draw.text((left.x + 42, left.y + 45), "Inclusion Criteria:", font=FONT_HEADING, fill=ORANGE_LIGHT)
+    draw.text((left.x + 42, left.y + 45), "Dataset and Training:", font=FONT_HEADING, fill=ORANGE_LIGHT)
     bullet_list(
         draw,
         [
-            "Video files, RTSP streams, webcams, and replayed CCTV clips.",
-            "Labels map to safe, unsafe, or other categories.",
-            "Voxel51 workplace-safety clips: 691 clips across 8 classes.",
-            "Each message is keyed by camera_id for ordered per-camera processing.",
+            "Dataset: Voxel51 Safe and Unsafe Behaviours workplace videos.",
+            "Annotation type: clip-level labels; no bounding-box annotations.",
+            "Frame extraction: up to 12 evenly spaced frames per video clip.",
+            "Split: 70% train, 20% validation, and 10% test with random seed 42.",
         ],
         Box(left.x + 45, left.y + 95, 510, 300),
         FONT_SMALL,
@@ -403,14 +404,14 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
     )
     table_x = left.x + 45
     table_y = left.y + 395
-    headers = ["Source", "FPS", "Payload", "Topic"]
+    headers = ["Item", "Value", "Task", "Hardware"]
     rows = [
-        ["CCTV", "4", "JPEG+b64", "cctv-frames"],
-        ["RTSP", "cfg", "JSON", "cctv-frames"],
-        ["YOLO", "live", "counts", "detections"],
-        ["Agg", "1Hz", "alerts", "safety-alerts"],
+        ["Model", "YOLOv8m-cls", "classification", "RTX 3060 Ti"],
+        ["Image", "224 x 224", "per-frame", "8 GB GPU"],
+        ["Epochs", "50", "batch 16", "auto device"],
+        ["Temporal", "16 frames", "5 models", "linear probes"],
     ]
-    col_w = [130, 85, 155, 205]
+    col_w = [130, 160, 145, 140]
     draw.rectangle((table_x, table_y, table_x + sum(col_w), table_y + 45), fill=TEAL)
     x = table_x
     for header, width in zip(headers, col_w):
@@ -424,13 +425,13 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
             draw.text((x + 10, y + 12), cell, font=FONT_TINY, fill=INK)
             x += width
 
-    draw.text((right.x + 50, right.y + 45), "Collection Process:", font=FONT_HEADING, fill=ORANGE_LIGHT)
+    draw.text((right.x + 50, right.y + 45), "Methodology Phases:", font=FONT_HEADING, fill=ORANGE_LIGHT)
     steps = [
-        ("Video source", "sample frames"),
-        ("Producer", "encode + publish"),
-        ("Detector", "YOLO labels"),
-        ("Aggregator", "smooth alerts"),
-        ("Dashboard", "live view"),
+        ("Phase 1", "ingestion"),
+        ("Phase 2", "training"),
+        ("Phase 3", "inference"),
+        ("Phase 4", "alerting"),
+        ("Phase 5", "dashboard"),
     ]
     start_x = right.x + 70
     start_y = right.y + 160
@@ -443,9 +444,9 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
             draw.line((x + 175, start_y + 60, x + 250, start_y + 60), fill=LINE, width=3)
             draw.polygon([(x + 250, start_y + 60), (x + 232, start_y + 49), (x + 232, start_y + 71)], fill=LINE)
     notes = [
-        "Study data enter the same service contract as webcam or RTSP frames.",
-        "The detector publishes compact counts and class details for every frame.",
-        "The dashboard displays frames, latency, throughput, trends, and alerts.",
+        "Online pipeline: producer -> detector -> aggregator -> dashboard through Kafka topics.",
+        "Offline phase: dataset preparation trains YOLOv8 plus five temporal window models.",
+        "Dashboard demonstration shows camera cards, unsafe-ratio trends, alerts, and live system metrics.",
     ]
     y = right.y + 345
     for note in notes:
@@ -457,18 +458,21 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
 def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
     x = box.x
     y = box.y
-    columns = ["Input", "Accuracy", "AP/AUC", "Latency", "F1/Recall", "Alert Rate"]
-    widths = [430, 325, 320, 320, 330, 330]
+    columns = ["Model / Metric", "Unsafe AP", "F1", "8-class acc", "Safe clips alerted", "Time/frame"]
+    widths = [430, 280, 250, 300, 400, 295]
     groups = [
-        ("Evaluation", [
-            ["YOLOv8 classifier", "0.641", "0.887", "0.198 s", "0.76 / 0.91", "0.311"],
-            ["R18+GRU temporal", "0.613", "0.842", "73 fps", "stream eval", "calibrated"],
-            ["Hiera-B linear probe", "0.620", "0.861", "21 fps", "stream eval", "calibrated"],
+        ("Six-Model Comparison", [
+            ["YOLOv8 per-frame", "0.887", "0.803", "0.641", "0.311", "6.40 ms"],
+            ["ResNet18+GRU", "0.862", "0.704", "0.440", "0.557", "13.63 ms"],
+            ["R(2+1)D-18", "0.755", "0.695", "0.472", "0.705", "26.39 ms"],
+            ["MViTv2-S", "0.795", "0.707", "0.488", "0.852", "48.38 ms"],
+            ["Video Swin-T", "0.805", "0.702", "0.480", "0.623", "39.76 ms"],
+            ["Hiera-B", "0.862", "0.727", "0.536", "0.787", "46.96 ms"],
         ]),
-        ("Streaming", [
-            ["Kafka payload", "JSON", "base64", "352 KB", "per frame", "camera-keyed"],
-            ["Controlled run", "4 fps", "0 lag", "1 Hz ws", "live", "stable"],
-            ["Alert owner", "Aggregator", "EWMA", "60 s", "WARN/HIGH", "deduped"],
+        ("Per-frame YOLO and System Measurements", [
+            ["Binary unsafe precision", "0.769", "recall 0.841", "F1 0.803", "AP 0.887", "1500 frames"],
+            ["Streaming alert quality", "P 0.732", "R 0.812", "125 clips", "0.311 safe-alert", "cal thr 0.60"],
+            ["Live pipeline", "0.198 s", "max 0.379 s", "3.98 fps", "zero lag", "352 KB/frame"],
         ]),
     ]
     total_w = sum(widths)
@@ -482,28 +486,29 @@ def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
             draw.text((col_x + 12, y + 17), col, font=FONT_SMALL_BOLD, fill=INK)
             col_x += width
         y += 62
+        row_h = 54 if len(rows) > 3 else 62
         for ridx, row in enumerate(rows):
-            draw.rectangle((x, y, x + total_w, y + 62), fill=TABLE_B if ridx % 2 == 0 else TABLE_A)
+            draw.rectangle((x, y, x + total_w, y + row_h), fill=TABLE_B if ridx % 2 == 0 else TABLE_A)
             col_x = x
             for cell, width in zip(row, widths):
-                draw.text((col_x + 12, y + 18), cell, font=FONT_SMALL, fill=INK)
+                draw.text((col_x + 12, y + 14), cell, font=FONT_SMALL, fill=INK)
                 col_x += width
-            y += 62
+            y += row_h
 
 
-def draw_feature_chart(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
+def draw_streaming_evaluation(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
     draw.rounded_rectangle((box.x + 10, box.y + 5, box.x + box.w - 10, box.y + box.h - 15), radius=28, fill="#FFFFFF", outline="#E5E5E5", width=2)
-    draw.text((box.x + 55, box.y + 32), "Streaming threshold calibration", font=FONT_SMALL_BOLD, fill=TEAL)
-    draw.text((box.x + 1210, box.y + 32), "Model speed comparison", font=FONT_SMALL_BOLD, fill=TEAL)
+    draw.text((box.x + 55, box.y + 32), "Streaming alert findings", font=FONT_SMALL_BOLD, fill=TEAL)
+    draw.text((box.x + 1210, box.y + 32), "Single-stream throughput ceiling", font=FONT_SMALL_BOLD, fill=TEAL)
     callout = Box(box.x + 40, box.y + 80, 1040, 335)
     draw.rounded_rectangle((callout.x, callout.y, callout.x + callout.w, callout.y + callout.h), radius=70, fill=CALLOUT, outline=INK, width=2)
     bullet_list(
         draw,
         [
-            "Every model emits unsafe_prob on a different scale, so thresholds are calibrated on validation clips.",
-            "YOLOv8 performs best when unsafe behavior is visible in one frame.",
-            "Temporal models increase inference cost without improving this deployment metric.",
-            "Offline AP and streaming false-alert rate must be reported separately.",
+            "RQ1: Offline accuracy did not fully predict streaming false-alert behavior, so both were measured.",
+            "RQ2: Temporal window models did not beat the per-frame YOLO classifier on this dataset.",
+            "RQ3: Alert thresholds had to be calibrated per model because unsafe probabilities used different scales.",
+            "System result: mean end-to-end latency was 0.198 s at 3.98 fps with zero consumer lag.",
         ],
         Box(callout.x + 55, callout.y + 45, callout.w - 110, 230),
         FONT_SMALL,
@@ -527,14 +532,19 @@ def draw_feature_chart(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box)
 
     diagram_box = Box(box.x + 65, box.y + 500, box.w - 130, 300)
     draw.rounded_rectangle((diagram_box.x, diagram_box.y, diagram_box.x + diagram_box.w, diagram_box.y + diagram_box.h), radius=18, fill="white", outline="#D6D6D6", width=2)
-    draw_centered(draw, Box(diagram_box.x, diagram_box.y + 16, diagram_box.w, 35), "Mermaid Streaming Evaluation Flow", FONT_SMALL_BOLD, TEAL)
+    draw_centered(draw, Box(diagram_box.x, diagram_box.y + 16, diagram_box.w, 35), "Offline + Streaming Evaluation Flow", FONT_SMALL_BOLD, TEAL)
     paste_image_fit(canvas, STREAMING_EVAL_DIAGRAM, Box(diagram_box.x + 45, diagram_box.y + 72, diagram_box.w - 90, diagram_box.h - 110), 0)
 
-    note = Box(box.x + 85, box.y + box.h - 165, box.w - 170, 135)
+    dashboard_box = Box(box.x + 115, box.y + 815, box.w - 230, 300)
+    draw.rounded_rectangle((dashboard_box.x, dashboard_box.y, dashboard_box.x + dashboard_box.w, dashboard_box.y + dashboard_box.h), radius=18, fill="white", outline="#D6D6D6", width=2)
+    draw_centered(draw, Box(dashboard_box.x, dashboard_box.y + 12, dashboard_box.w, 35), "Dashboard Demonstration", FONT_SMALL_BOLD, TEAL)
+    paste_image_fit(canvas, DASHBOARD_IMAGE, Box(dashboard_box.x + 32, dashboard_box.y + 58, dashboard_box.w - 64, dashboard_box.h - 76), 0)
+
+    note = Box(box.x + 85, box.y + box.h - 145, box.w - 170, 115)
     draw.rounded_rectangle((note.x, note.y, note.x + note.w, note.y + note.h), radius=28, fill="#FCEADF", outline=INK, width=2)
     draw_wrapped(
         draw,
-        "Best deployment choice is selected on streaming behavior, not offline accuracy alone. Calibration reduces probability-scale mismatch and prevents repeated alerts from flickering frame predictions.",
+        "Conclusion: YOLOv8 per-frame classification gave the strongest offline score, the fewest safe-clip alerts, and the lowest per-frame cost for this single-frame-visible workplace safety dataset.",
         (note.x + 26, note.y + 24),
         FONT_SMALL,
         INK,
@@ -575,14 +585,14 @@ def generate(output: Path) -> None:
     draw_stream_contract_card(draw, Box(problem.x + problem_text_w + 64, problem.y + 4, 610, 270))
     draw_background_flow(draw, Box(problem.x + 54, problem.y + 326, problem.w - 108, 95))
 
-    gaps = draw_panel(draw, Box(left_x, 1105, col_w, 650), "Research Gaps")
-    draw_gap_cards(draw, Box(gaps.x, gaps.y + 5, gaps.w, 465))
+    gaps = draw_panel(draw, Box(left_x, 1105, col_w, 650), "Research Questions")
+    draw_research_question_cards(draw, Box(gaps.x, gaps.y + 5, gaps.w, 465))
 
     draw_bar(draw, Box(left_x + 210, 1785, col_w - 420, 140), "Key Contributions", radius=14)
     draw_contributions(draw, Box(left_x - 20, 1960, col_w + 40, 1045))
 
     draw_bar(draw, Box(left_x + 260, 3050, col_w - 520, 130), "System Architecture", radius=14)
-    draw_architecture(image, draw, Box(left_x, 3235, col_w, 700))
+    draw_architecture(image, draw, Box(left_x, 3235, col_w, 790))
 
     data_bar = Box(right_x + 350, 455, right_w - 700, 140)
     draw_bar(draw, data_bar, "Data Collection", radius=18)
@@ -591,8 +601,8 @@ def generate(output: Path) -> None:
     draw_bar(draw, Box(right_x + 350, 1480, right_w - 700, 135), "Results", radius=18)
     draw_results_table(draw, Box(right_x + 45, 1655, right_w - 90, 680))
 
-    draw_bar(draw, Box(right_x + 350, 2385, right_w - 700, 135), "Feature Analysis", radius=18)
-    draw_feature_chart(image, draw, Box(right_x + 45, 2555, right_w - 90, 1320))
+    draw_bar(draw, Box(right_x + 350, 2475, right_w - 700, 135), "Streaming Evaluation", radius=18)
+    draw_streaming_evaluation(image, draw, Box(right_x + 45, 2645, right_w - 90, 1230))
 
     footer_y = CANVAS_SIZE - 100
     footer = "Code: github.com/Lumysia/SafeKafka   |   Course: ENGR 5785G Real-Time Data Analytics for IoT   |   Sensor Syndicate"
