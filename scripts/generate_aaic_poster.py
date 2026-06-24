@@ -252,7 +252,7 @@ def draw_research_question_cards(draw: ImageDraw.ImageDraw, box: Box) -> None:
         "Do 16-frame temporal window models outperform a YOLOv8 per-frame classifier for visible workplace safety behaviors?",
         "Can one fixed alert threshold serve every model, or does each unsafe-probability scale need validation calibration?",
     ]
-    impacts = ["offline != stream", "temporal test", "calibrated alerting"]
+    impacts = ["measure separately", "compare model families", "calibrate per model"]
     gap = 76
     card_w = (box.w - gap * 2) // 3
     for index, (title, body) in enumerate(zip(titles, bodies)):
@@ -363,10 +363,24 @@ def draw_contributions(draw: ImageDraw.ImageDraw, box: Box) -> None:
 def draw_architecture(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
     draw.rounded_rectangle((box.x + 20, box.y + 70, box.x + box.w - 20, box.y + box.h - 70), radius=42, fill="white", outline=ORANGE_LIGHT, width=3)
     draw.rectangle((box.x + box.w // 2 - 220, box.y + 42, box.x + box.w // 2 + 220, box.y + 105), fill=ORANGE)
-    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "Updated Architecture", FONT_SMALL_BOLD, "white")
+    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "System Architecture", FONT_SMALL_BOLD, "white")
 
     def arrow(start: tuple[int, int], end: tuple[int, int]) -> None:
         draw.line((*start, *end), fill=LINE, width=4)
+        ex, ey = end
+        sx, sy = start
+        if abs(ex - sx) >= abs(ey - sy):
+            direction = 1 if ex >= sx else -1
+            draw.polygon([(ex, ey), (ex - direction * 18, ey - 10), (ex - direction * 18, ey + 10)], fill=LINE)
+        else:
+            direction = 1 if ey >= sy else -1
+            draw.polygon([(ex, ey), (ex - 10, ey - direction * 18), (ex + 10, ey - direction * 18)], fill=LINE)
+
+    def polyline_arrow(points: list[tuple[int, int]]) -> None:
+        for start, end in zip(points, points[1:]):
+            draw.line((*start, *end), fill=LINE, width=4)
+        start = points[-2]
+        end = points[-1]
         ex, ey = end
         sx, sy = start
         if abs(ex - sx) >= abs(ey - sy):
@@ -410,12 +424,29 @@ def draw_architecture(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) 
     node(dash_frames, "Frame consumer", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
     node(dash_alerts, "Alert consumer", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
     node(dashboard, "Dashboard UI\nFastAPI + WebSocket", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
-    arrow((frames.x + frames.w // 2, frames.y + frames.h), (dash_frames.x + dash_frames.w // 2, dash_frames.y))
-    arrow((alerts.x + alerts.w // 2, alerts.y + alerts.h), (dash_alerts.x + dash_alerts.w // 2, dash_alerts.y))
-    arrow((dash_frames.x + dash_frames.w, dash_frames.y + dash_frames.h // 2), (dashboard.x, dashboard.y + dashboard.h // 2))
+    route_y = dash_box.y + dash_box.h + 35
+    polyline_arrow([
+        (frames.x + frames.w // 2, frames.y + frames.h),
+        (frames.x + frames.w // 2, route_y),
+        (dash_frames.x + dash_frames.w // 2, route_y),
+        (dash_frames.x + dash_frames.w // 2, dash_frames.y + dash_frames.h),
+    ])
+    polyline_arrow([
+        (alerts.x + alerts.w // 2, alerts.y + alerts.h),
+        (alerts.x + alerts.w // 2, route_y),
+        (dash_alerts.x + dash_alerts.w // 2, route_y),
+        (dash_alerts.x + dash_alerts.w // 2, dash_alerts.y + dash_alerts.h),
+    ])
+    internal_route_y = dash_box.y + dash_box.h - 48
+    polyline_arrow([
+        (dash_frames.x + dash_frames.w, dash_frames.y + dash_frames.h // 2),
+        (dash_frames.x + dash_frames.w + 22, dash_frames.y + dash_frames.h // 2),
+        (dash_frames.x + dash_frames.w + 22, internal_route_y),
+        (dashboard.x - 22, internal_route_y),
+        (dashboard.x - 22, dashboard.y + dashboard.h // 2),
+        (dashboard.x, dashboard.y + dashboard.h // 2),
+    ])
     arrow((dash_alerts.x + dash_alerts.w, dash_alerts.y + dash_alerts.h // 2), (dashboard.x, dashboard.y + dashboard.h // 2))
-    draw_centered(draw, Box(dash_box.x + 40, dash_box.y + dash_box.h - 30, dash_box.w - 80, 24), "Dashboard displays frames and alerts but does not publish safety-alerts", FONT_TINY_BOLD, ORANGE)
-
     contract = Box(box.x + 130, box.y + 590, box.w - 260, 150)
     draw.text((contract.x, contract.y), "Kafka topic contract", font=FONT_HEADING, fill=TEAL)
     topic_rows = [
@@ -518,8 +549,8 @@ def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
         ]),
         ("Per-frame YOLO and System Measurements", ["Scope", "Measure 1", "Measure 2", "Measure 3", "Measure 4", "Sample / Cost"], [330, 315, 315, 350, 350, 295], [
             ["Binary unsafe", "Precision 0.769", "Recall 0.841", "F1 0.803", "AP 0.887", "1500 frames"],
-            ["Streaming alerts", "Precision 0.732", "Recall 0.812", "Safe alerted 0.311", "Threshold 0.60", "125 clips"],
-            ["Live pipeline", "Mean 0.198 s", "Max 0.379 s", "Throughput 3.98 fps", "Lag 0", "352 KB/frame"],
+            ["Streaming alerts", "Precision 0.732", "Recall 0.812", "Safe-clip alert rate 0.311", "Calibrated threshold 0.60", "125 clips"],
+            ["Live pipeline", "Mean latency 0.198 s", "Max latency 0.379 s", "Throughput 3.98 fps", "Zero consumer lag", "352 KB/frame"],
         ]),
     ]
     for group, columns, widths, rows in groups:
