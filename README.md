@@ -23,38 +23,9 @@ CCTV / RTSP / video file
 
 ## Requirements
 
-- macOS on Apple Silicon (M1 / M2 / M3 / M4) or Linux
 - Python 3.10 – 3.12
 - Homebrew (only needed for the optional local Kafka via Docker)
 - A YOLOv8 weights file (`yolov8m.pt` for the COCO baseline, or your own `best.pt`)
-
-## Docker Compose demo
-
-For the fastest live demonstration, use the bundled Docker Compose stack. It starts Kafka,
-creates topics, launches the dashboard, detector, and producer, then replays the included
-demo videos through the pipeline.
-
-```bash
-docker compose up --build
-```
-
-Then open <http://localhost:8000>. The producer replays one bundled clip per behaviour
-class from `demo_videos/`, the detector uses the 8-class `previous_weights/best.pt`, and
-the dashboard shows continuous MJPEG camera feeds plus live `cam-01` / `cam-02` safe and
-unsafe totals.
-
-To run in the background:
-
-```bash
-docker compose up --build -d
-docker compose logs -f dashboard detector producer
-```
-
-Stop everything with:
-
-```bash
-docker compose down
-```
 
 ## Mac M1 setup
 
@@ -166,6 +137,34 @@ The `.vscode/launch.json` file ships four debug configurations — Producer, Det
 Aggregator, Dashboard — plus a compound configuration **"SafeStream: all services"**
 that starts everything at once.
 
+## Docker Compose demo
+
+For the fastest live demonstration, use the bundled Docker Compose stack. It starts Kafka,
+creates topics, launches the dashboard, detector, and producer, then replays the included
+demo videos through the pipeline.
+
+```bash
+docker compose up --build
+```
+
+Then open <http://localhost:8000>. The producer replays one bundled clip per behaviour
+class from `demo_videos/`, the detector uses the 8-class `previous_weights/best.pt`, and
+the dashboard shows continuous MJPEG camera feeds plus live `cam-01` / `cam-02` safe and
+unsafe totals.
+
+To run in the background:
+
+```bash
+docker compose up --build -d
+docker compose logs -f dashboard detector producer
+```
+
+Stop everything with:
+
+```bash
+docker compose down
+```
+
 ## Configuration cheat sheet
 
 All knobs are read from `.env` (see `.env.example` for the full list):
@@ -197,19 +196,19 @@ This is a **classification** model, so the headline quality numbers are classifi
 metrics — not bbox/IoU `mAP`. (Earlier versions of this table labelled the two AP figures
 below as `mAP @ 0.5` / `mAP @ 0.5:0.95`; that naming was misleading and has been corrected.)
 
-| Metric                    | Value                                | Notes                                                                                              |
-| ------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| Binary unsafe AP (PR-AUC) | `0.887`                              | Area under the precision–recall curve for the `unsafe` score. Classification AP, **not** bbox mAP. |
-| 8-class macro AP          | `0.729`                              | Macro-averaged one-vs-rest AP across the 8 classes. Classification AP, **not** bbox mAP.           |
-| Detector precision        | `0.769`                              | Binary unsafe precision on the held-out test split.                                                |
-| Detector recall           | `0.841`                              | Binary unsafe recall on the held-out test split.                                                   |
-| Binary F1 score           | `0.803`                              | Binary unsafe-vs-safe F1 on the held-out test split.                                               |
-| Accuracy                  | `0.789`                              | Binary safe-vs-unsafe accuracy. See the imbalance caveat below.                                    |
-| 8-class top-1 accuracy    | `0.641`                              | Exact 8-class classification accuracy (see the class-name canonicalization note below).            |
-| Confusion matrix          | `TP=646`, `FP=194`, `FN=122`, `TN=538` | Positive class is `unsafe`; rows are true unsafe/safe.                                           |
-| Alerts per minute         | live dashboard                       | Count of generated alerts in the last 60 seconds.                                                  |
-| End-to-end latency        | live dashboard                       | Frame timestamp to dashboard detection consumption, rolling average/max over the last 60 seconds.  |
-| Throughput                | live dashboard                       | `safety-detections` messages per second over the last 60 seconds.                                  |
+| Metric                    | Value                                  | Notes                                                                                              |
+| ------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Binary unsafe AP (PR-AUC) | `0.887`                                | Area under the precision–recall curve for the `unsafe` score. Classification AP, **not** bbox mAP. |
+| 8-class macro AP          | `0.729`                                | Macro-averaged one-vs-rest AP across the 8 classes. Classification AP, **not** bbox mAP.           |
+| Detector precision        | `0.769`                                | Binary unsafe precision on the held-out test split.                                                |
+| Detector recall           | `0.841`                                | Binary unsafe recall on the held-out test split.                                                   |
+| Binary F1 score           | `0.803`                                | Binary unsafe-vs-safe F1 on the held-out test split.                                               |
+| Accuracy                  | `0.789`                                | Binary safe-vs-unsafe accuracy. See the imbalance caveat below.                                    |
+| 8-class top-1 accuracy    | `0.641`                                | Exact 8-class classification accuracy (see the class-name canonicalization note below).            |
+| Confusion matrix          | `TP=646`, `FP=194`, `FN=122`, `TN=538` | Positive class is `unsafe`; rows are true unsafe/safe.                                             |
+| Alerts per minute         | live dashboard                         | Count of generated alerts in the last 60 seconds.                                                  |
+| End-to-end latency        | live dashboard                         | Frame timestamp to dashboard detection consumption, rolling average/max over the last 60 seconds.  |
+| Throughput                | live dashboard                         | `safety-detections` messages per second over the last 60 seconds.                                  |
 
 **How to read these.** The test set is roughly balanced — `768/1500` (~51%) frames are
 `unsafe` — so the trivial "always unsafe" baseline scores only ~`0.512` accuracy; the honest
@@ -271,19 +270,19 @@ uv run python -m safestream.detector --weights runs/safestream_yolov8m/weights/b
 ## Temporal models & SOTA ablation
 
 Beyond the per-frame YOLO classifier, the repo includes a **temporal** model family
-([safestream/temporal/](safestream/temporal/)) that classifies a *window of frames* per clip, plus
+([safestream/temporal/](safestream/temporal/)) that classifies a _window of frames_ per clip, plus
 a one-command ablation benchmarking them against the per-frame baseline and against modern
 video-recognition SOTA. A single factory `build_model(kind, num_classes)` builds every kind:
 
-| `kind`   | backbone                    | regime                          | input |
-| -------- | --------------------------- | ------------------------------- | ----- |
-| `head`   | ResNet-18 + GRU/attention   | frozen encoder, head trained    | 224   |
-| `video`  | R(2+1)D-18 (torchvision)    | full fine-tune                  | 112   |
-| `mvit`   | MViTv2-S (Kinetics-400)     | backbone frozen (linear probe)  | 224   |
-| `swin3d` | Video Swin-T (Kinetics-400) | backbone frozen (linear probe)  | 224   |
-| `hiera`  | Hiera-B (Kinetics-400)      | backbone frozen (linear probe)  | 224   |
+| `kind`   | backbone                    | regime                         | input |
+| -------- | --------------------------- | ------------------------------ | ----- |
+| `head`   | ResNet-18 + GRU/attention   | frozen encoder, head trained   | 224   |
+| `video`  | R(2+1)D-18 (torchvision)    | full fine-tune                 | 112   |
+| `mvit`   | MViTv2-S (Kinetics-400)     | backbone frozen (linear probe) | 224   |
+| `swin3d` | Video Swin-T (Kinetics-400) | backbone frozen (linear probe) | 224   |
+| `hiera`  | Hiera-B (Kinetics-400)      | backbone frozen (linear probe) | 224   |
 
-All train at `--window 16`; `mvit`/`hiera` *require* window 16 (fixed positional embeddings). The
+All train at `--window 16`; `mvit`/`hiera` _require_ window 16 (fixed positional embeddings). The
 transformers train only a ~6K-param head, so they fit in 8 GB; the first run of each downloads its
 Kinetics-400 weights (needs internet once). `hiera` needs the `hiera-transformer` package (already
 in `requirements.txt`). Set `DETECTOR_MODE=temporal` + `TEMPORAL_WEIGHTS` to run one live in the
@@ -315,7 +314,7 @@ fixes this — it sweeps the enter/exit thresholds on the **val** split, picks e
 at a matched operating point (default: lowest false-alert rate among thresholds with
 alert-recall ≥ 0.95), and reports on the **test** split. The chosen thresholds land in a
 `calibration` block in the output JSON and the "Smart enter-thr (cal)" column. The per-frame YOLO
-baseline goes through the *same* path (`--model-type yolo`), so its streaming row is directly
+baseline goes through the _same_ path (`--model-type yolo`), so its streaming row is directly
 comparable.
 
 ### Results & findings
@@ -339,31 +338,31 @@ column is directly comparable across rows._
 **Headline: temporal modeling does not beat the per-frame baseline on this dataset.**
 
 1. **Offline, YOLO wins outright** — best binary AP (0.887), F1 (0.803), and 8-class top-1 (0.641);
-   no temporal model beats it. These violations are mostly *appearance/state* (panel open vs closed,
-   person in walkway), visible in a single frame, so aggregating 16 frames adds little. *(Caveat:
-   YOLO AP is over 1,500 frames, temporal AP over 125 clips — related but not identical units.)*
+   no temporal model beats it. These violations are mostly _appearance/state_ (panel open vs closed,
+   person in walkway), visible in a single frame, so aggregating 16 frames adds little. _(Caveat:
+   YOLO AP is over 1,500 frames, temporal AP over 125 clips — related but not identical units.)_
 2. **Offline quality ≠ streaming quality.** `head` and `Hiera` have identical offline AP (0.862) but
    opposite streaming false-alert rates (0.557 vs 0.787). Choosing a model by offline F1 would pick
-   one of the *worst* alert streams — the threshold + aggregator layer matters as much as the model.
+   one of the _worst_ alert streams — the threshold + aggregator layer matters as much as the model.
 3. **Calibration is the biggest lever.** No model is well-calibrated at the default 0.5 (chosen
-   thresholds span 0.45–0.70). Before calibration Hiera *looked* like the best streamer (FA 0.377) —
+   thresholds span 0.45–0.70). Before calibration Hiera _looked_ like the best streamer (FA 0.377) —
    but only because it was being scored at a recall it never actually reached; at matched recall it's
    near the bottom.
-4. **The per-frame baseline also streams best — closing the gap.** Run through the *same* aggregator,
+4. **The per-frame baseline also streams best — closing the gap.** Run through the _same_ aggregator,
    YOLO has the **lowest false-alert rate (0.311)** and **highest alert precision (0.732)** of any
    model. It does so at a lower test recall (0.812 vs 0.88–1.00), because its val→test recall gap is
    larger — so it's a precision/recall trade, not a strict domination. But the upshot stands: the
-   shipped *per-frame YOLO → EWMA/hysteresis aggregator* pipeline produces a competitive-or-better
+   shipped _per-frame YOLO → EWMA/hysteresis aggregator_ pipeline produces a competitive-or-better
    alert stream, and the heavyweight 3D video transformers don't justify their cost.
 5. **Cost.** The shipped per-frame YOLO is also the cheapest to run — **6.4 ms/frame**, ~2× faster
    than the cheap GRU `head` (13.4) and 6–8× faster than the transformer linear-probes (40–48
    ms/frame), which push a full 3D backbone over the whole 16-frame window every frame. So the
-   baseline wins on streaming alert quality *and* latency; the heavyweight temporal nets cost more for
+   baseline wins on streaming alert quality _and_ latency; the heavyweight temporal nets cost more for
    no accuracy gain.
 
-**How to read the streaming columns.** Operating points are matched on *val* recall (≥ 0.95), so the
-*test* recall varies per row (0.81–1.00) — read false-alert rate alongside recall, not in isolation.
-Val has few safe clips, so the reported false-alert rate is the *test* number (over 125 clips); the
+**How to read the streaming columns.** Operating points are matched on _val_ recall (≥ 0.95), so the
+_test_ recall varies per row (0.81–1.00) — read false-alert rate alongside recall, not in isolation.
+Val has few safe clips, so the reported false-alert rate is the _test_ number (over 125 clips); the
 tie-break on the highest qualifying threshold keeps the choice stable. The takeaway for deployment:
 **invest in per-model (and per-camera) threshold calibration and the aggregator, not a heavier
 backbone.**

@@ -19,7 +19,8 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
 
-\title{SafeStream-Kafka: Real-Time Safety Analytics for IoT Workplace Video Streams\\
+\title{SafeStream-Kafka: Real-Time Safety Analytics for IoT Workplace Video Streams\textsuperscript{*}\\
+\thanks{\textsuperscript{*}~The complete source code is available at \protect\url{https://github.com/Lumysia/SafeKafka}.}
 }
 
 \author{
@@ -42,7 +43,7 @@ Oshawa, Ontario, Canada
 % abstract
 % =========================================================
 \begin{abstract}
-SafeStream-Kafka is a prototype for real-time safety analytics on IoT-style workplace video streams. It uses Apache Kafka to move frame events between services, OpenCV to extract and encode frames, an Ultralytics YOLO per-frame classifier (the code also supports a detection mode) to label safety-related behavior, a rolling-window aggregator to calculate per-camera metrics, and a FastAPI dashboard for live monitoring. The pipeline accepts CCTV, RTSP, webcam, or replayed video sources; labels each processed frame as safe, unsafe, or other; tracks cumulative and rolling unsafe ratios; and publishes alerts when unsafe activity crosses a threshold. Across six models compared on this dataset, the per-frame classifier had the highest offline accuracy and produced the fewest false alerts in the stream. On the live pipeline we additionally measure systems behavior---a mean end-to-end latency near 0.2\,s through a cloud broker, throughput that tracks the input rate with zero consumer lag, and the network cost of moving base64-encoded JPEG frames. The report documents the motivation, background, architecture, methodology, evaluation results, limitations, and remaining work.
+SafeStream-Kafka is a prototype for real time safety analytics on IoT style workplace video streams. It uses Apache Kafka to move frame events between services, OpenCV to extract and encode frames, an Ultralytics YOLO per frame classifier (the code also supports a detection mode) to label safety related behavior, a rolling-window aggregator to calculate per camera metrics, and a FastAPI dashboard for live monitoring. The pipeline accepts CCTV, RTSP, webcam, or replayed video sources; labels each processed frame as safe, unsafe, or other; tracks cumulative and rolling unsafe ratios; and publishes alerts when unsafe activity crosses a threshold. Across six models compared on this dataset, the classifier had the highest offline accuracy and produced the fewest false alerts in the stream. On the live pipeline, we additionally measure system behavior, including a mean end to end latency of approximately 0.2 s through a cloud broker, throughput that tracks the input rate with zero consumer lag, and the network cost of transporting base64-encoded JPEG frames, throughput that tracks the input rate with zero consumer lag, and the network cost of moving base64 encoded JPEG frames. The report documents the motivation, background, architecture, methodology, evaluation results, limitations, and remaining work.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -57,18 +58,18 @@ real-time stream processing, FastAPI
 \section{Problem Definition and Motivation}
 Unsafe behavior in workplaces puts workers, equipment, and production schedules at immediate risk. Industrial and construction sites already run CCTV or network cameras, but raw video is hard to monitor continuously by hand. The analytics problem is to turn those streams into timely safety signals: unsafe-behavior counts, rolling violation ratios, and high-severity alerts that a supervisor can act on.
 
-SafeStream-Kafka treats this video as an IoT data stream rather than an offline video-processing task. It ingests live or realistically replayed video, classifies safety-related behavior frame by frame, aggregates the results per camera, and surfaces live operational metrics in a web dashboard. The scope fits the graduate real-time analytics rubric: it handles streaming data, applies machine-learning inference, delivers a working prototype, and exposes measurable quantities such as alert rates, rolling ratios, and processing throughput.
+SafeStream-Kafka treats this video as an IoT data stream rather than an offline video-processing task. It ingests live or realistically replayed video, classifies safety related behavior frame by frame, aggregates the results per camera, and surfaces live operational metrics in a web dashboard. The scope fits the graduate real-time analytics rubric: it handles streaming data, applies machine learning inference, delivers a working prototype, and exposes measurable quantities such as alert rates, rolling ratios, and processing throughput.
 
-We also study the classifier itself as a real-time alert source. Prior work on safety-behavior recognition reports \emph{offline} accuracy (measured on a fixed, pre-recorded test set rather than on the live stream); we instead run the model as a Kafka \emph{stream} and measure its \emph{streaming} behavior on the running pipeline, as alerts are produced. While the gap between offline and online performance and the need for per-model decision thresholds are familiar in machine learning generally, we are not aware of prior work that measures them for this safety-behavior task on a running stream-processing pipeline. We find that offline accuracy does not by itself rank models by their streaming false-alert behavior, that the alert level must be set per model, and that a per-frame classifier matches or exceeds temporal \emph{window models} (which classify a short stack of consecutive frames rather than one frame) on accuracy and alert quality at lower per-frame cost.
+We also study the classifier itself as a real time alert source. Prior work on safety behavior recognition reports \emph{offline} accuracy (measured on a fixed, pre recorded test set rather than on the live stream); we instead run the model as a Kafka \emph{stream} and measure its \emph{streaming} behavior on the running pipeline, as alerts are produced. While the gap between offline and online performance and the need for per-model decision thresholds are familiar in machine learning generally, we are not aware of prior work that measures them for this safety behavior task on a running stream processing pipeline. We find that offline accuracy does not by itself rank models by their streaming false alert behavior, that the alert level must be set per model, and that a per frame classifier matches or exceeds temporal \emph{window models} (which classify a short stack of consecutive frames rather than one frame) on accuracy and alert quality at lower per frame cost.
 
 The project objectives are:
 
 \begin{itemize}
 \item Ingest video from files, directories, RTSP streams, or webcams and publish frames as Kafka events.
-\item Run a per-frame YOLO classifier on each frame to label safety behavior (a detection mode is also available in code).
+\item Run YOLO classifier on each frame to label safety behavior (a detection mode is also available in code).
 \item Convert model labels into safe, unsafe, or other categories.
-\item Maintain per-camera cumulative counts, rolling-window unsafe ratios, violation labels, and alert history.
-\item Serve a live dashboard with camera cards, current frame snapshots, recent alerts, and violation-frame endpoints.
+\item Maintain per camera cumulative counts, rolling-window unsafe ratios, violation labels, and alert history.
+\item Serve a live dashboard with camera cards, current frame snapshots, recent alerts, and violation frame endpoints.
 \item Provide reproducible scripts for topic creation, dataset preparation, model training, and local or cloud Kafka deployment.
 \end{itemize}
 
@@ -76,22 +77,22 @@ The project objectives are:
 \label{subsec:research-questions}
 
 Beyond building the prototype, the project sets out to answer three
-research questions about running a safety classifier as a real-time alert
+research questions about running a safety classifier as a real time alert
 source. These questions are stated here and answered with measured results
 in Section~\ref{subsec:findings}.
 
 \begin{itemize}
 \item \textbf{RQ1.} Does a model's \emph{offline} classification accuracy
-predict its \emph{streaming} false-alert behavior, or must the two be
+predict its \emph{streaming} false alert behavior, or must the two be
 measured separately?
 
 \item \textbf{RQ2.} Do temporal window models outperform a single-frame
 classifier on accuracy and alert quality for safety behaviors that are
-visible in one frame, and is the extra per-frame cost justified?
+visible in one frame, and is the extra per frame cost justified?
 
 \item \textbf{RQ3.} Can one fixed alert threshold serve every model, or
-must the alert level be \emph{calibrated} per model---choosing its trigger
-level on a validation set---because each puts its unsafe probability on a
+must the alert level be \emph{calibrated} per model choosing its trigger
+level on a validation set because each puts its unsafe probability on a
 different scale?
 \end{itemize}
 
@@ -102,13 +103,13 @@ different scale?
 
 \subsection{Streaming Video Analytics for IoT}
 
-Streaming video analytics has a simple requirement and a difficult systems constraint: frames arrive continuously, but the model, broker, dashboard, and alert logic do not all run at the same pace. Edge and IoT video analytics surveys point to the same pressure points: high data volume, latency sensitivity, and expensive deep-learning inference~\cite{b1,b2}. SafeStream-Kafka handles those constraints by separating ingestion, inference, aggregation, and visualization instead of forcing every stage through one process.
+Streaming video analytics has a simple requirement and a difficult systems constraint: frames arrive continuously, but the model, broker, dashboard, and alert logic do not all run at the same pace. Edge and IoT video analytics surveys point to the same pressure points: high data volume, latency sensitivity, and expensive deep learning inference~\cite{b1,b2}. SafeStream-Kafka handles those constraints by separating ingestion, inference, aggregation, and visualization instead of forcing every stage through one process.
 
-That separation is what makes the project a streaming analytics prototype rather than a single offline computer-vision script.
+That separation is what makes the project a streaming analytics prototype rather than a single offline computer vision script.
 
 \subsection{Apache Kafka as a Streaming Backbone}
 
-Kafka was designed to move high-volume event data with low latency~\cite{b3}. In SafeStream-Kafka, each stage reads and writes a topic without sharing memory or process state. The topic boundaries are explicit: cctv-frames carries encoded video frames, safety-detections carries model outputs, and safety-alerts carries aggregated alert events.
+Kafka was designed to move high volume event data with low latency~\cite{b3}. In SafeStream-Kafka, each stage reads and writes a topic without sharing memory or process state. The topic boundaries are explicit: cctv-frames carries encoded video frames, safety detections carries model outputs, and safety alerts carries aggregated alert events.
 
 The implementation can point either to Confluent Cloud or to a local plaintext broker. The producer enables compression, idempotent delivery, and larger message limits because JPEG frame payloads are much larger than ordinary log lines. Consumers use separate group IDs, so the dashboard, detector, and aggregator can process the same topics without sharing offset state.
 
@@ -120,50 +121,57 @@ The detector does not treat YOLO output as the final product. It turns raw label
 \subsection{Video Action-Recognition Models}
 \label{subsec:action-models}
 
-The per-frame classifier above labels each frame independently, but many
-unsafe behaviors play out over time. A second model family---temporal
-window models---instead classifies a short stack of consecutive frames,
-trading per-frame cost for access to motion cues. To test whether that
-extra modeling helps on this dataset (Section~\ref{subsec:research-questions},
-RQ2), the comparison in Section~\ref{subsec:findings} places the per-frame
-YOLO classifier against five window models drawn from the
-action-recognition literature.
+The per frame classifier above labels each frame independently, while temporal
+window models classify short stacks of consecutive frames to test whether motion
+improves safety recognition. We compare the per-frame YOLO classifier with five
+temporal-window baselines: ResNet18+GRU, R(2+1)D-18, MViTv2-S, Video Swin-T, and
+Hiera-B. The transformer models were pretrained on Kinetics-400 and linear-probed
+to fit the available 8\,GB GPU budget.
 
-\begin{itemize}
-    \item \textbf{Per-frame YOLO classifier} labels each frame on its own
-    and serves as the single-frame point of comparison; it carries no
-    cross-frame temporal information.
+% The per-frame classifier above labels each frame independently, but many
+% unsafe behaviors play out over time. A second model family---temporal
+% window models---instead classifies a short stack of consecutive frames,
+% trading per-frame cost for access to motion cues. To test whether that
+% extra modeling helps on this dataset (Section~\ref{subsec:research-questions},
+% RQ2), the comparison in Section~\ref{subsec:findings} places the per-frame
+% YOLO classifier against five window models drawn from the
+% action-recognition literature.
 
-    \item \textbf{ResNet18 + GRU head} is the simple in-house baseline: a
-    two-dimensional convolutional ResNet~\cite{b11} extracts per-frame
-    features that a gated recurrent unit (GRU)~\cite{b12} reads in sequence
-    across the window. It is included as a lightweight baseline rather than
-    a state-of-the-art model.
+% \begin{itemize}
+%     \item \textbf{Per-frame YOLO classifier} labels each frame on its own
+%     and serves as the single-frame point of comparison; it carries no
+%     cross-frame temporal information.
 
-    \item \textbf{R(2+1)D-18} factorizes each three-dimensional convolution
-    into a separate spatial convolution followed by a separate temporal
-    convolution, which improves action recognition while keeping the
-    parameter count modest~\cite{b7}.
+%     \item \textbf{ResNet18 + GRU head} is the simple in-house baseline: a
+%     two-dimensional convolutional ResNet~\cite{b11} extracts per-frame
+%     features that a gated recurrent unit (GRU)~\cite{b12} reads in sequence
+%     across the window. It is included as a lightweight baseline rather than
+%     a state-of-the-art model.
 
-    \item \textbf{MViTv2-S} is a multiscale vision transformer that builds a
-    feature pyramid inside the transformer, progressively trading spatial
-    resolution for channel depth for efficient video classification~\cite{b8}.
+%     \item \textbf{R(2+1)D-18} factorizes each three-dimensional convolution
+%     into a separate spatial convolution followed by a separate temporal
+%     convolution, which improves action recognition while keeping the
+%     parameter count modest~\cite{b7}.
 
-    \item \textbf{Video Swin-T} is a video transformer that restricts
-    self-attention to local, shifted three-dimensional windows, giving a
-    strong accuracy--efficiency trade-off for video~\cite{b9}.
+%     \item \textbf{MViTv2-S} is a multiscale vision transformer that builds a
+%     feature pyramid inside the transformer, progressively trading spatial
+%     resolution for channel depth for efficient video classification~\cite{b8}.
 
-    \item \textbf{Hiera-B} is a hierarchical vision transformer that drops
-    the specialized modules added by earlier hierarchical models and instead
-    learns spatial structure through masked-autoencoder pretraining~\cite{b10}.
-\end{itemize}
+%     \item \textbf{Video Swin-T} is a video transformer that restricts
+%     self-attention to local, shifted three-dimensional windows, giving a
+%     strong accuracy--efficiency trade-off for video~\cite{b9}.
 
-The three transformers (MViTv2-S, Video Swin-T, and Hiera-B) are pretrained
-on the Kinetics-400 action-recognition dataset~\cite{b13} and are used here
-as strong action-recognition baselines. Rather than fine-tuning their large
-backbones, this project \emph{linear-probes} them---training only a new final
-layer on top of the frozen pretrained network---so that the comparison stays
-within a single 8\,GB GPU.
+%     \item \textbf{Hiera-B} is a hierarchical vision transformer that drops
+%     the specialized modules added by earlier hierarchical models and instead
+%     learns spatial structure through masked-autoencoder pretraining~\cite{b10}.
+% \end{itemize}
+
+% The three transformers (MViTv2-S, Video Swin-T, and Hiera-B) are pretrained
+% on the Kinetics-400 action-recognition dataset~\cite{b13} and are used here
+% as strong action-recognition baselines. Rather than fine-tuning their large
+% backbones, this project \emph{linear-probes} them---training only a new final
+% layer on top of the frozen pretrained network---so that the comparison stays
+% within a single 8\,GB GPU.
 
 
 % =========================================================
@@ -224,8 +232,7 @@ step; Phases~1 and 3--5 form the online streaming pipeline.}
 The SafeStream-Kafka data flow is shown in
 Fig.~\ref{fig:system-architecture}. The pipeline is structured as producer
 $\rightarrow$ detector $\rightarrow$ aggregator $\rightarrow$ dashboard, with
-the four services communicating only through three Kafka topics; the complete
-source code is available in the project repository~\cite{b14}. In
+the four services communicating only through three Kafka topics. In
 Fig.~\ref{fig:system-architecture}, solid boxes are the four services, cylinders
 are the Kafka topics that connect them, and dashed boxes are the external video
 sources and the browser.
@@ -234,20 +241,33 @@ To keep one responsibility per service and a single source of truth for every
 alert, we designate the \emph{standalone aggregator} as the sole authoritative
 owner of alerting: it alone consumes \texttt{safety-detections}, evaluates the
 sliding window, and publishes to \texttt{safety-alerts}. The dashboard is a
-strictly \emph{read-only} consumer---it subscribes to \texttt{safety-alerts} to
+strictly \emph{read-only} consumer it subscribes to \texttt{safety-alerts} to
 display alerts and to \texttt{cctv-frames} to show the latest camera images, runs
 no aggregation logic of its own, and never writes to \texttt{safety-alerts}.
 
-The as-built prototype does not yet enforce this separation. The dashboard
-currently embeds its own copy of the aggregator and re-publishes alerts in
-parallel with the standalone service. Because the two subscribe under
-\emph{different} Kafka consumer groups, each receives every detection
-independently rather than sharing the load, so running both at once makes both
-emit alerts for the same event---producing duplicate alerts and divergent
-window state. This is a genuine race in alert ownership, not merely cosmetic
-redundancy. Consolidating onto the read-only dashboard described above removes
-it by construction; Section~\ref{sec:limitations} discusses completing that
-migration.
+% The prototype does not yet enforce this separation. The dashboard
+% currently embeds its own copy of the aggregator and republishes alerts in
+% parallel with the standalone service. Because the two subscribe under
+% \emph{different} Kafka consumer groups, each receives every detection
+% independently rather than sharing the load, so running both at once makes both
+% emit alerts for the same event producing duplicate alerts and divergent
+% window state. This is a genuine race in alert ownership, not merely cosmetic
+% redundancy. Consolidating onto the read-only dashboard described above removes
+% it by construction; Section~\ref{sec:limitations} discusses completing that
+% migration.
+
+The runtime pipeline separates video ingestion, model inference, aggregation,
+and dashboard visualization. The producer publishes encoded frames to
+\texttt{cctv-frames}; the detector consumes those frames and publishes
+safety-detection summaries to \texttt{safety-detections}; the standalone
+aggregator maintains per-camera rolling state and alert logic; and the dashboard
+consumes stream outputs to display live camera images, rolling ratios, recent
+alerts, unsafe-behavior summaries, and operational metrics.
+
+This separation keeps the pipeline modular while still supporting the live
+dashboard shown in the prototype. Kafka topics provide the contract between
+services, so each component can be developed, tested, and scaled independently.
+
 
 \begin{figure*}[t]
 \centering
@@ -285,7 +305,7 @@ migration.
 \end{tikzpicture}
 \caption{SafeStream-Kafka runtime architecture in the resolved single-owner
 design: the standalone aggregator is the only producer of \texttt{safety-alerts},
-and the dashboard is a read-only consumer of \texttt{safety-alerts} (for alerts)
+and the dashboard is a read only consumer of \texttt{safety-alerts} (for alerts)
 and \texttt{cctv-frames} (for live images).}
 \label{fig:system-architecture}
 \end{figure*}
@@ -301,7 +321,7 @@ the frame image itself, stored as a JPEG encoded into text so it can travel
 inside the message.
 
 The detector consumes those frame messages and publishes detection summaries.
-A classification model produces a single best-guess label and a confidence score
+A classification model produces a single best guess label and a confidence score
 for the frame. A detection model produces labels, confidence scores, and bounding
 boxes for predicted regions.
 
@@ -311,7 +331,7 @@ a forklift are treated as unsafe, while an authorized intervention, a closed
 panel cover, or wearing a safety vest are treated as safe.
 
 \subsection{Producer Methodology}
-The producer accepts one or more video files, a directory of clips or, an RTSP stream, samples frames at a configurable analytics FPS, JPEG-encodes the selected frames, and publishes them to Kafka with the camera ID as the key, preserving per-camera order when Kafka partitions by key.
+The producer accepts one or more video files, a directory of clips or, an RTSP stream, samples frames at a configurable analytics FPS, JPEG encodes the selected frames, and publishes them to Kafka with the camera ID as the key, preserving per camera order when Kafka partitions by key.
 
 \subsection{Detector Methodology}
 
@@ -339,7 +359,7 @@ dataset could use the same streaming pipeline for localized violations.
 \subsection{Aggregation and Alert Methodology}
 \label{subsec:aggregation}
 
-The aggregator processes incoming detection summaries sequentially to maintain independent state engines for each camera stream. Each message contributes to both a continuous time-series smoothing pipeline and a categorical rolling window. This dual-track architecture converts individual frame inferences into stable, operational metrics using two distinct alerting mechanisms: the \textit{Rolling-Ratio Rule} and the \textit{Smoothed-Probability Rule}.
+The aggregator processes incoming detection summaries sequentially to maintain independent state engines for each camera stream. Each message contributes to both a continuous time-series smoothing pipeline and a categorical rolling window. This dual track architecture converts individual frame inferences into stable, operational metrics using two distinct alerting mechanisms: the \textit{Rolling-Ratio Rule} and the \textit{Smoothed-Probability Rule}.
 
 \begin{figure*}[t]
 \centering
@@ -380,7 +400,7 @@ The aggregator processes incoming detection summaries sequentially to maintain i
   \draw[->] (r1) |- (alert);
   \draw[->] (alert) -- (out);
 \end{tikzpicture}
-\caption{The dual-track aggregator architecture. The top tier handles real-time state mutations for dashboard visualization, while the bottom tier orchestrates the conditional alerting logic.}
+\caption{The dual track aggregator architecture. The top tier handles real time state mutations for dashboard visualization, while the bottom tier orchestrates the conditional alerting logic.}
 \label{fig:aggregator}
 \end{figure*}
 
@@ -435,8 +455,8 @@ browser:
     \item a live update channel that refreshes the dashboard about once a second.
 \end{itemize}
 
-For a classroom demonstration, the dashboard shows per-camera safe and
-unsafe counts, rolling unsafe ratios, recent alerts, live-frame freshness,
+For a classroom demonstration, the dashboard shows per camera safe and
+unsafe counts, rolling unsafe ratios, recent alerts, live frame freshness,
 and violation information.
 
 
@@ -445,15 +465,15 @@ and violation information.
 
 The project targets the Voxel51 Safe and Unsafe Behaviours dataset~\cite{b6}.
 Because the dataset has
-clip-level labels rather than bounding boxes, a dataset-preparation step builds
+clip level labels rather than bounding boxes, a dataset preparation step builds
 a YOLO classification folder tree by sampling evenly spaced frames from each
-clip. This avoids the earlier weak approximation of using whole-frame boxes for
+clip. This avoids the earlier weak approximation of using whole frame boxes for
 a detection model.
 
 The training step then trains a YOLO image classifier, starting from an
 ImageNet-pretrained classification model, with a default image size of 224 and
 automatic device selection. All model training, offline evaluation, and
-live-streaming measurements reported in this paper were carried out on a single
+live streaming measurements reported in this paper were carried out on a single
 workstation equipped with an NVIDIA GeForce RTX 3060 Ti GPU (8\,GB). The main
 dataset-preparation and training settings are summarized in
 Table~\ref{tab:dataset-config}.
@@ -477,7 +497,7 @@ Dataset source &
 Voxel51 Safe and Unsafe Behaviours \\
 
 Annotation type &
-Clip-level behavior labels; no bounding-box annotations \\
+Clip level behavior labels; no bounding-box annotations \\
 
 Learning task &
 YOLOv8 image classification \\
@@ -508,7 +528,7 @@ Batch size &
 16 \\
 
 Training hardware &
-NVIDIA GeForce RTX 3060 Ti GPU (8\,GB); code auto-selects an Apple-silicon GPU,
+NVIDIA GeForce RTX 3060 Ti GPU (8\,GB); code auto selects an Apple silicon GPU,
 an NVIDIA GPU, or the CPU \\
 
 \bottomrule
@@ -517,95 +537,102 @@ an NVIDIA GPU, or the CPU \\
 
 \subsubsection{Temporal Window Models}
 
-The per-frame YOLO classifier is one of two model families trained for
+The per-frame YOLO classifier is one of the two model families trained for
 this project. To test whether motion across frames helps
 (Section~\ref{subsec:research-questions}, RQ2), Phase~2 also trains five
 \emph{temporal window models} that classify a short clip from a stack of
 frames. These models do not use the YOLO classification tree; instead a separate
-training step reads a clip manifest---a table listing each clip's file path,
-label, and train/val/test split---and decodes a fixed window of frames per clip
-with the same evenly spaced selection used by the per-frame pipeline. Decoded
+training step reads a clip manifest a table listing each clip's file path,
+label, and train/val/test split and decodes a fixed window of frames per clip
+with the same evenly spaced selection used by the per frame pipeline. Decoded
 and resized frames are cached on disk, keyed by image size and frame
-count, so repeated runs and all 224-pixel models reuse one cache.
+count, so repeated runs and all 224 pixel models reuse one cache.
 
 A single model factory constructs every
 kind, so the same training, evaluation, and live-inference code
-serves all of them. The five kinds are an in-house ResNet18+GRU
+serves all of them. The five kinds are an in house ResNet18+GRU
 head~\cite{b11,b12}, a torchvision R(2+1)D-18~\cite{b7}, and three
 Kinetics-400-pretrained~\cite{b13} video transformers
 (MViTv2-S~\cite{b8}, Video Swin-T~\cite{b9}, and Hiera-B~\cite{b10}).
 The three transformers
 are \emph{linear-probed}: the pretrained backbone is frozen and only a
-fresh, roughly six-thousand-parameter head is trained, which keeps them
+fresh, roughly six thousand parameter head is trained, which keeps them
 within an 8\,GB GPU. The optimizer filters to trainable parameters, so a
 frozen backbone trains only its head automatically. MViTv2-S and Hiera-B
-have fixed positional embeddings and require a 16-frame window, so all
+have fixed positional embeddings and require a 16 frame window, so all
 window models use 16 frames for a fair comparison.
 
-Training and both evaluation stages are orchestrated by a single ablation
-runner, which trains every kind under identical
-conditions and then measures offline accuracy, streaming alert quality,
-parameter count, and per-frame latency. Crucially, because each model
-places its unsafe probability on a different scale, the streaming alert
-threshold is \emph{calibrated per model} on the validation split (sweeping
-the aggregator's start and clear levels to a recall target before reporting on
-the test split), as discussed in Section~\ref{subsec:aggregation}. The
-shared temporal-training settings are summarized in
-Table~\ref{tab:temporal-config}.
+Training and evaluation were handled by a shared ablation runner so that all
+temporal models used matched conditions. The temporal models used 16-frame
+windows, 224$\times$224 inputs, RTX 3060 Ti hardware, and linear probing for the
+transformer backbones. The alert threshold was calibrated per model on the
+validation split because each model placed its unsafe probability on a different
+scale.
 
-\begin{table}[!t]
-\centering
-\caption{Temporal Window-Model Training and Ablation Configuration}
-\label{tab:temporal-config}
-\renewcommand{\arraystretch}{1.08}
-\setlength{\tabcolsep}{3.5pt}
+% Training and both evaluation stages are orchestrated by a single ablation
+% runner, which trains every kind under identical
+% conditions and then measures offline accuracy, streaming alert quality,
+% parameter count, and per-frame latency. Crucially, because each model
+% places its unsafe probability on a different scale, the streaming alert
+% threshold is \emph{calibrated per model} on the validation split (sweeping
+% the aggregator's start and clear levels to a recall target before reporting on
+% the test split), as discussed in Section~\ref{subsec:aggregation}. The
+% shared temporal-training settings are summarized in
+% Table~\ref{tab:temporal-config}.
 
-\begin{tabularx}{\columnwidth}{
-    >{\raggedright\arraybackslash}p{2.25cm}
-    >{\raggedright\arraybackslash}X
-}
-\toprule
-\textbf{Item} & \textbf{Configuration} \\
-\midrule
+% \begin{table}[!t]
+% \centering
+% \caption{Temporal Window-Model Training and Ablation Configuration}
+% \label{tab:temporal-config}
+% \renewcommand{\arraystretch}{1.08}
+% \setlength{\tabcolsep}{3.5pt}
 
-Models &
-ResNet18+GRU head, R(2+1)D-18, MViTv2-S, Video Swin-T, Hiera-B \\
+% \begin{tabularx}{\columnwidth}{
+%     >{\raggedright\arraybackslash}p{2.25cm}
+%     >{\raggedright\arraybackslash}X
+% }
+% \toprule
+% \textbf{Item} & \textbf{Configuration} \\
+% \midrule
 
-Window length &
-16 frames per clip \\
+% Models &
+% ResNet18+GRU head, R(2+1)D-18, MViTv2-S, Video Swin-T, Hiera-B \\
 
-Frame sampling &
-Evenly spaced selection matching the per-frame pipeline; decoded frames
-cached by image size and count \\
+% Window length &
+% 16 frames per clip \\
 
-Pretraining &
-ImageNet (head backbone); Kinetics-400 (R(2+1)D-18 and the three
-transformers) \\
+% Frame sampling &
+% Evenly spaced selection matching the per-frame pipeline; decoded frames
+% cached by image size and count \\
 
-Transformer training &
-Linear probe; frozen backbone, fresh approximately 6K-parameter head \\
+% Pretraining &
+% ImageNet (head backbone); Kinetics-400 (R(2+1)D-18 and the three
+% transformers) \\
 
-Optimizer &
-AdamW over the trainable parameters (the frozen backbone is skipped
-automatically) \\
+% Transformer training &
+% Linear probe; frozen backbone, fresh approximately 6K-parameter head \\
 
-Image size &
-224 $\times$ 224 pixels \\
+% Optimizer &
+% AdamW over the trainable parameters (the frozen backbone is skipped
+% automatically) \\
 
-Alert threshold &
-Calibrated per model on the validation split (recall target, lowest
-false-alert rate) \\
+% Image size &
+% 224 $\times$ 224 pixels \\
 
-Orchestration &
-A single ablation runner trains and evaluates all kinds under identical
-conditions \\
+% Alert threshold &
+% Calibrated per model on the validation split (recall target, lowest
+% false-alert rate) \\
 
-Training hardware &
-NVIDIA GeForce RTX 3060 Ti GPU (8\,GB) \\
+% Orchestration &
+% A single ablation runner trains and evaluates all kinds under identical
+% conditions \\
 
-\bottomrule
-\end{tabularx}
-\end{table}
+% Training hardware &
+% NVIDIA GeForce RTX 3060 Ti GPU (8\,GB) \\
+
+% \bottomrule
+% \end{tabularx}
+% \end{table}
 
 
 
@@ -617,12 +644,12 @@ NVIDIA GeForce RTX 3060 Ti GPU (8\,GB) \\
 % 4.1 Evaluation Scope
 \subsection{Evaluation Scope}
 
-This section reports measured results---both \emph{offline} (on the fixed
-test split) and \emph{streaming} (from the running pipeline)---for the
-shipped per-frame classifier and a six-model comparison. The per-frame offline
+This section reports measured results both \emph{offline} (on the fixed
+test split) and \emph{streaming} (from the running pipeline) for the
+shipped per frame classifier and a six model comparison. The per frame offline
 metrics are computed on 1500 sampled test frames, and every number in this
-section traces to a saved results file. End-to-end latency, throughput,
-frame-transport overhead, and consumer lag are measured on the running pipeline
+section traces to a saved results file. End to end latency, throughput,
+frame transport overhead, and consumer lag are measured on the running pipeline
 in Section~\ref{subsec:systems}; GPU and memory utilization under load and
 large-scale multi-camera scaling remain future work
 (Section~\ref{sec:limitations}).
@@ -630,13 +657,13 @@ large-scale multi-camera scaling remain future work
 % 4.2 Offline Classification Results
 \subsection{Offline Classification Results}
 
-Table~\ref{tab:offline-metrics} reports the per-frame classifier on the
+Table~\ref{tab:offline-metrics} reports the per frame classifier on the
 test split. Precision is the share of frames flagged unsafe that were
 unsafe; recall is the share of unsafe frames that were flagged. Average
-precision is the area under the precision--recall curve. The 8-class
+precision is the area under the precision --- recall curve. The 8 class
 accuracy is the share of frames whose predicted behavior matched
-the labeled behavior across the eight behavior classes; the 8-class macro
-average precision averages the per-class average precision. These are
+the labeled behavior across the eight behavior classes; the 8 class macro
+average precision averages the per class average precision. These are
 classification metrics, not bounding-box overlap.
 
 \begin{table}[!t]
@@ -670,17 +697,17 @@ True negatives & 538 \\
 % 4.3 Model Comparison
 \subsection{Model Comparison}
 
-Table~\ref{tab:model-comparison} compares the per-frame classifier with
+Table~\ref{tab:model-comparison} compares the per frame classifier with
 five window models on the same data. The five window models are an
 in-house ResNet18+GRU head~\cite{b11,b12}, a torchvision
 R(2+1)D-18~\cite{b7}, and three Kinetics-400-pretrained~\cite{b13} video
 transformers: MViTv2-S~\cite{b8} and Video Swin-T~\cite{b9} from
 torchvision, and Hiera-B~\cite{b10} from a public Hiera implementation.
 The three transformers kept their main layers fixed and trained only a
-small final layer, and all window models use a 16-frame window. In the
+small final layer, and all window models use a 16 frame window. In the
 table, the offline columns are over the test split: unsafe AP is the
 average precision for the unsafe class, F1 balances unsafe precision and
-recall, and 8-class accuracy is the share of frames whose predicted
+recall, and 8 class accuracy is the share of frames whose predicted
 behavior matched the label across the eight classes. The streaming
 columns use a per-model alert start level chosen on the validation set
 (Section~\ref{subsec:streaming-alerts}): ``safe clips alerted'' is the
@@ -727,7 +754,7 @@ Hiera-B & 0.862 & 0.727 & 0.536 & 0.787 & 0.571 & 1.000 & 46.96 \\
 \subsection{Streaming Alerts and Alert-Level Setting}
 \label{subsec:streaming-alerts}
 
-In the stream, the per-frame classifier produced alert precision 0.732
+In the stream, the per frame classifier produced alert precision 0.732
 and alert recall 0.812, and 0.311 of safe clips produced an alert. It
 used 6.40 ms per frame. These streaming numbers are over 125 test clips
 (64 unsafe and 61 safe); the offline metrics in
@@ -736,9 +763,9 @@ Table~\ref{tab:offline-metrics} are over 1500 frames.
 The alert start level had to be chosen with care. With one fixed start
 level, most models alerted on nearly every clip, because each model puts
 its unsafe probability on a different scale. Choosing the start level per
-model on the validation split, using the smoothed-probability rule in
+model on the validation split, using the smoothed probability rule in
 Section~\ref{subsec:aggregation}, removed this: the chosen start levels
-ranged from 0.45 to 0.70 across the six models, and the per-frame
+ranged from 0.45 to 0.70 across the six models, and the per frame
 classifier settled at 0.60 with the 0.311 share of safe clips alerted
 reported above.
 
@@ -746,247 +773,241 @@ reported above.
 \subsection{Findings}
 \label{subsec:findings}
 
-The comparison gives five findings, which together answer the three
-research questions posed in Section~\ref{subsec:research-questions}
-(RQ1--RQ3):
-
+The six-model comparison answers the three research questions posed in
+Section~\ref{subsec:research-questions}:
 \begin{itemize}
-    \item \textbf{(RQ2)} The per-frame classifier had the highest offline
-    accuracy of the six models (8-class accuracy 0.641 versus 0.440--0.536;
-    binary unsafe average precision 0.887 versus 0.755--0.862).
-
-    \item \textbf{(RQ2)} Using a 16-frame window did not raise accuracy on
-    this dataset; the likely reason is that the unsafe behaviors in this
-    dataset can be seen in a single frame, although we do not measure this
-    directly.
-
-    \item \textbf{(RQ1)} A model's offline accuracy did not reliably rank
-    the models by how many false alerts they produced. The best offline
-    model (the per-frame classifier) was also the best in the stream, but
-    among the remaining models the ranking broke down: two models with the
-    same offline average precision (0.862) had shares of safe clips alerted
-    of 0.557 (head) and 0.787 (Hiera-B). Offline accuracy therefore carries
-    some signal but cannot stand in for a streaming measurement.
-
-    \item \textbf{(RQ3)} The alert start level has to be set per model; the
-    chosen levels ranged from 0.45 to 0.70.
-
-    \item \textbf{(RQ2)} The per-frame classifier produced the fewest false
-    alerts (0.311 of safe clips) and used the least time per frame
-    (6.40 ms).
+\item \textbf{(RQ2)} The per-frame YOLO classifier achieved the best offline
+result, with 0.887 unsafe AP and 0.641 8 class accuracy; temporal window models
+did not improve accuracy on this dataset, likely because many unsafe behaviours
+are visible in a single frame. They did not improve alert quality either: the
+per-frame classifier produced the fewest false alerts (0.311 of safe clips
+alerted) at the lowest cost (6.40\,ms per frame), so the window models' extra
+per-frame cost was not justified here.
+\item \textbf{(RQ1)} Offline accuracy did not always predict streaming
+false alert behaviour, so the two must be measured separately --- two models with
+the same 0.862 offline unsafe AP alerted on 0.557 (head) and 0.787 (Hiera-B) of
+safe clips.
+\item \textbf{(RQ3)} A single fixed alert level did not serve every model:
+thresholds needed per model calibration because each model produced unsafe
+probabilities on a different scale, with chosen start levels ranging from 0.45
+to 0.70.
 \end{itemize}
 
-The RQ2 result deserves a methodological caveat. The three transformers
-(MViTv2-S, Video Swin-T, and Hiera-B) were deliberately resource-constrained: to
-stay within the RTX 3060 Ti's 8\,GB they were \emph{linear-probed}, freezing their
-Kinetics-400 backbones and training only a fresh ${\sim}6$K-parameter head.
-Freezing the spatio-temporal backbone limits how far each model can adapt to this
-workplace dataset, so their lower accuracy may reflect that constrained training
-regime rather than an inherent inability to exploit temporal context; full
-fine-tuning under a larger GPU budget could narrow the gap and is left to future
-work. Two observations temper this reading, however. First, the R(2+1)D-18 model
-was \emph{fully} fine-tuned---all 31\,M parameters trainable---and still trailed
-the per-frame classifier on both offline accuracy and streaming false-alert rate,
-so the single-frame advantage is not purely an artifact of frozen backbones.
-Second, the unsafe behaviors in this dataset are visible within a single frame,
-which bounds how much temporal modeling can add. We therefore read RQ2 narrowly:
-on \emph{this} single-frame-visible task and under \emph{this} compute budget, the
-window models did not justify their extra per-frame cost---not as a general claim
-that temporal models cannot help.
-
-These findings carry five caveats. The offline metrics are over 1500
-frames for the per-frame model but over 125 clips for the window models.
-The per-frame model's lower share of safe clips alerted comes with a
-lower test recall (alert recall 0.812 versus 0.875--1.000 for the window
-models). The time-per-frame numbers were measured on the workstation's
-NVIDIA GeForce RTX 3060 Ti (8\,GB) GPU. The labeled set covers behaviors that
-are visible in a single
-frame. Finally, the three transformer models were linear-probed under the
-RTX 3060 Ti's 8\,GB budget, so their reported accuracy is a lower bound on what full
-fine-tuning might achieve.
-
+These results should be read within this dataset and compute budget: several
+transformer backbones were linear probed rather than fully fine tuned, and the
+main unsafe behaviours were often visible in a single frame.
 Section~\ref{subsec:systems} complements these model-quality findings with
-systems-level measurements---end-to-end latency, throughput, frame-transport
-overhead, and consumer lag---taken on the running pipeline.
+systems-level measurements.
+
+% The comparison gives five findings, which together answer the three
+% research questions posed in Section~\ref{subsec:research-questions}
+% (RQ1--RQ3):
+
+% \begin{itemize}
+%     \item \textbf{(RQ2)} The per-frame classifier had the highest offline
+%     accuracy of the six models (8-class accuracy 0.641 versus 0.440--0.536;
+%     binary unsafe average precision 0.887 versus 0.755--0.862).
+
+%     \item \textbf{(RQ2)} Using a 16-frame window did not raise accuracy on
+%     this dataset; the likely reason is that the unsafe behaviors in this
+%     dataset can be seen in a single frame, although we do not measure this
+%     directly.
+
+%     \item \textbf{(RQ1)} A model's offline accuracy did not reliably rank
+%     the models by how many false alerts they produced. The best offline
+%     model (the per-frame classifier) was also the best in the stream, but
+%     among the remaining models the ranking broke down: two models with the
+%     same offline average precision (0.862) had shares of safe clips alerted
+%     of 0.557 (head) and 0.787 (Hiera-B). Offline accuracy therefore carries
+%     some signal but cannot stand in for a streaming measurement.
+
+%     \item \textbf{(RQ3)} The alert start level has to be set per model; the
+%     chosen levels ranged from 0.45 to 0.70.
+
+%     \item \textbf{(RQ2)} The per-frame classifier produced the fewest false
+%     alerts (0.311 of safe clips) and used the least time per frame
+%     (6.40 ms).
+% \end{itemize}
+
+% The RQ2 result deserves a methodological caveat. The three transformers
+% (MViTv2-S, Video Swin-T, and Hiera-B) were deliberately resource-constrained: to
+% stay within the RTX 3060 Ti's 8\,GB they were \emph{linear-probed}, freezing their
+% Kinetics-400 backbones and training only a fresh ${\sim}6$K-parameter head.
+% Freezing the spatio-temporal backbone limits how far each model can adapt to this
+% workplace dataset, so their lower accuracy may reflect that constrained training
+% regime rather than an inherent inability to exploit temporal context; full
+% fine-tuning under a larger GPU budget could narrow the gap and is left to future
+% work. Two observations temper this reading, however. First, the R(2+1)D-18 model
+% was \emph{fully} fine-tuned---all 31\,M parameters trainable---and still trailed
+% the per-frame classifier on both offline accuracy and streaming false-alert rate,
+% so the single-frame advantage is not purely an artifact of frozen backbones.
+% Second, the unsafe behaviors in this dataset are visible within a single frame,
+% which bounds how much temporal modeling can add. We therefore read RQ2 narrowly:
+% on \emph{this} single-frame-visible task and under \emph{this} compute budget, the
+% window models did not justify their extra per-frame cost---not as a general claim
+% that temporal models cannot help.
+
+% These findings carry five caveats. The offline metrics are over 1500
+% frames for the per-frame model but over 125 clips for the window models.
+% The per-frame model's lower share of safe clips alerted comes with a
+% lower test recall (alert recall 0.812 versus 0.875--1.000 for the window
+% models). The time-per-frame numbers were measured on the workstation's
+% NVIDIA GeForce RTX 3060 Ti (8\,GB) GPU. The labeled set covers behaviors that
+% are visible in a single
+% frame. Finally, the three transformer models were linear-probed under the
+% RTX 3060 Ti's 8\,GB budget, so their reported accuracy is a lower bound on what full
+% fine-tuning might achieve.
+
+% Section~\ref{subsec:systems} complements these model-quality findings with
+% systems-level measurements---end-to-end latency, throughput, frame-transport
+% overhead, and consumer lag---taken on the running pipeline.
 
 % 4.x Systems-Level Performance
 \subsection{Systems-Level Performance}
 \label{subsec:systems}
 
-The metrics above measure alert quality; this subsection measures the streaming
-\emph{system}. Unless stated otherwise, numbers were collected with the per-frame
-YOLO classifier running live against a Confluent Cloud broker (SASL\_SSL) on the
-evaluation machine (NVIDIA GeForce RTX 3060 Ti, 8\,GB), with frames sampled at the default analytics
-rate of 4\,fps. Two measurements support this subsection---an offline sizing of
-the frame payload and a probe of Kafka consumer-group lag---and both are
-reproducible from the source repository~\cite{b14}.
+The metrics above measure alert quality; this subsection summarizes the
+streaming system measurements. In the controlled live run, the per frame YOLO
+classifier ran against a Confluent Cloud broker with frames sampled at the
+default analytics rate of 4\,fps. The pipeline achieved a mean end to end
+latency of 0.198\,s, a maximum latency of 0.379\,s, and sustained throughput of
+3.98\,fps with zero consumer lag. Each base64 JSON frame cost about 352\,KB on
+the wire, or about 1.38\,MB/s per camera at 4\,fps. Based on the measured
+inference time of 6.40\,ms per frame, the YOLOv8 per frame classifier has a
+single-stream throughput ceiling of about 156\,fps. These results show that the
+GPU was not the bottleneck at the classroom analytics rate, while Kafka buffering
+allowed temporary bursts to accumulate and drain without dropped records.
 
-\subsubsection{Frame-transport overhead}
-Each frame travels as a JPEG that is base64-encoded inside a JSON message so it
-can ride within a Kafka record. Table~\ref{tab:payload} traces that cost over 192
-sampled 1080p demo frames. JPEG removes most of the raw cost---a frame shrinks to
-4.3\% of its uncompressed size---but base64 then re-inflates the image by exactly
-one third (a 4:3 expansion), and the broker's configured \texttt{lz4} compression
-recovers essentially none of it because a JPEG is already entropy-coded. Net, a
-frame costs about 352\,KB on the wire versus 264\,KB as a raw JPEG, or roughly
-1.4\,MB/s per camera at 4\,fps. A binary frame topic would remove the 33\% base64
-tax; we keep the text encoding for its inspectability in this prototype.
+% The metrics above measure alert quality; this subsection measures the streaming
+% \emph{system}. Unless stated otherwise, numbers were collected with the per-frame
+% YOLO classifier running live against a Confluent Cloud broker (SASL\_SSL) on the
+% evaluation machine (NVIDIA GeForce RTX 3060 Ti, 8\,GB), with frames sampled at the default analytics
+% rate of 4\,fps. Two measurements support this subsection---an offline sizing of
+% the frame payload and a probe of Kafka consumer-group lag---and both are
+% reproducible from the source repository~\cite{b14}.
 
-\begin{table}[!t]
-\centering
-\caption{Per-frame transport cost (mean over 192 sampled 1080p frames, JPEG
-quality 80).}
-\label{tab:payload}
-\renewcommand{\arraystretch}{1.15}
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabularx}{\columnwidth}{
-    >{\raggedright\arraybackslash}X
-    >{\raggedleft\arraybackslash}p{1.7cm}
-    >{\raggedleft\arraybackslash}p{1.7cm}
-}
-\toprule
-\textbf{Representation} & \textbf{Mean size} & \textbf{vs.\ JPEG} \\
-\midrule
-Raw BGR frame (1920$\times$1080) & 6075 KB & 23.0$\times$ \\
-JPEG (quality 80) & 264 KB & 1.00$\times$ \\
-Base64 text & 352 KB & 1.33$\times$ \\
-Full JSON message & 352 KB & 1.33$\times$ \\
-lz4-compressed (on wire) & 352 KB & 1.33$\times$ \\
-\midrule
-Per camera at 4\,fps & \multicolumn{2}{r}{$\approx$\,1.38 MB/s} \\
-\bottomrule
-\end{tabularx}
-\end{table}
+% \subsubsection{Frame-transport overhead}
+% Each frame travels as a JPEG that is base64-encoded inside a JSON message so it
+% can ride within a Kafka record. Table~\ref{tab:payload} traces that cost over 192
+% sampled 1080p demo frames. JPEG removes most of the raw cost---a frame shrinks to
+% 4.3\% of its uncompressed size---but base64 then re-inflates the image by exactly
+% one third (a 4:3 expansion), and the broker's configured \texttt{lz4} compression
+% recovers essentially none of it because a JPEG is already entropy-coded. Net, a
+% frame costs about 352\,KB on the wire versus 264\,KB as a raw JPEG, or roughly
+% 1.4\,MB/s per camera at 4\,fps. A binary frame topic would remove the 33\% base64
+% tax; we keep the text encoding for its inspectability in this prototype.
 
-\subsubsection{End-to-end latency and throughput}
-With the producer publishing at 4\,fps, the dashboard observed a mean end-to-end
-latency of 0.198\,s and a maximum of 0.379\,s. Here ``end to end'' spans the
-producer's publish timestamp, the \texttt{cctv-frames} hop to the cloud broker,
-the detector's consume--infer--publish, the \texttt{safety-detections} hop back,
-and the dashboard's ingest; the dashboard's WebSocket then refreshes the browser
-at about 1\,Hz, adding up to a further ${\sim}1$\,s of on-screen latency.
-Sustained throughput matched the input at 3.98\,fps with the detector holding
-zero consumer lag, so the two cloud round-trips---not the GPU---dominate the
-figure.
+% \begin{table}[!t]
+% \centering
+% \caption{Per-frame transport cost (mean over 192 sampled 1080p frames, JPEG
+% quality 80).}
+% \label{tab:payload}
+% \renewcommand{\arraystretch}{1.15}
+% \setlength{\tabcolsep}{3.5pt}
+% \begin{tabularx}{\columnwidth}{
+%     >{\raggedright\arraybackslash}X
+%     >{\raggedleft\arraybackslash}p{1.7cm}
+%     >{\raggedleft\arraybackslash}p{1.7cm}
+% }
+% \toprule
+% \textbf{Representation} & \textbf{Mean size} & \textbf{vs.\ JPEG} \\
+% \midrule
+% Raw BGR frame (1920$\times$1080) & 6075 KB & 23.0$\times$ \\
+% JPEG (quality 80) & 264 KB & 1.00$\times$ \\
+% Base64 text & 352 KB & 1.33$\times$ \\
+% Full JSON message & 352 KB & 1.33$\times$ \\
+% lz4-compressed (on wire) & 352 KB & 1.33$\times$ \\
+% \midrule
+% Per camera at 4\,fps & \multicolumn{2}{r}{$\approx$\,1.38 MB/s} \\
+% \bottomrule
+% \end{tabularx}
+% \end{table}
 
-Per-frame inference leaves wide headroom over this 4\,fps operating point.
-Table~\ref{tab:throughput} converts each model's measured time per frame into a
-single-stream throughput ceiling: the per-frame classifier sustains about
-156\,fps---an order of magnitude above the fastest window model and far above the
-analytics rate---while the video transformers fall to 21--25\,fps. The per-frame
-classifier is therefore not only the most accurate model here but also the one
-with the most streaming headroom.
+% \subsubsection{End-to-end latency and throughput}
+% With the producer publishing at 4\,fps, the dashboard observed a mean end-to-end
+% latency of 0.198\,s and a maximum of 0.379\,s. Here ``end to end'' spans the
+% producer's publish timestamp, the \texttt{cctv-frames} hop to the cloud broker,
+% the detector's consume--infer--publish, the \texttt{safety-detections} hop back,
+% and the dashboard's ingest; the dashboard's WebSocket then refreshes the browser
+% at about 1\,Hz, adding up to a further ${\sim}1$\,s of on-screen latency.
+% Sustained throughput matched the input at 3.98\,fps with the detector holding
+% zero consumer lag, so the two cloud round-trips---not the GPU---dominate the
+% figure.
 
-\begin{table}[!t]
-\centering
-\caption{Single-stream throughput ceiling derived from each model's measured time
-per frame (Table~\ref{tab:model-comparison}).}
-\label{tab:throughput}
-\renewcommand{\arraystretch}{1.15}
-\setlength{\tabcolsep}{3.5pt}
-\begin{tabularx}{\columnwidth}{
-    >{\raggedright\arraybackslash}X
-    >{\raggedleft\arraybackslash}p{2.0cm}
-    >{\raggedleft\arraybackslash}p{1.6cm}
-}
-\toprule
-\textbf{Model} & \textbf{Time/frame (ms)} & \textbf{Max FPS} \\
-\midrule
-YOLOv8 (per-frame) & 6.40 & 156 \\
-head (ResNet18+GRU) & 13.63 & 73 \\
-video (R(2+1)D-18) & 26.39 & 38 \\
-Video Swin-T & 39.76 & 25 \\
-Hiera-B & 46.96 & 21 \\
-MViTv2-S & 48.38 & 21 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+% Per-frame inference leaves wide headroom over this 4\,fps operating point.
+% Table~\ref{tab:throughput} converts each model's measured time per frame into a
+% single-stream throughput ceiling: the per-frame classifier sustains about
+% 156\,fps---an order of magnitude above the fastest window model and far above the
+% analytics rate---while the video transformers fall to 21--25\,fps. The per-frame
+% classifier is therefore not only the most accurate model here but also the one
+% with the most streaming headroom.
 
-\subsubsection{Backpressure and consumer lag}
-Decoupling ingestion from inference through Kafka is what lets the pipeline absorb
-a frame-rate spike without stalling the producer: unprocessed frames accumulate in
-\texttt{cctv-frames}---bounded only by topic retention---and the detector drains
-them once it catches up. We observed both directions of this. At the 4\,fps
-operating point the detector and dashboard consumer groups held zero lag; after we
-injected a burst of frames far above the 4\,fps rate, the detector group absorbed
-the backlog and returned to zero lag once the burst ended, with no records dropped
-by the broker. The buffering is clearest from an \emph{idle} group: with the
-standalone aggregator stopped, its committed offset stayed fixed while the topic
-kept advancing, so its lag grew monotonically (159 then 719 records over the
-session)---precisely the backlog Kafka retains on a stalled consumer's behalf.
-Under a flat-out burst the first bottleneck was in fact the producer's upload of
-the fat base64 frames (${\sim}10$\,MB/s, ${\sim}30$\,fps), which reinforces the
-transport finding above.
+% \begin{table}[!t]
+% \centering
+% \caption{Single-stream throughput ceiling derived from each model's measured time
+% per frame (Table~\ref{tab:model-comparison}).}
+% \label{tab:throughput}
+% \renewcommand{\arraystretch}{1.15}
+% \setlength{\tabcolsep}{3.5pt}
+% \begin{tabularx}{\columnwidth}{
+%     >{\raggedright\arraybackslash}X
+%     >{\raggedleft\arraybackslash}p{2.0cm}
+%     >{\raggedleft\arraybackslash}p{1.6cm}
+% }
+% \toprule
+% \textbf{Model} & \textbf{Time/frame (ms)} & \textbf{Max FPS} \\
+% \midrule
+% YOLOv8 (per-frame) & 6.40 & 156 \\
+% head (ResNet18+GRU) & 13.63 & 73 \\
+% video (R(2+1)D-18) & 26.39 & 38 \\
+% Video Swin-T & 39.76 & 25 \\
+% Hiera-B & 46.96 & 21 \\
+% MViTv2-S & 48.38 & 21 \\
+% \bottomrule
+% \end{tabularx}
+% \end{table}
 
-If a sustained spike exceeded one detector's 6.40\,ms (156\,fps) budget, the
-architecture absorbs it three ways without changing the message contracts. First,
-the producer already samples at a fixed analytics FPS far below the camera's
-native frame rate, so it never offers the raw rate downstream. Second, the
-detector is a Kafka consumer group, so adding detector instances load-balances the
-\texttt{cctv-frames} partitions across them; because frames are keyed by
-\texttt{camera\_id}, each camera's order is preserved within its partition. Third,
-a consumer can skip stale frames to trade completeness for freshness when latency
-matters more than covering every frame. This elasticity is exactly what a
-monolithic offline script cannot provide, and it is why the streaming
-decomposition---not only the choice of model---is part of this work's
-contribution.
+% \subsubsection{Backpressure and consumer lag}
+% Decoupling ingestion from inference through Kafka is what lets the pipeline absorb
+% a frame-rate spike without stalling the producer: unprocessed frames accumulate in
+% \texttt{cctv-frames}---bounded only by topic retention---and the detector drains
+% them once it catches up. We observed both directions of this. At the 4\,fps
+% operating point the detector and dashboard consumer groups held zero lag; after we
+% injected a burst of frames far above the 4\,fps rate, the detector group absorbed
+% the backlog and returned to zero lag once the burst ended, with no records dropped
+% by the broker. The buffering is clearest from an \emph{idle} group: with the
+% standalone aggregator stopped, its committed offset stayed fixed while the topic
+% kept advancing, so its lag grew monotonically (159 then 719 records over the
+% session)---precisely the backlog Kafka retains on a stalled consumer's behalf.
+% Under a flat-out burst the first bottleneck was in fact the producer's upload of
+% the fat base64 frames (${\sim}10$\,MB/s, ${\sim}30$\,fps), which reinforces the
+% transport finding above.
 
-% 4.3 Prototype Capabilities Demonstrated by Code
-\subsection{Prototype Capabilities Demonstrated by Code}
-
-The implemented prototype demonstrates the main capabilities required for
-a real-time workplace safety analytics system:
-
-\begin{itemize}
-    \item Real-time frame-event generation from files, directories,
-    webcams, or RTSP sources.
-
-    \item Kafka event transport with configurable local or Confluent Cloud
-    broker settings.
-
-    \item Per-frame YOLO classification over streamed frames (detection mode available in code).
-
-    \item Per-camera cumulative safe and unsafe counts.
-
-    \item Per-camera rolling-window unsafe ratios.
-
-    \item Threshold-based warning and high-severity alerts.
-
-    \item Live dashboard state over HTTP and WebSocket.
-
-    \item Recent-frame display and optional detection-box overlays for
-    detection-model outputs.
-
-    \item Aggregated unsafe-behavior statistics across monitored camera
-    streams.
-
-    \item Live visualization of unsafe-ratio trends for operational safety
-    monitoring.
-
-    \item Dashboard-level operational metrics including throughput,
-    alert frequency, latency estimates, and evaluation statistics.
-\end{itemize}
-
-The dashboard provides one interface for live video monitoring,
-safety-event analytics, and operational metrics. Operators can monitor
-individual camera streams, review safety classifications, observe alert
-activity, and track system-level metrics in real time. These capabilities
-cover the implementation side of the rubric: computer-vision inference,
-stream processing, and interactive visualization in one Kafka-based
-system.
+% If a sustained spike exceeded one detector's 6.40\,ms (156\,fps) budget, the
+% architecture absorbs it three ways without changing the message contracts. First,
+% the producer already samples at a fixed analytics FPS far below the camera's
+% native frame rate, so it never offers the raw rate downstream. Second, the
+% detector is a Kafka consumer group, so adding detector instances load-balances the
+% \texttt{cctv-frames} partitions across them; because frames are keyed by
+% \texttt{camera\_id}, each camera's order is preserved within its partition. Third,
+% a consumer can skip stale frames to trade completeness for freshness when latency
+% matters more than covering every frame. This elasticity is exactly what a
+% monolithic offline script cannot provide, and it is why the streaming
+% decomposition---not only the choice of model---is part of this work's
+% contribution.
 
 % 4.4 Dashboard Demonstration
 \subsection{Dashboard Demonstration}
 
 Figure~\ref{fig:dashboard-live} shows the SafeStream-Kafka dashboard
-during a multi-camera replay. The dashboard shows live camera monitoring,
-safety classifications, rolling unsafe-ratio tracking, alert activity, and
+during a multi camera replay. The dashboard shows live camera monitoring,
+safety classifications, rolling unsafe ratio tracking, alert activity, and
 operational metrics in one interface, end to end from video ingestion to
 visualization.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{dashboard.png}
+\includegraphics[width=\textwidth]{dashboard1.png}
 \caption{The SafeStream-Kafka dashboard during a multi-camera replay.}
 \label{fig:dashboard-live}
 \end{figure*}
@@ -994,54 +1015,15 @@ visualization.
 % =========================================================
 % 5. Technical Writing Quality and Reproducibility
 % =========================================================
-\section{Technical Writing Quality and Reproducibility}
+\section{Technical Writing and Reproducibility}
 
-The repository is reasonably reproducible for a prototype. It includes
-setup instructions for macOS, Linux, and Windows, together with a local
-Kafka broker through Docker Compose and configuration for Confluent
-Cloud. The code is divided into producer, detector, aggregator,
-dashboard, common utilities, scripts, and tests. Runtime configuration
-is managed through environment-variable settings.
-
-What works now:
-
-\begin{itemize}
-    \item A dependency list covering the core streaming, computer-vision,
-    dashboard, and testing libraries.
-
-    \item An example settings file documenting the Kafka, producer, detector,
-    aggregator, and dashboard options.
-
-    \item A Docker Compose setup that provides a local Kafka broker.
-
-    \item A script that creates the Kafka topics automatically.
-
-    \item Dataset-preparation and training scripts that document the
-    classification-dataset preparation and model-training workflow.
-
-    \item A test for the aggregator that validates the core aggregation and
-    label-mapping behavior without requiring Kafka or YOLO.
-
-    \item The trained per-frame classifier weights used for the offline and
-    streaming results reported earlier.
-
-    \item Saved results files that record the per-frame offline metrics and the
-    six-model comparison.
-\end{itemize}
-
-What is still missing:
-
-\begin{itemize}
-    \item The dataset is not committed: the raw video and the prepared
-    classification-tree directories are excluded from version control.
-
-    \item The dataset-loading library required by the default hub-dataset
-    preparation workflow is not currently listed in the dependency manifest.
-
-    \item Full end-to-end tests require Kafka, a trained model, and
-    sample video data. These resources are not yet included as a small
-    smoke-test fixture.
-\end{itemize}
+The complete source code, setup instructions, and configuration for
+SafeStream-Kafka are available in the project repository linked in the title
+footnote. To
+reproduce the prototype, follow the README, which documents the dependencies,
+the local Kafka broker through Docker Compose and the Confluent Cloud
+configuration, and the scripts for topic creation, dataset preparation, model
+training, and running the four services.
 
 
 % =========================================================
@@ -1053,7 +1035,7 @@ What is still missing:
 \subsection{Limitations}
 
 These results come from one dataset. The offline metrics for the
-per-frame model are over 1500 test frames, and the six-model streaming
+per frame model are over 1500 test frames, and the six model streaming
 comparison is over 125 test clips, so behavior on other sites, camera
 placements, or unseen behaviors is not measured.
 
@@ -1063,11 +1045,11 @@ behavior inside the frame. A detection model could mark the region, but
 it needs bounding-box labels that this dataset does not provide.
 
 The live F1 and confusion values shown for arbitrary camera streams are
-demo-only. The dashboard derives ground truth from the clip filename, so
+demo only. The dashboard derives ground truth from the clip filename, so
 those values are meaningful only for the labeled demo clips, not for
 unlabeled cameras.
 
-End-to-end latency, throughput, frame-transport overhead, and consumer lag
+End-to-end latency, throughput, frame transport overhead, and consumer lag
 are now measured (Section~\ref{subsec:systems}), but on a single machine and a
 single live camera stream. GPU and memory utilization under load, and scaling to
 many simultaneous cameras across multiple detector instances, are not yet
@@ -1075,12 +1057,12 @@ profiled.
 
 A second limitation is the as-built overlap in alert ownership. As described in
 Section~\ref{subsec:architecture}, the dashboard currently embeds its own
-aggregator and re-publishes alerts in parallel with the standalone aggregator;
+aggregator and republishes alerts in parallel with the standalone aggregator;
 because the two run under different consumer groups, running both duplicates
 alerts and lets their window state diverge. The resolved design makes the
 standalone aggregator the sole alert producer and reduces the dashboard to a
-read-only consumer of \texttt{safety-alerts}; completing that migration---removing
-the dashboard's embedded aggregator---is the remaining engineering work.
+read-only consumer of \texttt{safety-alerts}; completing that migration --- removing
+the dashboard's embedded aggregator --- is the remaining engineering work.
 
 \subsection{Future Improvements}
 
@@ -1094,7 +1076,7 @@ The next development steps are measurable:
     \item Package the live latency, throughput, and lag measurement into a
     one-command replay harness so those numbers regenerate automatically.
 
-    \item Provide a small public smoke-test video or generated test
+    \item Provide a small public smoke test video or generated test
     stream that can exercise the pipeline without using private
     workplace data.
 
@@ -1107,11 +1089,11 @@ The next development steps are measurable:
     (Section~\ref{subsec:architecture}).
 
     \item Add an integration test using local Kafka through Docker
-    Compose for a minimal producer-to-detector-to-aggregator/dashboard
+    Compose for a minimal producer to detector to aggregator/dashboard
     pipeline.
 
     \item Improve privacy controls through techniques such as frame
-    redaction, retention limits, or edge-only inference for sensitive
+    redaction, retention limits, or edge only inference for sensitive
     workplace video.
 \end{itemize}
 
@@ -1122,12 +1104,12 @@ The next development steps are measurable:
 \section{Conclusion}
 
 SafeStream-Kafka publishes video frames through Kafka, labels each frame
-with a per-frame YOLO safety classifier, aggregates safe and unsafe counts
-over time, fires alerts through a rolling-ratio rule and a
+with a per frame YOLO safety classifier, aggregates safe and unsafe counts
+over time, fires alerts through a rolling ratio rule and a
 smoothed-probability rule, and shows the result on a live dashboard. The
 services communicate only through three Kafka topics, so each stage runs
 as a separate process. This covers the implementation side of the rubric:
-real-time event processing, modular services, a running prototype, and
+real time event processing, modular services, a running prototype, and
 documented deployment procedures.
 
 Across the six models compared on this dataset, the per-frame classifier
@@ -1144,14 +1126,16 @@ utilization under load and multi-camera scaling remain to be profiled.
 
 \section*{Member Contributions}
 % Add each team member's contribution here.
-Yujie Lin: Converted the existing technical report draft into the required IEEE format, refined the report layout, and created the system architecture diagram and dataset configuration table based on the project implementation.
+Vitor Raposo: Led the management of the project alongside Ahmed. Participated in discussions, iterated on model training, model testing, ablation studies and dashboard development. Helped in paper writing and presentation setup. Recorded the DEMO.
+
+Livia Zhang: Drafted the initial final report, trained and uploaded the YOLO model weights, refactored the dashboard with real-time video streaming and sliding-window display, and wrote the Docker Compose setup.
+
+Yujie Lin: Supported safe/unsafe classification evaluation and dashboard risk-display improvements, including metric alignment, confusion-matrix interpretation, and the Highest Risk Camera summary. Formatted the IEEE report, created the system architecture diagram and dataset configuration table, and participated in proposal and presentation preparation.
 
 
 Quang Thong Phung: Implemented the Kafka streaming pipeline, aggregation and alerting logic, dashboard backend services, and dashboard analytics enhancements including Top Unsafe Behaviors and Unsafe Ratio Trend visualization. Assisted with system testing and report preparation.
 
-
-
-
+Ahmed Seyam: Supported the group through topic selection, model choosing, project proposal, aggregator code and overall project development feedback.
 
 \begin{thebibliography}{00}
 % NOTE: b1 author corrected from "S. S. Gill et al." to "A. A. Ravindran" -- the cited title is MDPI IoT 4(4):21 (2023) by Ravindran. Verify before submission.
@@ -1168,7 +1152,11 @@ Quang Thong Phung: Implemented the Kafka streaming pipeline, aggregation and ale
 \bibitem{b11} K. He, X. Zhang, S. Ren, and J. Sun, "Deep Residual Learning for Image Recognition," in Proc. IEEE Conf. Computer Vision and Pattern Recognition (CVPR), 2016, pp. 770--778. [Online]. Available: \url{https://arxiv.org/abs/1512.03385}
 \bibitem{b12} K. Cho, B. van Merrienboer, C. Gulcehre, D. Bahdanau, F. Bougares, H. Schwenk, and Y. Bengio, "Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation," in Proc. Conf. Empirical Methods in Natural Language Processing (EMNLP), 2014, pp. 1724--1734. [Online]. Available: \url{https://arxiv.org/abs/1406.1078}
 \bibitem{b13} W. Kay et al., "The Kinetics Human Action Video Dataset," arXiv:1705.06950, 2017. [Online]. Available: \url{https://arxiv.org/abs/1705.06950}
-\bibitem{b14} V. B. Raposo, Y. Lin, L. Zhang, Q. T. Phung, and A. Seyam, ``SafeStream-Kafka: source code,'' 2024. [Online]. Available: \url{https://github.com/Lumysia/SafeKafka}
+% =========================================================
+
+% \bibitem{b14} V. B. Raposo, Y. Lin, L. Zhang, Q. T. Phung, and A. Seyam, ``SafeStream-Kafka: source code,'' 2026. [Online]. Available: \url{https://github.com/Lumysia/SafeKafka}
+% =========================================================
+
 \end{thebibliography}
 
 \end{document}
