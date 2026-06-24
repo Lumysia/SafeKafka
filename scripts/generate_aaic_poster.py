@@ -507,10 +507,8 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
 def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
     x = box.x
     y = box.y
-    columns = ["Model / Metric", "Unsafe AP", "F1", "8-class acc", "Safe clips alerted", "Time/frame"]
-    widths = [430, 280, 250, 300, 400, 295]
     groups = [
-        ("Six-Model Comparison", [
+        ("Six-Model Comparison", ["Model", "Unsafe AP", "F1", "8-class acc", "Safe clips alerted", "Time/frame"], [430, 280, 250, 300, 400, 295], [
             ["YOLOv8 per-frame", "0.887", "0.803", "0.641", "0.311", "6.40 ms"],
             ["ResNet18+GRU", "0.862", "0.704", "0.440", "0.557", "13.63 ms"],
             ["R(2+1)D-18", "0.755", "0.695", "0.472", "0.705", "26.39 ms"],
@@ -518,14 +516,14 @@ def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
             ["Video Swin-T", "0.805", "0.702", "0.480", "0.623", "39.76 ms"],
             ["Hiera-B", "0.862", "0.727", "0.536", "0.787", "46.96 ms"],
         ]),
-        ("Per-frame YOLO and System Measurements", [
-            ["Binary unsafe precision", "0.769", "recall 0.841", "F1 0.803", "AP 0.887", "1500 frames"],
-            ["Streaming alert quality", "P 0.732", "R 0.812", "125 clips", "0.311 safe-alert", "cal thr 0.60"],
-            ["Live pipeline", "0.198 s", "max 0.379 s", "3.98 fps", "zero lag", "352 KB/frame"],
+        ("Per-frame YOLO and System Measurements", ["Scope", "Measure 1", "Measure 2", "Measure 3", "Measure 4", "Sample / Cost"], [330, 315, 315, 350, 350, 295], [
+            ["Binary unsafe", "Precision 0.769", "Recall 0.841", "F1 0.803", "AP 0.887", "1500 frames"],
+            ["Streaming alerts", "Precision 0.732", "Recall 0.812", "Safe alerted 0.311", "Threshold 0.60", "125 clips"],
+            ["Live pipeline", "Mean 0.198 s", "Max 0.379 s", "Throughput 3.98 fps", "Lag 0", "352 KB/frame"],
         ]),
     ]
-    total_w = sum(widths)
-    for group, rows in groups:
+    for group, columns, widths, rows in groups:
+        total_w = sum(widths)
         draw.rectangle((x, y, x + total_w, y + 64), fill=ORANGE_LIGHT)
         draw_centered(draw, Box(x, y, total_w, 64), group, FONT_SMALL_BOLD, "white")
         y += 64
@@ -654,7 +652,7 @@ def generate(output: Path) -> None:
     draw_architecture(image, draw, Box(left_x, 3235, col_w, 790))
 
     data_bar = Box(right_x + 350, 455, right_w - 700, 140)
-    draw_bar(draw, data_bar, "Data Collection", radius=18)
+    draw_bar(draw, data_bar, "Dataset & Methodology", radius=18)
     draw_data_collection(draw, Box(right_x, 630, right_w, 820))
 
     draw_bar(draw, Box(right_x + 350, 1480, right_w - 700, 135), "Results", radius=18)
