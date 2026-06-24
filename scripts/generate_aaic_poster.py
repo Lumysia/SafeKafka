@@ -38,9 +38,7 @@ LINE = "#1E5D83"
 LIGHT_LINE = "#8DB9D4"
 SCRIPT_DIR = Path(__file__).resolve().parent
 ONTARIO_TECH_LOGO = SCRIPT_DIR / "assets" / "ontario_tech_logo.png"
-ARCHITECTURE_DIAGRAM = SCRIPT_DIR / "assets" / "safestream_architecture.png"
 STREAMING_EVAL_DIAGRAM = SCRIPT_DIR / "assets" / "streaming_evaluation.png"
-DASHBOARD_IMAGE = SCRIPT_DIR / "assets" / "dashboard1.png"
 
 
 @dataclass(frozen=True)
@@ -248,17 +246,15 @@ def draw_research_question_cards(draw: ImageDraw.ImageDraw, box: Box) -> None:
         "RQ1\nOffline vs.\nStreaming",
         "RQ2\nTemporal vs.\nSingle Frame",
         "RQ3\nThreshold\nCalibration",
-        "System\nPipeline\nBehavior",
     ]
     bodies = [
         "Does offline classification accuracy predict streaming false-alert behavior, or must both be measured separately?",
         "Do 16-frame temporal window models outperform a YOLOv8 per-frame classifier for visible workplace safety behaviors?",
         "Can one fixed alert threshold serve every model, or does each unsafe-probability scale need validation calibration?",
-        "Can a Kafka pipeline sustain live frame transport, low latency, zero consumer lag, and dashboard updates?",
     ]
-    impacts = ["offline != stream", "temporal test", "calibrated alerting", "systems metric"]
-    gap = 56
-    card_w = (box.w - gap * 3) // 4
+    impacts = ["offline != stream", "temporal test", "calibrated alerting"]
+    gap = 76
+    card_w = (box.w - gap * 2) // 3
     for index, (title, body) in enumerate(zip(titles, bodies)):
         x = box.x + index * (card_w + gap)
         draw.rectangle((x, box.y, x + card_w, box.y + 155), fill=TEAL)
@@ -317,23 +313,27 @@ def draw_contributions(draw: ImageDraw.ImageDraw, box: Box) -> None:
         (
             "Kafka\nStreaming\nPrototype",
             ["Producer, detector, aggregator, and dashboard communicate through three Kafka topics.", "Frames are keyed by camera_id to preserve ordered per-camera state.", "The pipeline supports files, RTSP streams, webcams, and replayed CCTV."],
+            "MODULAR STREAMING",
         ),
         (
             "YOLOv8\nSafety\nClassifier",
             ["Voxel51 workplace clips are converted into a YOLO classification tree.", "Raw labels map to safe, unsafe, or other categories.", "The detector also keeps a bounding-box mode for future datasets."],
+            "FRAME CLASSIFIER",
         ),
         (
             "Dual-Rule\nAlert\nAggregator",
             ["Rolling windows compute unsafe ratios over the last 60 seconds.", "EWMA smoothing uses calibrated enter and exit thresholds.", "Alerts publish warning or high-severity state to safety-alerts."],
+            "STABLE ALERTS",
         ),
         (
             "Six-Model\nStreaming\nEvaluation",
             ["YOLOv8 is compared with ResNet18+GRU, R(2+1)D-18, MViTv2-S, Video Swin-T, and Hiera-B.", "Offline quality and streaming alert behavior are reported separately.", "Per-frame YOLO produced the fewest safe-clip alerts and lowest cost."],
+            "MEASURED RESULTS",
         ),
     ]
     gap = 110
     card_w = (box.w - gap * 3) // 4
-    for index, (title, bullets) in enumerate(items):
+    for index, (title, bullets, footer) in enumerate(items):
         x = box.x + index * (card_w + gap)
         top_fill = TEAL if index == 0 else TEAL_LIGHT if index in {1, 2} else BLUE_GRAY
         header_h = 210
@@ -357,16 +357,65 @@ def draw_contributions(draw: ImageDraw.ImageDraw, box: Box) -> None:
             y_text = draw_wrapped(draw, bullet, (x + 88, y_text), FONT_SMALL, INK, card_w - 146, 5)
             y_text += 18
         draw.line((x + 58, body_y + body_h - 70, x + card_w - 58, body_y + body_h - 70), fill=LIGHT_LINE, width=2)
-        draw_centered(draw, Box(x + 58, body_y + body_h - 58, card_w - 116, 38), "PAPER-ALIGNED", FONT_TINY_BOLD, TEAL)
+        draw_centered(draw, Box(x + 58, body_y + body_h - 58, card_w - 116, 38), footer, FONT_TINY_BOLD, TEAL)
 
 
 def draw_architecture(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
     draw.rounded_rectangle((box.x + 20, box.y + 70, box.x + box.w - 20, box.y + box.h - 70), radius=42, fill="white", outline=ORANGE_LIGHT, width=3)
     draw.rectangle((box.x + box.w // 2 - 220, box.y + 42, box.x + box.w // 2 + 220, box.y + 105), fill=ORANGE)
-    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "Paper Architecture", FONT_SMALL_BOLD, "white")
-    diagram = Box(box.x + 70, box.y + 130, box.w - 140, 430)
+    draw_centered(draw, Box(box.x + box.w // 2 - 220, box.y + 42, 440, 63), "Updated Architecture", FONT_SMALL_BOLD, "white")
+
+    def arrow(start: tuple[int, int], end: tuple[int, int]) -> None:
+        draw.line((*start, *end), fill=LINE, width=4)
+        ex, ey = end
+        sx, sy = start
+        if abs(ex - sx) >= abs(ey - sy):
+            direction = 1 if ex >= sx else -1
+            draw.polygon([(ex, ey), (ex - direction * 18, ey - 10), (ex - direction * 18, ey + 10)], fill=LINE)
+        else:
+            direction = 1 if ey >= sy else -1
+            draw.polygon([(ex, ey), (ex - 10, ey - direction * 18), (ex + 10, ey - direction * 18)], fill=LINE)
+
+    def node(rect: Box, label: str, fill: str = "#F7FBFD", outline: str = LINE, font: ImageFont.ImageFont = FONT_TINY_BOLD) -> None:
+        draw.rounded_rectangle((rect.x, rect.y, rect.x + rect.w, rect.y + rect.h), radius=14, fill=fill, outline=outline, width=3)
+        draw_wrapped_centered(draw, label, Box(rect.x + 8, rect.y + 8, rect.w - 16, rect.h - 16), font, INK, 3)
+
+    diagram = Box(box.x + 70, box.y + 135, box.w - 140, 420)
     draw.rounded_rectangle((diagram.x, diagram.y, diagram.x + diagram.w, diagram.y + diagram.h), radius=18, fill="#FAFAFA", outline="#D6D6D6", width=2)
-    paste_image_fit(canvas, ARCHITECTURE_DIAGRAM, diagram, 18)
+    top_y = diagram.y + 40
+    source = Box(diagram.x + 20, top_y, 235, 74)
+    producer = Box(source.x + 295, top_y, 190, 74)
+    frames = Box(producer.x + 255, top_y, 210, 74)
+    detector = Box(frames.x + 275, top_y, 210, 74)
+    detections = Box(detector.x + 275, top_y, 240, 74)
+    aggregator = Box(detections.x + 300, top_y, 230, 74)
+    alerts = Box(aggregator.x + 285, top_y, 200, 74)
+
+    node(source, "Video / RTSP / Webcam", "#FFFFFF", MUTED)
+    node(producer, "Producer")
+    node(frames, "cctv-frames", "#EAF4FA")
+    node(detector, "Detector\nYOLOv8-cls")
+    node(detections, "safety-detections", "#EAF4FA")
+    node(aggregator, "Standalone\nAggregator")
+    node(alerts, "safety-alerts", "#EAF4FA")
+    for left, right in [(source, producer), (producer, frames), (frames, detector), (detector, detections), (detections, aggregator), (aggregator, alerts)]:
+        arrow((left.x + left.w, left.y + left.h // 2), (right.x, right.y + right.h // 2))
+
+    dash_box = Box(diagram.x + 365, diagram.y + 205, diagram.w - 730, 150)
+    draw.rounded_rectangle((dash_box.x, dash_box.y, dash_box.x + dash_box.w, dash_box.y + dash_box.h), radius=22, fill="#FFFFFF", outline=MUTED, width=2)
+    draw.text((dash_box.x + 28, dash_box.y + 18), "Dashboard service (read-only)", font=FONT_SMALL_BOLD, fill=TEAL)
+    dash_frames = Box(dash_box.x + 48, dash_box.y + 68, 310, 54)
+    dash_alerts = Box(dash_box.x + 400, dash_box.y + 68, 310, 54)
+    dashboard = Box(dash_box.x + 752, dash_box.y + 68, 310, 54)
+    node(dash_frames, "Frame consumer", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
+    node(dash_alerts, "Alert consumer", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
+    node(dashboard, "Dashboard UI\nFastAPI + WebSocket", "#F4F7F9", LIGHT_LINE, FONT_TINY_BOLD)
+    arrow((frames.x + frames.w // 2, frames.y + frames.h), (dash_frames.x + dash_frames.w // 2, dash_frames.y))
+    arrow((alerts.x + alerts.w // 2, alerts.y + alerts.h), (dash_alerts.x + dash_alerts.w // 2, dash_alerts.y))
+    arrow((dash_frames.x + dash_frames.w, dash_frames.y + dash_frames.h // 2), (dashboard.x, dashboard.y + dashboard.h // 2))
+    arrow((dash_alerts.x + dash_alerts.w, dash_alerts.y + dash_alerts.h // 2), (dashboard.x, dashboard.y + dashboard.h // 2))
+    draw_centered(draw, Box(dash_box.x + 40, dash_box.y + dash_box.h - 30, dash_box.w - 80, 24), "Dashboard displays frames and alerts but does not publish safety-alerts", FONT_TINY_BOLD, ORANGE)
+
     contract = Box(box.x + 130, box.y + 590, box.w - 260, 150)
     draw.text((contract.x, contract.y), "Kafka topic contract", font=FONT_HEADING, fill=TEAL)
     topic_rows = [
@@ -496,23 +545,22 @@ def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
             y += row_h
 
 
-def draw_streaming_evaluation(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
+def draw_findings(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> None:
     draw.rounded_rectangle((box.x + 10, box.y + 5, box.x + box.w - 10, box.y + box.h - 15), radius=28, fill="#FFFFFF", outline="#E5E5E5", width=2)
-    draw.text((box.x + 55, box.y + 32), "Streaming alert findings", font=FONT_SMALL_BOLD, fill=TEAL)
+    draw.text((box.x + 55, box.y + 32), "Answers to the research questions", font=FONT_SMALL_BOLD, fill=TEAL)
     draw.text((box.x + 1210, box.y + 32), "Single-stream throughput ceiling", font=FONT_SMALL_BOLD, fill=TEAL)
-    callout = Box(box.x + 40, box.y + 80, 1040, 335)
+    callout = Box(box.x + 40, box.y + 80, 1040, 400)
     draw.rounded_rectangle((callout.x, callout.y, callout.x + callout.w, callout.y + callout.h), radius=70, fill=CALLOUT, outline=INK, width=2)
     bullet_list(
         draw,
         [
-            "RQ1: Offline accuracy did not fully predict streaming false-alert behavior, so both were measured.",
-            "RQ2: Temporal window models did not beat the per-frame YOLO classifier on this dataset.",
-            "RQ3: Alert thresholds had to be calibrated per model because unsafe probabilities used different scales.",
-            "System result: mean end-to-end latency was 0.198 s at 3.98 fps with zero consumer lag.",
+            "RQ1: Offline accuracy carried some signal, but it did not reliably rank streaming false-alert behavior; both must be measured.",
+            "RQ2: Temporal window models did not improve this dataset's accuracy or alert quality; visible frame-level behaviors favored YOLOv8.",
+            "RQ3: A fixed alert threshold failed across models; calibrated start levels ranged from 0.45 to 0.70.",
         ],
-        Box(callout.x + 55, callout.y + 45, callout.w - 110, 230),
+        Box(callout.x + 55, callout.y + 45, callout.w - 110, 290),
         FONT_SMALL,
-        8,
+        16,
         INK,
     )
 
@@ -530,21 +578,32 @@ def draw_streaming_evaluation(canvas: Image.Image, draw: ImageDraw.ImageDraw, bo
         draw_centered(draw, Box(bx - 15, y0 + 8, 85, 24), name, FONT_TINY, INK)
         draw_centered(draw, Box(bx - 8, y0 - bh - 32, 70, 24), str(value), FONT_TINY, INK)
 
-    diagram_box = Box(box.x + 65, box.y + 500, box.w - 130, 300)
+    diagram_box = Box(box.x + 65, box.y + 535, box.w - 130, 300)
     draw.rounded_rectangle((diagram_box.x, diagram_box.y, diagram_box.x + diagram_box.w, diagram_box.y + diagram_box.h), radius=18, fill="white", outline="#D6D6D6", width=2)
     draw_centered(draw, Box(diagram_box.x, diagram_box.y + 16, diagram_box.w, 35), "Offline + Streaming Evaluation Flow", FONT_SMALL_BOLD, TEAL)
     paste_image_fit(canvas, STREAMING_EVAL_DIAGRAM, Box(diagram_box.x + 45, diagram_box.y + 72, diagram_box.w - 90, diagram_box.h - 110), 0)
 
-    dashboard_box = Box(box.x + 115, box.y + 815, box.w - 230, 300)
-    draw.rounded_rectangle((dashboard_box.x, dashboard_box.y, dashboard_box.x + dashboard_box.w, dashboard_box.y + dashboard_box.h), radius=18, fill="white", outline="#D6D6D6", width=2)
-    draw_centered(draw, Box(dashboard_box.x, dashboard_box.y + 12, dashboard_box.w, 35), "Dashboard Demonstration", FONT_SMALL_BOLD, TEAL)
-    paste_image_fit(canvas, DASHBOARD_IMAGE, Box(dashboard_box.x + 32, dashboard_box.y + 58, dashboard_box.w - 64, dashboard_box.h - 76), 0)
+    systems = Box(box.x + 115, box.y + 875, box.w - 230, 220)
+    draw.rounded_rectangle((systems.x, systems.y, systems.x + systems.w, systems.y + systems.h), radius=18, fill="#F4F7F9", outline="#D6D6D6", width=2)
+    draw_centered(draw, Box(systems.x, systems.y + 14, systems.w, 35), "Live Pipeline Finding", FONT_SMALL_BOLD, TEAL)
+    bullet_list(
+        draw,
+        [
+            "Mean end-to-end latency: 0.198 s; maximum: 0.379 s.",
+            "Throughput tracked the 4 fps input at 3.98 fps with zero consumer lag.",
+            "Each base64 JSON frame cost about 352 KB on the wire, or 1.38 MB/s per camera at 4 fps.",
+        ],
+        Box(systems.x + 62, systems.y + 70, systems.w - 124, 120),
+        FONT_SMALL,
+        8,
+        TEAL,
+    )
 
     note = Box(box.x + 85, box.y + box.h - 145, box.w - 170, 115)
     draw.rounded_rectangle((note.x, note.y, note.x + note.w, note.y + note.h), radius=28, fill="#FCEADF", outline=INK, width=2)
     draw_wrapped(
         draw,
-        "Conclusion: YOLOv8 per-frame classification gave the strongest offline score, the fewest safe-clip alerts, and the lowest per-frame cost for this single-frame-visible workplace safety dataset.",
+        "Conclusion: YOLOv8 per-frame classification gave the strongest offline score, the fewest safe-clip alerts, and the lowest per-frame cost for this workplace safety dataset.",
         (note.x + 26, note.y + 24),
         FONT_SMALL,
         INK,
@@ -601,8 +660,8 @@ def generate(output: Path) -> None:
     draw_bar(draw, Box(right_x + 350, 1480, right_w - 700, 135), "Results", radius=18)
     draw_results_table(draw, Box(right_x + 45, 1655, right_w - 90, 680))
 
-    draw_bar(draw, Box(right_x + 350, 2475, right_w - 700, 135), "Streaming Evaluation", radius=18)
-    draw_streaming_evaluation(image, draw, Box(right_x + 45, 2645, right_w - 90, 1230))
+    draw_bar(draw, Box(right_x + 350, 2475, right_w - 700, 135), "Findings", radius=18)
+    draw_findings(image, draw, Box(right_x + 45, 2645, right_w - 90, 1230))
 
     footer_y = CANVAS_SIZE - 100
     footer = "Code: github.com/Lumysia/SafeKafka   |   Course: ENGR 5785G Real-Time Data Analytics for IoT   |   Sensor Syndicate"
