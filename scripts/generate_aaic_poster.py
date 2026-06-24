@@ -505,34 +505,22 @@ def draw_data_collection(draw: ImageDraw.ImageDraw, box: Box) -> None:
             draw.text((x + 10, y + 12), cell, font=FONT_TINY, fill=INK)
             x += width
 
-    draw.text((right.x + 50, right.y + 45), "Methodology Phases:", font=FONT_HEADING, fill=ORANGE_LIGHT)
-    steps = [
-        ("Phase 1", "ingestion"),
-        ("Phase 2", "training"),
-        ("Phase 3", "inference"),
-        ("Phase 4", "alerting"),
-        ("Phase 5", "dashboard"),
+    draw.text((right.x + 50, right.y + 45), "Methodology Flow:", font=FONT_HEADING, fill=ORANGE_LIGHT)
+    flow = Box(right.x + 85, right.y + 115, right.w - 170, 500)
+    draw.rounded_rectangle((flow.x, flow.y, flow.x + flow.w, flow.y + flow.h), radius=28, fill="#F7FBFD", outline=LINE, width=3)
+    flow_items = [
+        ("1. Offline preparation", "Sample labeled Voxel51 clips into a YOLOv8 classification tree; train YOLOv8 plus five 16-frame temporal models under matched settings."),
+        ("2. Online stream", "Publish camera frames to cctv-frames; run detector inference; publish labels and counts to safety-detections."),
+        ("3. Alert aggregation", "Maintain per-camera rolling windows and EWMA unsafe probability; calibrate model thresholds on validation clips before test reporting."),
+        ("4. Live dashboard", "Display camera cards, unsafe-ratio trends, recent alerts, latency, throughput, and demo evaluation metrics."),
     ]
-    start_x = right.x + 70
-    start_y = right.y + 160
-    for index, (name, detail) in enumerate(steps):
-        x = start_x + index * 250
-        draw.rounded_rectangle((x, start_y, x + 175, start_y + 120), radius=18, fill="#F7FBFD", outline=LINE, width=3)
-        draw_centered(draw, Box(x + 15, start_y + 24, 145, 32), name, FONT_TINY_BOLD, INK)
-        draw_centered(draw, Box(x + 15, start_y + 68, 145, 32), detail, FONT_TINY, MUTED)
-        if index < len(steps) - 1:
-            draw.line((x + 175, start_y + 60, x + 250, start_y + 60), fill=LINE, width=3)
-            draw.polygon([(x + 250, start_y + 60), (x + 232, start_y + 49), (x + 232, start_y + 71)], fill=LINE)
-    notes = [
-        "Online pipeline: producer -> detector -> aggregator -> dashboard through Kafka topics.",
-        "Offline phase: dataset preparation trains YOLOv8 plus five temporal window models.",
-        "Dashboard demonstration shows camera cards, unsafe-ratio trends, alerts, and live system metrics.",
-    ]
-    y = right.y + 345
-    for note in notes:
-        draw.rounded_rectangle((right.x + 95, y, right.x + right.w - 95, y + 98), radius=11, fill=TEAL)
-        draw_wrapped(draw, note, (right.x + 125, y + 18), FONT_TINY_BOLD, "white", right.w - 250, 3)
-        y += 122
+    y = flow.y + 28
+    for title, detail in flow_items:
+        draw.text((flow.x + 38, y), title, font=FONT_SMALL_BOLD, fill=TEAL)
+        y = draw_wrapped(draw, detail, (flow.x + 68, y + 32), FONT_SMALL, INK, flow.w - 120, 4)
+        if title != flow_items[-1][0]:
+            draw.line((flow.x + 50, y + 10, flow.x + flow.w - 50, y + 10), fill=LIGHT_LINE, width=2)
+        y += 24
 
 
 def draw_results_table(draw: ImageDraw.ImageDraw, box: Box) -> None:
@@ -594,11 +582,16 @@ def draw_findings(canvas: Image.Image, draw: ImageDraw.ImageDraw, box: Box) -> N
     )
 
     bar = Box(box.x + 1190, box.y + 100, 650, 315)
-    draw.text((bar.x + 170, bar.y - 18), "Throughput by Model", font=FONT_TINY_BOLD, fill=MUTED)
     x0 = bar.x + 85
     y0 = bar.y + bar.h - 42
     draw.line((x0, y0, x0 + 500, y0), fill="#A6A6A6", width=2)
     draw.line((x0, y0, x0, y0 - 265), fill="#A6A6A6", width=2)
+    draw.text((x0 - 135, y0 - 252), "Max FPS", font=FONT_TINY_BOLD, fill=MUTED)
+    draw.text((x0 + 220, y0 + 48), "Model", font=FONT_TINY_BOLD, fill=MUTED)
+    for tick, label in [(0, "0"), (80, "80"), (160, "160")]:
+        ty = y0 - int(265 * tick / 160)
+        draw.line((x0 - 8, ty, x0, ty), fill="#A6A6A6", width=2)
+        draw.text((x0 - 42, ty - 10), label, font=FONT_TINY, fill=MUTED)
     models = [("YOLO", 156, "#78C7E7"), ("R18", 73, "#3B83B7"), ("R2D", 38, "#78C7E7"), ("Swin", 25, "#3B83B7"), ("Hiera", 21, "#78C7E7")]
     for idx, (name, value, color) in enumerate(models):
         bx = x0 + 28 + idx * 94
